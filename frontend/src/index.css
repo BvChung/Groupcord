@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 
+#3D3E66
+#494B83
+#6264A7
+#B2b5ff
+#E9EAF6
+
+#242424
+#424242
+#616161
+#bdbdbd
+#f5f5f5
+#ffffff
+ */
+
+@layer components {
+	.sidebar-icon {
+		@apply relative flex items-center justify-center 
+        h-14 w-full mx-auto dark:bg-gray-900 
+        dark:text-purple5 hover:dark:bg-gray-700 hover:dark:text-purple4;
+	}
+}

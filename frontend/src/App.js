@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "./components/sidebar/Sidebar";
+import Tray from "./components/tray/Tray";
 import "./index.css";
 
 export default function App() {
@@ -18,7 +19,7 @@ export default function App() {
 				Change theme
 			</button>
 
-			<p className="text-3xl font-bold underline">Hello world!</p>
+			<p className="text-red-900">Hello world!</p>
 			<Sidebar />
 		</main>
 	);
