@@ -19,13 +19,8 @@ app.use(errorHandler);
 
 // When front end reaches /api/chatlogs app looks into route folder to establish route
 app.use("/api/v1/chatlogs", require("./routes/chatlogRoutes"));
+app.use("/api/v1/users", require("./routes/userRoutes"));
 
 app.listen(port, () => {
 	console.log(`Server started on port ${port}`);
 });
-
-// import chatlogs from "./api/chatlogs.route.js";
-// app.use("/api/v1/chatlogs", chatlogs);
-// app.use("*", (req, res) => {
-// 	res.status(404).json({ error: "not found" });
-// });
