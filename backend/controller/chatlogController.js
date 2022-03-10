@@ -55,7 +55,16 @@ const updateChatlogs = asyncHandler(async (req, res) => {
 // @route DELETE /api/v1/chatlogs
 // @access Private
 const deleteChatlogs = asyncHandler(async (req, res) => {
-	res.status(200).json({ message: `Delete chatlogs ${req.params.id}` });
+	const chatlog = await Chatlogs.findById(req.params.id);
+
+	if (!chatlog) {
+		res.status(400);
+		throw new Error("Chatlog not found");
+	}
+
+	await chatlog.remove();
+
+	res.status(200).json({ id: req.params.id });
 });
 
 module.exports = { getChatlogs, setChatlogs, updateChatlogs, deleteChatlogs };
