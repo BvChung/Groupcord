@@ -8,11 +8,16 @@ const {
 	deleteChatlogs,
 } = require("../controller/chatlogController");
 
+const { protect } = require("../middleware/authMiddleware");
+
 // router.get("/", getChatlogs);
 // router.post("/", setChatlogs);
 // router.put("/:id", updateChatlogs);
 // router.delete("/:id", deleteChatlogs);
-router.route("/").get(getChatlogs).post(setChatlogs);
-router.route("/:id").put(updateChatlogs).delete(deleteChatlogs);
+router.route("/").get(protect, getChatlogs).post(protect, setChatlogs);
+router
+	.route("/:id")
+	.put(protect, updateChatlogs)
+	.delete(protect, deleteChatlogs);
 
 module.exports = router;

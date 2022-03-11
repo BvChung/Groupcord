@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 
 const chatlogsSchema = mongoose.Schema(
 	{
-		// Needed to associate user with a chatlog
 		user: {
+			// Used to associate user with a chatlog
 			type: mongoose.Schema.Types.ObjectId,
 			required: true,
 			ref: "User",

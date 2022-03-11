@@ -1,12 +1,13 @@
 const asyncHandler = require("express-async-handler");
 
 const Chatlogs = require("../models/chatlogModel");
+const User = require("../models/userModel");
 
 // @desc Get chatlogs
 // @route GET /api/v1/chatlogs
 // @access Private
 const getChatlogs = asyncHandler(async (req, res) => {
-	const chatlog = await Chatlogs.find();
+	const chatlog = await Chatlogs.find({ user: req.user.id });
 
 	res.status(200).json(chatlog);
 });
@@ -22,6 +23,7 @@ const setChatlogs = asyncHandler(async (req, res) => {
 
 	const chatlog = await Chatlogs.create({
 		text: req.body.text,
+		user: req.user.id,
 	});
 
 	res.status(200).json(chatlog);
@@ -37,6 +39,20 @@ const updateChatlogs = asyncHandler(async (req, res) => {
 	if (!chatlog) {
 		res.status(400);
 		throw new Error("Chatlog not found");
+	}
+
+	const user = await User.findById(req.user.id);
+
+	// Check for user
+	if (!user) {
+		res.status(401);
+		throw new Error("User not found");
+	}
+
+	// Check if logged in user matches the chatlog user
+	if (chatlog.user.toString() !== user.id) {
+		res.status(401);
+		throw new Error("User not authorized");
 	}
 
 	// Update the chatlog
@@ -60,6 +76,20 @@ const deleteChatlogs = asyncHandler(async (req, res) => {
 	if (!chatlog) {
 		res.status(400);
 		throw new Error("Chatlog not found");
+	}
+
+	const user = await User.findById(req.user.id);
+
+	// Check for user
+	if (!user) {
+		res.status(401);
+		throw new Error("User not found");
+	}
+
+	// Check if logged in user matches the chatlog user
+	if (chatlog.user.toString() !== user.id) {
+		res.status(401);
+		throw new Error("User not authorized");
 	}
 
 	await chatlog.remove();
