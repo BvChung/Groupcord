@@ -6,8 +6,10 @@ const {
 	getCurrentUser,
 } = require("../controller/userController");
 
-router.post("/", registerUser);
+const { protect } = require("../middleware/authMiddleware");
+
+router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.get("/current", getCurrentUser);
+router.get("/currentUser", protect, getCurrentUser);
 
 module.exports = router;
