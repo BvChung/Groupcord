@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 
 // JWT token is => Bearer token
+// authMiddleware returns the user(object) based on the token of the request to server
 
 const protect = asyncHandler(async (req, res, next) => {
 	// Initialize the token
