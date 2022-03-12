@@ -35,6 +35,10 @@ module.exports = {
 				gray4: "#bdbdbd",
 				gray5: "#f5f5f5",
 				offwhite: "#f9fafb",
+				offwhite2: "#f3f3f4",
+			},
+			spacing: {
+				maxLogin: "31rem",
 			},
 		},
 	},
