@@ -1,26 +1,24 @@
 import React, { useState } from "react";
-import Sidebar from "./components/sidebar/Sidebar";
-import Tray from "./components/tray/Tray";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navigation from "./components/Navigation/Navigation";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import "./index.css";
 
 export default function App() {
-	const [theme, setTheme] = useState(false);
-	function changeTheme() {
-		setTheme((prevTheme) => !prevTheme);
-	}
-	const themeStyle = theme ? "" : "dark";
-
 	return (
-		<main className={themeStyle}>
-			<button
-				className="cursor-pointer bg-indigo-900 text-white"
-				onClick={changeTheme}
-			>
-				Change theme
-			</button>
-
-			<p className="text-red-900">Hello world!</p>
-			<Sidebar />
-		</main>
+		<>
+			<BrowserRouter>
+				{/* <Navigation /> */}
+				<div className="">
+					<Routes>
+						<Route path="/" element={<Dashboard />}></Route>
+						<Route path="/login" element={<Login />}></Route>
+						<Route path="/register" element={<Register />}></Route>
+					</Routes>
+				</div>
+			</BrowserRouter>
+		</>
 	);
 }
