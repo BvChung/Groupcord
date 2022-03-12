@@ -71,16 +71,10 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 // @desc Get user data
-// @route GET /api/v1/users/me
+// @route GET /api/v1/users/currentUser
 // @access Private
 const getCurrentUser = asyncHandler(async (req, res) => {
-	const { _id, name, email } = await User.findById(req.user.id);
-
-	return res.status(200).json({
-		id: _id,
-		name: name,
-		email: email,
-	});
+	return res.status(200).json(req.user);
 });
 
 // Generate a JWT: used to validate user

@@ -41,16 +41,14 @@ const updateChatlogs = asyncHandler(async (req, res) => {
 		throw new Error("Chatlog not found");
 	}
 
-	const user = await User.findById(req.user.id);
-
 	// Check for user
-	if (!user) {
+	if (!req.user) {
 		res.status(401);
 		throw new Error("User not found");
 	}
 
 	// Check if logged in user matches the chatlog user
-	if (chatlog.user.toString() !== user.id) {
+	if (chatlog.user.toString() !== req.user.id) {
 		res.status(401);
 		throw new Error("User not authorized");
 	}
@@ -78,16 +76,14 @@ const deleteChatlogs = asyncHandler(async (req, res) => {
 		throw new Error("Chatlog not found");
 	}
 
-	const user = await User.findById(req.user.id);
-
 	// Check for user
-	if (!user) {
+	if (!req.user) {
 		res.status(401);
 		throw new Error("User not found");
 	}
 
 	// Check if logged in user matches the chatlog user
-	if (chatlog.user.toString() !== user.id) {
+	if (chatlog.user.toString() !== req.user.id) {
 		res.status(401);
 		throw new Error("User not authorized");
 	}
