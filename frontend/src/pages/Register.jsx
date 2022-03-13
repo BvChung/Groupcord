@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { UserAddIcon } from "@heroicons/react/solid";
 
 function Register() {
 	const [form, setForm] = useState({
-		firstName: "",
+		name: "",
 		username: "",
 		email: "",
 		password: "",
@@ -24,68 +26,96 @@ function Register() {
 	}
 
 	return (
-		<main className="flex items-center justify-center h-screen w-screen">
-			<div className="h-max border-2 border-gray-400 p-5">
-				<p className="text-center text-2xl font-semibold mb-10">
-					Create your account
-				</p>
+		<div
+			className="flex justify-center h-screen w-screen text-gray1 
+			sm:items-center dark:bg-gray-900"
+		>
+			<section
+				className="h-max w-full pt-12
+				sm:w-fit sm:p-8 sm:border-[1px] border-gray-300 rounded-md
+				dark:border-offwhite"
+			>
+				<div className="flex items-center justify-center gap-2 mb-8">
+					<UserAddIcon className="h-12 w-12 text-sky-600" />
+					<p className="text-center font-bold text-xl sm:text-3xl dark:text-white">
+						Create your account
+					</p>
+				</div>
 				<form
 					className="flex flex-col align-center content-center 
-				h-fit  w-maxLogin"
+				h-fit w-screen px-6 sm:w-maxLogin"
 					onSubmit={handleSubmit}
 				>
-					<div className="flex justify-between mb-8">
+					<div className="flex flex-col gap-4 mb-8 w-full sm:flex-row">
 						<div>
-							<label className="font-semibold ">First Name</label>
+							<label className="font-semibold text-sm text-gray1  dark:text-slate-300">
+								Name
+							</label>
 							<input
-								name="firstName"
-								value={form.firstName}
+								name="name"
+								value={form.name}
 								type="text"
 								onChange={handleChange}
 								required
-								className="border-[1px] border-gray-400  rounded-sm"
+								className="border-[1px] border-gray-300 rounded-sm w-full p-1
+								focus:outline-sky-600"
 							></input>
 						</div>
 
 						<div>
-							<label className="font-semibold">Username</label>
+							<label className="font-semibold text-sm text-gray1 dark:text-slate-300">
+								Username
+							</label>
 							<input
 								name="username"
 								value={form.username}
 								type="text"
 								onChange={handleChange}
 								required
-								className="border-[1px] border-gray-400 rounded-sm"
+								className="border-[1px] border-gray-300 rounded-sm w-full p-1 focus:outline-sky-600"
 							></input>
 						</div>
 					</div>
 
-					<label className="font-semibold">Email</label>
+					<label className="font-semibold text-sm text-gray1 dark:text-slate-300">
+						Email
+					</label>
+
 					<input
 						name="email"
 						value={form.email}
 						type="email"
-						className="font-semibold"
 						onChange={handleChange}
 						required
-						className="border-[1px] border-gray-400 mb-8 rounded-sm"
+						className="w-full border-[1px] border-gray-300 mb-8 rounded-sm p-1 focus:outline-sky-600"
 					></input>
 
-					<label className="font-semibold">Password</label>
+					<label className="font-semibold text-sm text-gray1 dark:text-slate-300">
+						Password
+					</label>
 					<input
 						name="password"
 						value={form.password}
-						type="text"
+						type="password"
 						onChange={handleChange}
 						required
-						className="border-[1px] border-gray-400 mb-8 rounded-sm"
+						className="w-full border-[1px] border-gray-300 mb-10 rounded-sm p-1 focus:outline-sky-600"
 					></input>
-					<button className="bg-purple2 text-offwhite2 w-full self-center">
-						Sign up
+					<button
+						className="transition-all bg-sky-600 hover:bg-sky-500 text-offwhite2 
+							w-full self-center p-2 rounded-md mb-8"
+					>
+						Create Account
 					</button>
 				</form>
-			</div>
-		</main>
+				<div className="text-center">
+					<p className="dark:text-slate-300">Already have an account?</p>
+					<p className="font-semibold text-sky-600 hover:text-sky-400">
+						<Link to="/login">Sign in</Link>
+					</p>
+				</div>
+			</section>
+		</div>
 	);
 }
 

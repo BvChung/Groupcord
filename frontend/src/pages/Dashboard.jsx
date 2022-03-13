@@ -1,18 +1,10 @@
 import { useState } from "react";
 
 function Dashboard() {
-	const [theme, setTheme] = useState(false);
-	function changeTheme() {
-		setTheme((prevTheme) => !prevTheme);
-	}
-	const themeStyle = theme ? "" : "dark";
 	return (
-		<div className={` ${themeStyle}`}>
+		<div className="dark:bg-gray-900 w-screen h-screen">
 			Dashboard
-			<button
-				className="cursor-pointer bg-indigo-900 text-white text-xs"
-				onClick={changeTheme}
-			>
+			<button className="cursor-pointer bg-indigo-900 text-white text-xs">
 				Change theme
 			</button>
 			<p className="text-white">asd</p>

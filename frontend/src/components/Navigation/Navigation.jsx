@@ -1,28 +1,26 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { LoginIcon, LogoutIcon, UserIcon } from "@heroicons/react/outline";
+import { SunIcon, MoonIcon } from "@heroicons/react/outline";
 
-function Navigation() {
+function Navigation({ darkTheme, toggleTheme }) {
 	return (
-		<header className="flex justify-between items-center px-6 py-4 h-16 bg-slate-800">
+		<header
+			className="flex justify-between items-center fixed w-screen px-6 py-4 h-16 
+		dark:bg-slate-800"
+		>
 			<div>Navigation</div>
-			<div>
-				<ul className="flex gap-5">
-					<li>
-						<Link to="/login">
-							<div className="flex justify-center items-center">
-								<LoginIcon className="h-5 w-5" /> Login
-							</div>
-						</Link>
-					</li>
-					<li>
-						<Link to="/register">
-							<div className="flex justify-center items-center">
-								<UserIcon className="h-5 w-5" /> Register
-							</div>
-						</Link>
-					</li>
-				</ul>
+			<div className="">
+				{darkTheme ? (
+					<MoonIcon
+						onClick={toggleTheme}
+						className="text-sky-500 cursor-pointer w-10 h-10"
+					/>
+				) : (
+					<SunIcon
+						onClick={toggleTheme}
+						className="text-sky-500 cursor-pointer w-10 h-10"
+					/>
+				)}
 			</div>
 		</header>
 	);
