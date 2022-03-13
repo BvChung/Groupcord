@@ -38,7 +38,7 @@ module.exports = {
 				offwhite2: "#f3f3f4",
 			},
 			spacing: {
-				maxLogin: "31rem",
+				maxLogin: "30rem",
 			},
 		},
 	},
