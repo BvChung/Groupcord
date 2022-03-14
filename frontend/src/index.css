@@ -20,7 +20,7 @@
 @layer components {
 	.sidebar-icon {
 		@apply relative flex items-center justify-center 
-        h-14 w-full mx-auto dark:bg-gray-900 
+        h-14 w-full mx-auto dark:bg-white 
         dark:text-purple5 hover:dark:bg-gray-700 hover:dark:text-purple4;
 	}
 }
