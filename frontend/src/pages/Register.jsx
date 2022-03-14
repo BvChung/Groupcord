@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { UserAddIcon } from "@heroicons/react/solid";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { register, reset } from "../features/Authentication/authSlice";
 
 function Register() {
 	const [form, setForm] = useState({
@@ -22,8 +26,39 @@ function Register() {
 
 	function handleSubmit(e) {
 		e.preventDefault();
-		console.log(form);
+
+		const userData = {
+			name: form.name,
+			username: form.username,
+			email: form.email,
+			password: form.password,
+		};
+
+		console.log(userData);
+		dispatch(register(userData));
 	}
+
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
+
+	const { user, isLoading, isError, isSuccess, message } = useSelector(
+		(state) => state.auth
+	);
+	// console.log(user, isLoading, isError, isSuccess, message);
+
+	useEffect(() => {
+		if (isError) {
+			toast.error(message);
+		}
+
+		if (isSuccess || user) {
+			// If user logins or registers navigate('/') to dashboard
+			navigate("/Dashboard");
+		}
+
+		// Reset state in store
+		dispatch(reset());
+	}, [user, isError, isSuccess, message, navigate, dispatch]);
 
 	return (
 		<div
@@ -111,7 +146,7 @@ function Register() {
 				<div className="text-center">
 					<p className="dark:text-slate-300">Already have an account?</p>
 					<p className="font-semibold text-sky-600 hover:text-sky-400">
-						<Link to="/login">Sign in</Link>
+						<Link to="/">Sign in</Link>
 					</p>
 				</div>
 			</section>

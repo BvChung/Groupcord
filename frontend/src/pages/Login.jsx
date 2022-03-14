@@ -1,8 +1,19 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { LoginIcon } from "@heroicons/react/outline";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../features/User/userSlice";
 
 function Login() {
+	const dispatch = useDispatch();
+	const user = useSelector((state) => state.user.value);
+	console.log(user);
+	function updateState() {
+		dispatch(
+			login({ name: "as", username: "2", email: "asd", password: "123" })
+		);
+	}
+
 	const [form, setForm] = useState({
 		loginCredentials: "",
 		password: "",
