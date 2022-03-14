@@ -7,9 +7,9 @@ const User = require("../models/userModel");
 // @route POST /api/v1/users
 // @access Public
 const registerUser = asyncHandler(async (req, res) => {
-	const { name, email, password } = req.body;
+	const { name, username, email, password } = req.body;
 
-	if (!name || !email || !password) {
+	if (!name || !username || !email || !password) {
 		res.status(400);
 		throw new Error("Please fill in all fields");
 	}
@@ -29,6 +29,7 @@ const registerUser = asyncHandler(async (req, res) => {
 	// Create User using mongoose schema
 	const user = await User.create({
 		name,
+		username,
 		email,
 		password: hashedPassword,
 	});
@@ -38,6 +39,7 @@ const registerUser = asyncHandler(async (req, res) => {
 		return res.status(201).json({
 			_id: user.id,
 			name: user.name,
+			username: user.username,
 			email: user.email,
 			token: generateToken(user._id),
 		});
@@ -61,6 +63,7 @@ const loginUser = asyncHandler(async (req, res) => {
 		return res.status(201).json({
 			_id: user.id,
 			name: user.name,
+			username: user.username,
 			email: user.email,
 			token: generateToken(user._id),
 		});
