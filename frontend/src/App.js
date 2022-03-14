@@ -1,18 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navigation from "./components/Navigation/Navigation";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import "./index.css";
-import { ThemeProvider } from "./ThemeContext/ThemeProvider";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+// import { useSelector } from "react-redux";
 
 export default function App() {
-	const [darkTheme, setDarkTheme] = useState(false);
+	// const { darkMode } = useSelector((state) => state.theme.value);
+	// console.log(darkMode);
+	// const dark = darkMode ? "dark" : "";
+
+	const [darkTheme, setDarkTheme] = useState(
+		JSON.parse(localStorage.getItem("theme")) || false
+	);
 
 	function toggleTheme() {
 		setDarkTheme((prevTheme) => !prevTheme);
 	}
+
+	useEffect(() => {
+		window.localStorage.setItem("theme", JSON.stringify(darkTheme));
+	}, [darkTheme]);
 
 	const darkMode = darkTheme ? "dark" : "";
 
@@ -22,12 +35,13 @@ export default function App() {
 				<Navigation darkTheme={darkTheme} toggleTheme={toggleTheme} />
 				<div className={darkMode}>
 					<Routes>
-						<Route path="/" element={<Dashboard />}></Route>
-						<Route path="/login" element={<Login />}></Route>
+						<Route path="/" element={<Login />}></Route>
 						<Route path="/register" element={<Register />}></Route>
+						<Route path="/Dashboard" element={<Dashboard />}></Route>
 					</Routes>
 				</div>
 			</BrowserRouter>
+			<ToastContainer />
 		</>
 	);
 }
