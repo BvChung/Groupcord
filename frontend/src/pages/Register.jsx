@@ -1,19 +1,22 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { UserAddIcon } from "@heroicons/react/solid";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { register, reset } from "../features/Authentication/authSlice";
 
 function Register() {
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
+
 	const [form, setForm] = useState({
 		name: "",
 		username: "",
 		email: "",
 		password: "",
 	});
-
 	function handleChange(event) {
 		const { name, value } = event.target;
 		setForm((prevFormData) => {
@@ -23,7 +26,6 @@ function Register() {
 			};
 		});
 	}
-
 	function handleSubmit(e) {
 		e.preventDefault();
 
@@ -38,27 +40,24 @@ function Register() {
 		dispatch(register(userData));
 	}
 
-	const navigate = useNavigate();
-	const dispatch = useDispatch();
-
-	const { user, isLoading, isError, isSuccess, message } = useSelector(
+	const { user, registerError, isSuccess, isLoading, message } = useSelector(
 		(state) => state.auth
 	);
 	// console.log(user, isLoading, isError, isSuccess, message);
 
 	useEffect(() => {
-		if (isError) {
+		if (registerError) {
 			toast.error(message);
 		}
 
 		if (isSuccess || user) {
 			// If user logins or registers navigate('/') to dashboard
-			navigate("/Dashboard");
+			navigate("/dashboard");
 		}
 
 		// Reset state in store
 		dispatch(reset());
-	}, [user, isError, isSuccess, message, navigate, dispatch]);
+	}, [user, isSuccess, message, registerError, navigate, dispatch]);
 
 	return (
 		<div
@@ -140,7 +139,16 @@ function Register() {
 						className="transition-all bg-sky-600 hover:bg-sky-500 text-offwhite2 
 							w-full self-center p-2 rounded-md mb-8"
 					>
-						Create Account
+						{isLoading ? (
+							<div className="flex items-center justify-center gap-2">
+								<AiOutlineLoading3Quarters className="animate-spin h-6 w-6 text-white" />
+								<span>Creating Account</span>
+							</div>
+						) : (
+							<div className="flex items-center justify-center gap-2">
+								<span>Create Account</span>
+							</div>
+						)}
 					</button>
 				</form>
 				<div className="text-center">

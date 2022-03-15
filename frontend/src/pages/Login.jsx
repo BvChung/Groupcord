@@ -1,24 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { LoginIcon } from "@heroicons/react/outline";
-import { useDispatch, useSelector } from "react-redux";
-import { login } from "../features/User/userSlice";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { login, reset } from "../features/Authentication/authSlice";
 
 function Login() {
+	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const user = useSelector((state) => state.user.value);
-	console.log(user);
-	function updateState() {
-		dispatch(
-			login({ name: "as", username: "2", email: "asd", password: "123" })
-		);
-	}
 
 	const [form, setForm] = useState({
-		loginCredentials: "",
+		email: "",
 		password: "",
 	});
-
 	function handleChange(event) {
 		const { name, value } = event.target;
 		setForm((prevFormData) => {
@@ -28,11 +24,39 @@ function Login() {
 			};
 		});
 	}
-
 	function handleSubmit(e) {
 		e.preventDefault();
-		console.log(form);
+
+		const userData = {
+			email: form.email,
+			password: form.password,
+		};
+
+		dispatch(login(userData));
 	}
+
+	const { user, loginError, isSuccess, isLoading, message } = useSelector(
+		(state) => state.auth
+	);
+
+	const displayError = useCallback(() => {
+		if (loginError) {
+			toast.error(message);
+		}
+	}, [message, loginError]);
+
+	useEffect(() => {
+		displayError();
+
+		if (isSuccess || user) {
+			// If user logins or registers navigate('/') to dashboard
+			navigate("/dashboard");
+		}
+
+		// Reset state in store
+		// dispatch(reset());
+	}, [user, isSuccess, navigate, displayError]);
+	// [user, loginError, isSuccess, message, navigate, dispatch]
 
 	return (
 		<div
@@ -60,9 +84,9 @@ function Login() {
 					</label>
 
 					<input
-						name="loginCredentials"
-						value={form.loginCredentials}
-						type="text"
+						name="email"
+						value={form.email}
+						type="email"
 						onChange={handleChange}
 						required
 						className="w-full border-[1px] border-gray-300 mb-8 rounded-sm p-1 focus:outline-sky-600"
@@ -83,7 +107,16 @@ function Login() {
 						className="transition-all bg-sky-600 hover:bg-sky-500 text-offwhite2 
 							w-full self-center p-2 rounded-md mb-8"
 					>
-						Sign In
+						{isLoading ? (
+							<div className="flex items-center justify-center gap-2">
+								<AiOutlineLoading3Quarters className="animate-spin h-6 w-6 text-white" />
+								<span>Signing In</span>
+							</div>
+						) : (
+							<div className="flex items-center justify-center gap-2">
+								<span>Sign In</span>
+							</div>
+						)}
 					</button>
 				</form>
 				<div className="text-center">
@@ -92,6 +125,27 @@ function Login() {
 						<Link to="/register">Register</Link>
 					</p>
 				</div>
+
+				{/* <svg
+					className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+				>
+					<circle
+						className="opacity-25"
+						cx="12"
+						cy="12"
+						r="10"
+						stroke="currentColor"
+						strokeWidth="4"
+					></circle>
+					<path
+						className="opacity-75"
+						fill="currentColor"
+						d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+					></path>
+				</svg> */}
 			</section>
 		</div>
 	);
