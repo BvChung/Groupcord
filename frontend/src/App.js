@@ -25,6 +25,7 @@ export default function App() {
 
 	useEffect(() => {
 		window.localStorage.setItem("theme", JSON.stringify(darkTheme));
+		console.log("save theme");
 	}, [darkTheme]);
 
 	const darkMode = darkTheme ? "dark" : "";
@@ -32,16 +33,16 @@ export default function App() {
 	return (
 		<>
 			<BrowserRouter>
-				<Navigation darkTheme={darkTheme} toggleTheme={toggleTheme} />
 				<div className={darkMode}>
+					<Navigation darkTheme={darkTheme} toggleTheme={toggleTheme} />
 					<Routes>
 						<Route path="/" element={<Login />}></Route>
 						<Route path="/register" element={<Register />}></Route>
-						<Route path="/Dashboard" element={<Dashboard />}></Route>
+						<Route path="/dashboard" element={<Dashboard />}></Route>
 					</Routes>
 				</div>
 			</BrowserRouter>
-			<ToastContainer />
+			<ToastContainer autoClose={3000} />
 		</>
 	);
 }
