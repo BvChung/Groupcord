@@ -1,17 +1,37 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
+const cors = require("cors");
+const http = require("http");
+const { Server } = require("socket.io");
 const port = process.env.PORT || 3001;
 const colors = require("colors");
 const { errorHandler } = require("./middleware/errorMiddleware");
-const connectDB = require("./config/db");
+const connectDatabase = require("./config/database");
 
-connectDB();
+connectDatabase();
 
 // nodemon server to observe changes
 const app = express();
 
-// middleware
+// Setting up socketio
+const server = http.createServer(app);
+const io = new Server(server, {
+	cors: {
+		origin: "http://localhost:3000",
+		methods: ["GET", "POST"],
+	},
+});
 
+io.on("connection", (socket) => {
+	console.log("A user connected", socket.id);
+
+	socket.on("disconnect", () => {
+		console.log("User disconnected", socket.id);
+	});
+});
+
+// middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
