@@ -1,22 +1,24 @@
-import { useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import { SunIcon, MoonIcon } from "@heroicons/react/outline";
 import { BsGithub } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { logout, reset } from "../../features/Authentication/authSlice";
-
-// import { changeTheme } from "../../features/Theme/theme";
+import {
+	logoutUser,
+	resetState,
+	resetUser,
+} from "../../features/Authentication/authSlice";
 
 function Navigation({ darkTheme, toggleTheme }) {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
 	const { user } = useSelector((state) => state.auth);
-	// console.log(user, isLoading, isError, isSuccess, message);
 
 	const onLogout = () => {
-		dispatch(logout());
-		dispatch(reset());
+		dispatch(logoutUser());
+		dispatch(resetState());
+		dispatch(resetUser());
 
 		changePage();
 	};

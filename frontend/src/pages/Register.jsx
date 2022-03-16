@@ -5,7 +5,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { register, reset } from "../features/Authentication/authSlice";
+import { registerUser, resetState } from "../features/Authentication/authSlice";
 
 function Register() {
 	const navigate = useNavigate();
@@ -36,8 +36,7 @@ function Register() {
 			password: form.password,
 		};
 
-		console.log(userData);
-		dispatch(register(userData));
+		dispatch(registerUser(userData));
 	}
 
 	const { user, registerError, isSuccess, isLoading, message } = useSelector(
@@ -55,8 +54,8 @@ function Register() {
 			navigate("/dashboard");
 		}
 
-		// Reset state in store
-		dispatch(reset());
+		// reset state in store
+		dispatch(resetState());
 	}, [user, isSuccess, message, registerError, navigate, dispatch]);
 
 	return (

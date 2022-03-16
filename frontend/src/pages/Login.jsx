@@ -5,7 +5,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { login, reset } from "../features/Authentication/authSlice";
+import { loginUser, resetState } from "../features/Authentication/authSlice";
 
 function Login() {
 	const navigate = useNavigate();
@@ -32,7 +32,7 @@ function Login() {
 			password: form.password,
 		};
 
-		dispatch(login(userData));
+		dispatch(loginUser(userData));
 	}
 
 	const { user, loginError, isSuccess, isLoading, message } = useSelector(
@@ -54,8 +54,8 @@ function Login() {
 		}
 
 		// Reset state in store
-		// dispatch(reset());
-	}, [user, isSuccess, navigate, displayError]);
+		dispatch(resetState());
+	}, [user, isSuccess, navigate, dispatch, displayError]);
 	// [user, loginError, isSuccess, message, navigate, dispatch]
 
 	return (

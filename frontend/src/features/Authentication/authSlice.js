@@ -18,7 +18,7 @@ const initialState = {
 // and returns a thunk action creator that will run the promise callback
 // and dispatch the lifecycle actions based on the returned promise.
 // params: createAsyncThunk('action', async(user data from register component, thunkAPI)=> {})
-export const register = createAsyncThunk(
+export const registerUser = createAsyncThunk(
 	"auth/register",
 	async (user, thunkAPI) => {
 		try {
@@ -36,20 +36,25 @@ export const register = createAsyncThunk(
 );
 
 // Login user
-export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
-	try {
-		return await authService.login(user);
-	} catch (error) {
-		const message =
-			(error.response && error.response.data && error.response.data.message) ||
-			error.message ||
-			error.toString();
-		return thunkAPI.rejectWithValue(message);
+export const loginUser = createAsyncThunk(
+	"auth/login",
+	async (user, thunkAPI) => {
+		try {
+			return await authService.login(user);
+		} catch (error) {
+			const message =
+				(error.response &&
+					error.response.data &&
+					error.response.data.message) ||
+				error.message ||
+				error.toString();
+			return thunkAPI.rejectWithValue(message);
+		}
 	}
-});
+);
 
 // logout user
-export const logout = createAsyncThunk(
+export const logoutUser = createAsyncThunk(
 	"auth/logout",
 	async (user, thunkAPI) => {
 		try {
@@ -70,53 +75,54 @@ export const authSlice = createSlice({
 	name: "auth",
 	initialState,
 	reducers: {
-		reset: (state) => {
-			state.user = null;
+		resetState: (state) => {
 			state.isLoading = false;
 			state.isSuccess = false;
 			state.registerError = false;
 			state.loginError = false;
 			state.message = "";
 		},
+		resetUser: (state) => {
+			state.user = null;
+		},
 	},
-	// Create extra reducers for the pending,
-	// fulfilled and rejected states when registering a user
+	// Create extra reducers for the pending, fulfilled and rejected states
 	// Placed in extrareducers since registering uses asyncThunk
 	extraReducers: (builder) => {
 		builder
-			.addCase(register.pending, (state) => {
+			.addCase(registerUser.pending, (state) => {
 				state.isLoading = true;
 			})
-			.addCase(register.fulfilled, (state, action) => {
+			.addCase(registerUser.fulfilled, (state, action) => {
 				state.isLoading = false;
 				state.isSuccess = true;
 				state.user = action.payload;
 			})
-			.addCase(register.rejected, (state, action) => {
+			.addCase(registerUser.rejected, (state, action) => {
 				state.isLoading = false;
 				state.registerError = true;
 				state.message = action.payload;
 				state.user = null;
 			})
-			.addCase(login.pending, (state) => {
+			.addCase(loginUser.pending, (state) => {
 				state.isLoading = true;
 			})
-			.addCase(login.fulfilled, (state, action) => {
+			.addCase(loginUser.fulfilled, (state, action) => {
 				state.isLoading = false;
 				state.isSuccess = true;
 				state.user = action.payload;
 			})
-			.addCase(login.rejected, (state, action) => {
+			.addCase(loginUser.rejected, (state, action) => {
 				state.isLoading = false;
 				state.loginError = true;
 				state.message = action.payload;
 				state.user = null;
 			})
-			.addCase(logout.fulfilled, (state) => {
+			.addCase(logoutUser.fulfilled, (state) => {
 				state.user = null;
 			});
 	},
 });
 
-export const { reset } = authSlice.actions;
+export const { resetState, resetUser } = authSlice.actions;
 export default authSlice.reducer;
