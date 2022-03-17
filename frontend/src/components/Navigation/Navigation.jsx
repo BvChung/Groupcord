@@ -29,7 +29,7 @@ function Navigation({ darkTheme, toggleTheme }) {
 
 	return (
 		<header
-			className="flex justify-end items-center fixed w-screen px-6 py-4 h-30 
+			className="flex justify-end items-center fixed w-screen px-6 py-4 h-18 
 		dark:bg-slate-900"
 		>
 			<div>
@@ -38,7 +38,7 @@ function Navigation({ darkTheme, toggleTheme }) {
 						<li>
 							<button
 								onClick={onLogout}
-								className="p-2 rounded-xl bg-slate-700"
+								className="text-sm p-2 rounded-lg bg-slate-700"
 							>
 								Logout
 							</button>
@@ -50,12 +50,12 @@ function Navigation({ darkTheme, toggleTheme }) {
 						{darkTheme ? (
 							<MoonIcon
 								onClick={toggleTheme}
-								className="text-sky-500 cursor-pointer w-8 h-8"
+								className="text-sky-500 cursor-pointer w-7 h-7"
 							/>
 						) : (
 							<SunIcon
 								onClick={toggleTheme}
-								className="text-sky-500 cursor-pointer w-8 h-8"
+								className="text-sky-500 cursor-pointer w-7 h-7"
 							/>
 						)}
 					</li>
@@ -66,7 +66,7 @@ function Navigation({ darkTheme, toggleTheme }) {
 							rel="noopener noreferrer"
 						>
 							<BsGithub
-								className="w-8 h-8 cursor-pointer text-gray-900 hover:text-gray-700
+								className="w-7 h-7 cursor-pointer text-gray-900 hover:text-gray-700
 							dark:text-white dark:hover:text-gray-300"
 							/>
 						</a>
