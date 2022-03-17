@@ -5,7 +5,7 @@ const User = require("../models/userModel");
 // JWT token is => Bearer token
 // authMiddleware returns the user(object) based on the token of the request to server
 
-const protect = asyncHandler(async (req, res, next) => {
+const authWithToken = asyncHandler(async (req, res, next) => {
 	// Initialize the token
 	let token;
 
@@ -16,14 +16,18 @@ const protect = asyncHandler(async (req, res, next) => {
 		req.headers.authorization.startsWith("Bearer")
 	) {
 		try {
+			// console.log(req.headers);
 			// Get token from header
 			token = req.headers.authorization.split(" ")[1];
+			// console.log(token);
 
 			// Verify token
 			const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
 			// Get user from the token
+			// .select("-password") removes the password from req.user
 			req.user = await User.findById(decodedToken.id).select("-password");
+			// console.log(req.user);
 
 			next();
 		} catch (err) {
@@ -39,4 +43,4 @@ const protect = asyncHandler(async (req, res, next) => {
 	}
 });
 
-module.exports = { protect };
+module.exports = { authWithToken };

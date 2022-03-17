@@ -1,7 +1,6 @@
 const asyncHandler = require("express-async-handler");
 
 const Chatlogs = require("../models/chatlogModel");
-const User = require("../models/userModel");
 
 // @desc Get chatlogs
 // @route GET /api/v1/chatlogs
