@@ -88,6 +88,7 @@ export const authSlice = createSlice({
 	},
 	// Create extra reducers for the pending, fulfilled and rejected states
 	// Placed in extrareducers since registering uses asyncThunk
+	// Extrareducers update the state like function in useState()
 	extraReducers: (builder) => {
 		builder
 			.addCase(registerUser.pending, (state) => {
