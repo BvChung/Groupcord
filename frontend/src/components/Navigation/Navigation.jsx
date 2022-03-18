@@ -29,7 +29,7 @@ function Navigation({ darkTheme, toggleTheme }) {
 
 	return (
 		<header
-			className="flex justify-end items-center fixed w-screen px-6 py-4 h-18 
+			className="absolute top-0 right-0 flex items-center w-max px-6 py-4 h-18 
 		dark:bg-slate-900"
 		>
 			<div>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { LoginIcon } from "@heroicons/react/outline";
+import { LoginIcon, UserIcon } from "@heroicons/react/outline";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -11,10 +11,16 @@ function Login() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
+	const { user, loginError, isSuccess, isLoading, message } = useSelector(
+		(state) => state.auth
+	);
+
 	const [form, setForm] = useState({
+		guestAccount: false,
 		email: "",
 		password: "",
 	});
+
 	function handleChange(event) {
 		const { name, value } = event.target;
 		setForm((prevFormData) => {
@@ -35,9 +41,15 @@ function Login() {
 		dispatch(loginUser(userData));
 	}
 
-	const { user, loginError, isSuccess, isLoading, message } = useSelector(
-		(state) => state.auth
-	);
+	function loadGuestAccount() {
+		setForm(() => {
+			return {
+				guestAccount: true,
+				email: "guest@gmail.com",
+				password: "guest",
+			};
+		});
+	}
 
 	const displayError = useCallback(() => {
 		if (loginError) {
@@ -60,15 +72,15 @@ function Login() {
 
 	return (
 		<div
-			className="flex justify-center h-screen w-screen  text-gray1 
-			sm:items-center dark:bg-gray-900"
+			className="flex justify-center h-screen w-screen first-letter:text-gray1 
+			sm:items-center dark:bg-slate-900"
 		>
 			<section
 				className="h-max w-full pt-12 
 				sm:w-fit sm:p-8 sm:border-[1px] border-gray-300 rounded-md 
 				dark:border-offwhite"
 			>
-				<div className="flex items-center justify-center gap-2 mb-8">
+				<div className="flex items-center justify-center gap-2 mb-6">
 					<LoginIcon className="h-12 w-12 text-sky-600" />
 					<p className="text-center font-bold text-xl sm:text-3xl dark:text-white">
 						Sign In
@@ -89,7 +101,7 @@ function Login() {
 						type="email"
 						onChange={handleChange}
 						required
-						className="w-full border-[1px] border-gray-300 mb-8 rounded-sm p-1 focus:outline-sky-600"
+						className="w-full border-[1px] border-gray-300 mb-6 rounded-sm p-1 focus:outline-sky-600"
 					></input>
 
 					<label className="font-semibold text-sm text-gray1 dark:text-slate-300">
@@ -98,16 +110,16 @@ function Login() {
 					<input
 						name="password"
 						value={form.password}
-						type="text"
+						type="password"
 						onChange={handleChange}
 						required
-						className="w-full border-[1px] border-gray-300 mb-10 rounded-sm p-1 focus:outline-sky-600"
+						className="w-full border-[1px] border-gray-300 mb-8 rounded-sm p-1 focus:outline-sky-600"
 					></input>
 					<button
 						className="transition-all bg-sky-600 hover:bg-sky-500 text-offwhite2 
-							w-full self-center p-2 rounded-md mb-8"
+							w-full self-center p-2 rounded-md mb-4"
 					>
-						{isLoading ? (
+						{isLoading && !form.guestAccount ? (
 							<div className="flex items-center justify-center gap-2">
 								<AiOutlineLoading3Quarters className="animate-spin h-6 w-6 text-white" />
 								<span>Signing In</span>
@@ -118,6 +130,31 @@ function Login() {
 							</div>
 						)}
 					</button>
+
+					<div className="flex items-center justify-between mb-4">
+						<span className="w-1/5 border-b border-gray-500 dark:border-slate-300 lg:w-1/5"></span>
+						<span className="text-xs text-center text-gray1  uppercase dark:text-slate-300">
+							Login With Guest Account
+						</span>
+						<span className="w-1/5 border-b  border-gray-500 dark:border-gray-400 lg:w-1/5"></span>
+					</div>
+
+					<button
+						onClick={loadGuestAccount}
+						className="transition-all bg-blue-600 hover:bg-blue-500 text-offwhite2 
+							w-full self-center p-2 rounded-md mb-6"
+					>
+						{isLoading && form.guestAccount ? (
+							<div className="flex items-center justify-center gap-2">
+								<AiOutlineLoading3Quarters className="animate-spin h-6 w-6 text-white" />
+								<span>Signing in as Guest</span>
+							</div>
+						) : (
+							<div className="flex items-center justify-center gap-2">
+								<UserIcon className="h-5 w-5" /> <span>Guest Account</span>
+							</div>
+						)}
+					</button>
 				</form>
 				<div className="text-center">
 					<p className="dark:text-slate-300">Don't have an account?</p>
@@ -125,27 +162,6 @@ function Login() {
 						<Link to="/register">Register</Link>
 					</p>
 				</div>
-
-				{/* <svg
-					className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-				>
-					<circle
-						className="opacity-25"
-						cx="12"
-						cy="12"
-						r="10"
-						stroke="currentColor"
-						strokeWidth="4"
-					></circle>
-					<path
-						className="opacity-75"
-						fill="currentColor"
-						d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-					></path>
-				</svg> */}
 			</section>
 		</div>
 	);

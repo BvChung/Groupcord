@@ -61,14 +61,14 @@ function Register() {
 	return (
 		<div
 			className="flex justify-center h-screen w-screen text-gray1 
-			sm:items-center dark:bg-gray-900"
+			sm:items-center dark:bg-slate-900"
 		>
 			<section
 				className="h-max w-full pt-12
 				sm:w-fit sm:p-8 sm:border-[1px] border-gray-300 rounded-md
 				dark:border-offwhite"
 			>
-				<div className="flex items-center justify-center gap-2 mb-8">
+				<div className="flex items-center justify-center gap-2 mb-6">
 					<UserAddIcon className="h-12 w-12 text-sky-600" />
 					<p className="text-center font-bold text-xl sm:text-3xl dark:text-white">
 						Create your account
@@ -79,7 +79,7 @@ function Register() {
 				h-fit w-screen px-6 sm:w-maxLogin"
 					onSubmit={handleSubmit}
 				>
-					<div className="flex flex-col gap-4 mb-8 w-full sm:flex-row">
+					<div className="flex flex-col gap-4 mb-6 w-full sm:flex-row">
 						<div>
 							<label className="font-semibold text-sm text-gray1  dark:text-slate-300">
 								Name
@@ -120,7 +120,7 @@ function Register() {
 						type="email"
 						onChange={handleChange}
 						required
-						className="w-full border-[1px] border-gray-300 mb-8 rounded-sm p-1 focus:outline-sky-600"
+						className="w-full border-[1px] border-gray-300 mb-6 rounded-sm p-1 focus:outline-sky-600"
 					></input>
 
 					<label className="font-semibold text-sm text-gray1 dark:text-slate-300">
@@ -132,11 +132,11 @@ function Register() {
 						type="password"
 						onChange={handleChange}
 						required
-						className="w-full border-[1px] border-gray-300 mb-10 rounded-sm p-1 focus:outline-sky-600"
+						className="w-full border-[1px] border-gray-300 mb-8 rounded-sm p-1 focus:outline-sky-600"
 					></input>
 					<button
 						className="transition-all bg-sky-600 hover:bg-sky-500 text-offwhite2 
-							w-full self-center p-2 rounded-md mb-8"
+							w-full self-center p-2 rounded-md mb-6"
 					>
 						{isLoading ? (
 							<div className="flex items-center justify-center gap-2">
