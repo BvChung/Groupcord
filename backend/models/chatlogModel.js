@@ -9,7 +9,7 @@ const chatlogsSchema = mongoose.Schema(
 			required: true,
 			ref: "User",
 		},
-		text: {
+		message: {
 			type: String,
 			required: [true, "Please add a text value"],
 		},

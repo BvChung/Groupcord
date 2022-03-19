@@ -17,8 +17,23 @@ const createMessage = async (messageData, token) => {
 	return response.data;
 };
 
+const getMessage = async (token) => {
+	const configuration = {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	};
+
+	const response = await axios.get(API_URL, configuration);
+
+	if (!response) return;
+
+	return response.data;
+};
+
 const chatService = {
 	createMessage,
+	getMessage,
 };
 
 export default chatService;

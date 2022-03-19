@@ -6,22 +6,29 @@ const Chatlogs = require("../models/chatlogModel");
 // @route GET /api/v1/chatlogs
 // @access Private
 const getChatlogs = asyncHandler(async (req, res) => {
+	// Return messages based on user JWT
 	const chatlog = await Chatlogs.find({ user: req.user.id });
 
-	res.status(200).json(chatlog);
+	// Return all messages
+	const all = await Chatlogs.find({});
+
+	res.status(200).json({
+		currentUserMessage: chatlog,
+		allMessages: all,
+	});
 });
 
 // @desc Set chatlogs
 // @route POST /api/v1/chatlogs
 // @access Private
 const setChatlogs = asyncHandler(async (req, res) => {
-	if (!req.body.text) {
+	if (!req.body.message) {
 		res.status(400);
 		throw new Error("Please add a text field");
 	}
 
 	const chatlog = await Chatlogs.create({
-		text: req.body.text,
+		message: req.body.message,
 		user: req.user.id,
 	});
 
