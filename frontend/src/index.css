@@ -17,6 +17,12 @@
 #ffffff
  */
 
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
 @layer components {
 	.sidebar-icon {
 		@apply relative flex items-center justify-center 
