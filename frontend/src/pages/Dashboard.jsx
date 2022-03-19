@@ -2,28 +2,30 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	createChatMessage,
+	getChatMessage,
 	resetState,
 } from "../features/ChatLog/chatLogSlice";
 import { io } from "socket.io-client";
+import Nav from "../components/Navigation/Nav";
+import ChatBody from "../components/ChatBody/Body";
 
 function Dashboard() {
 	const dispatch = useDispatch();
 	const value = useSelector((state) => state.chatLog);
-	// console.log(value);
 
-	const [socket, setSocket] = useState("");
-	useEffect(() => {
-		setSocket(io("ws://localhost:3001"));
-	}, []);
+	// const [socket, setSocket] = useState("");
+	// useEffect(() => {
+	// 	setSocket(io("ws://localhost:3001"));
+	// }, []);
 
-	const [input, setInput] = useState({
-		text: "",
+	const [chat, setChat] = useState({
+		message: "",
 	});
 
 	function handleChange(e) {
 		const { value, name } = e.target;
 
-		setInput((prevMessage) => {
+		setChat((prevMessage) => {
 			return {
 				...prevMessage,
 				[name]: value,
@@ -34,26 +36,33 @@ function Dashboard() {
 	function handleSubmit(e) {
 		e.preventDefault();
 
-		const userText = {
-			text: input.text,
+		const userMessage = {
+			message: chat.message,
 		};
 
-		console.log(userText);
+		// console.log(userMessage);
+		dispatch(createChatMessage(userMessage));
 
-		dispatch(createChatMessage(userText));
-
-		setInput((prevMessage) => {
-			return {
-				...prevMessage,
-				text: "",
-			};
+		setChat({
+			message: "",
 		});
+		console.log(chat);
+
+		dispatch(resetState());
+		console.log(value);
 	}
-	// console.log(input);
+	// console.log(chat);
+
+	function getMessage() {
+		dispatch(getChatMessage());
+		console.log(value.chatLog);
+	}
 
 	return (
 		<div className="flex dark:bg-slate-900 w-screen h-screen">
-			<section className="w-1/3">
+			<Nav />
+			<ChatBody />
+			{/* <section className="w-1/3">
 				<div></div>
 			</section>
 			<section className="w-2/3 p-6">
@@ -62,6 +71,7 @@ function Dashboard() {
 					<p>two</p>
 					<p>three</p>
 					<p>four</p>
+					<button onClick={getMessage}>Get message</button>
 				</div>
 				<div
 					className="flex gap-2 items-center 
@@ -69,8 +79,8 @@ function Dashboard() {
 				>
 					<form className="w-full" onSubmit={handleSubmit}>
 						<input
-							name="text"
-							value={input.message}
+							name="message"
+							value={chat.message}
 							type="text"
 							onChange={handleChange}
 							placeholder="Enter message"
@@ -79,7 +89,7 @@ function Dashboard() {
 						<button className="text-center w-12 h-12">Send</button>
 					</form>
 				</div>
-			</section>
+			</section> */}
 		</div>
 	);
 }
