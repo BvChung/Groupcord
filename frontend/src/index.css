@@ -23,6 +23,23 @@
 	padding: 0;
 }
 
+::-webkit-scrollbar {
+	width: 7px;
+}
+
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+	background: rgb(3 105 161);
+	border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: rgb(7 89 133);
+}
+
 @layer components {
 	.sidebar-icon {
 		@apply relative flex items-center justify-center 
