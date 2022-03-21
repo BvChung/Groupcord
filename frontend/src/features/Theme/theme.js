@@ -1,16 +1,16 @@
-import { useEffect } from "react";
 import { createSlice } from "@reduxjs/toolkit";
 
-const themeValue = { darkMode: false };
+const storedTheme = JSON.parse(localStorage.getItem("theme"));
+
+const initialState = { darkMode: storedTheme ? storedTheme : false };
 
 export const themeSlice = createSlice({
-	name: "theme",
-	initialState: {
-		value: themeValue,
-	},
+	name: "currentTheme",
+	initialState,
 	reducers: {
-		changeTheme: (state, action) => {
-			state.value = action.payload;
+		changeTheme: (state) => {
+			state.darkMode = !state.darkMode;
+			localStorage.setItem("theme", JSON.stringify(state.darkMode));
 		},
 	},
 });

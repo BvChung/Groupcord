@@ -8,12 +8,14 @@ import {
 	resetState,
 	resetUser,
 } from "../../features/Authentication/authSlice";
+import { changeTheme } from "../../features/Theme/theme";
 
-function Navigation({ darkTheme, toggleTheme }) {
+function Navigation() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
 	const { user } = useSelector((state) => state.auth);
+	const { darkMode } = useSelector((state) => state.theme);
 
 	const onLogout = () => {
 		dispatch(logoutUser());
@@ -27,6 +29,9 @@ function Navigation({ darkTheme, toggleTheme }) {
 		navigate("/");
 	}, [navigate]);
 
+	function toggleMode() {
+		dispatch(changeTheme());
+	}
 	return (
 		<header
 			className="absolute top-0 right-0 flex items-center w-max px-6 py-4 h-18 
@@ -47,14 +52,14 @@ function Navigation({ darkTheme, toggleTheme }) {
 						""
 					)}
 					<li>
-						{darkTheme ? (
+						{darkMode ? (
 							<MoonIcon
-								onClick={toggleTheme}
+								onClick={toggleMode}
 								className="text-sky-500 cursor-pointer w-7 h-7"
 							/>
 						) : (
 							<SunIcon
-								onClick={toggleTheme}
+								onClick={toggleMode}
 								className="text-sky-500 cursor-pointer w-7 h-7"
 							/>
 						)}
