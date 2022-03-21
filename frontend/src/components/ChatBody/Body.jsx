@@ -4,7 +4,7 @@ import Chat from "./ChatContent/Chat";
 
 function ChatBody() {
 	return (
-		<div className="flex flex-grow py-6">
+		<div className="flex flex-grow">
 			<Contacts />
 			<Chat />
 		</div>
