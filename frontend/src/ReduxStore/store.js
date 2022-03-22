@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../features/Authentication/authSlice";
-import chatLogReducer from "../features/ChatLog/chatLogSlice";
-import themeReducer from "../features/Theme/theme";
+import messagesReducer from "../features/Messages/messageSlice";
+import themeReducer from "../features/Theme/themeSlice";
 
 export const store = configureStore({
 	reducer: {
 		auth: authReducer,
-		chatLog: chatLogReducer,
+		messages: messagesReducer,
 		theme: themeReducer,
 	},
 });
