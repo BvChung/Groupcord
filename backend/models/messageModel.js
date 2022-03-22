@@ -1,7 +1,7 @@
 // Define schema
 const mongoose = require("mongoose");
 
-const chatlogsSchema = mongoose.Schema(
+const messageSchema = mongoose.Schema(
 	{
 		user: {
 			// Used to associate user with a chatlog
@@ -19,4 +19,4 @@ const chatlogsSchema = mongoose.Schema(
 	}
 );
 
-module.exports = mongoose.model("Chatlogs", chatlogsSchema);
+module.exports = mongoose.model("Messages", messageSchema);
