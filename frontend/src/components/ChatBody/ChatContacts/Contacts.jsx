@@ -20,7 +20,7 @@ function Contacts() {
 	}
 
 	return (
-		<div className="flex flex-col p-6 w-[50%] max-w-[400px] bg-offwhite dark:bg-slate-900">
+		<div className="flex flex-col px-6 py-4 w-[50%] max-w-[400px] bg-offwhite dark:bg-slate-900">
 			{/* <div
 				className="flex items-center justify-center gap-2 mb-6 h-14 bg-sky-500 rounded-3xl shadow-md
 				active:shadow-lg hover:bg-sky-600 cursor-pointer transition-all"
@@ -58,13 +58,6 @@ function Contacts() {
 				className="flex-grow max-h-[715px] py-4 px-4 bg-white overflow-y-auto
 				rounded-lg"
 			>
-				<ContactItem />
-				<ContactItem />
-				<ContactItem />
-				<ContactItem />
-				<ContactItem />
-				<ContactItem />
-				<ContactItem />
 				<ContactItem />
 				<ContactItem />
 			</div>

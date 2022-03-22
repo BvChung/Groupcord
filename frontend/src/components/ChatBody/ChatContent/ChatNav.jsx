@@ -7,10 +7,10 @@ import {
 	logoutUser,
 	resetState,
 	resetUser,
-} from "../../features/Authentication/authSlice";
-import { changeTheme } from "../../features/Theme/themeSlice";
+} from "../../../features/Authentication/authSlice";
+import { changeTheme } from "../../../features/Theme/themeSlice";
 
-function Navigation() {
+function ChatNav() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
@@ -34,8 +34,8 @@ function Navigation() {
 	}
 	return (
 		<nav
-			className="absolute top-0 right-0 flex items-center w-max px-6 py-4 h-18 
-		dark:bg-slate-900"
+			className="flex items-center justify-end w-full px-6 py-4 mb-2  h-16 
+		border-b-2 border-gray-200 dark:bg-slate-900"
 		>
 			<div>
 				<ul className="flex flex-row justify-center items-center gap-6">
@@ -82,4 +82,4 @@ function Navigation() {
 	);
 }
 
-export default Navigation;
+export default ChatNav;

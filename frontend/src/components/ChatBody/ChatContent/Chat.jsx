@@ -4,15 +4,16 @@ import {
 	createChatMessage,
 	getChatMessage,
 	resetState,
-} from "../../../features/ChatLog/chatLogSlice";
+} from "../../../features/Messages/messageSlice";
 import { io } from "socket.io-client";
 import { GrSend } from "react-icons/gr";
 import { PaperAirplaneIcon, PlusIcon } from "@heroicons/react/solid";
 import ChatItem from "./ChatItem";
+import ChatNav from "./ChatNav";
 
 function Chat() {
 	const dispatch = useDispatch();
-	const value = useSelector((state) => state.chatLog);
+	const value = useSelector((state) => state.messages);
 
 	// const [socket, setSocket] = useState("");
 	// useEffect(() => {
@@ -50,20 +51,23 @@ function Chat() {
 		console.log(chat);
 
 		dispatch(resetState());
-		console.log(value);
+
+		// From redux store:messages
+		console.log(value.messageArr);
 	}
 	// console.log(chat);
 
 	function getMessage() {
 		dispatch(getChatMessage());
-		console.log(value.chatLog);
+		console.log(value);
 	}
 
 	const user = true;
 
 	return (
-		<div className="flex-grow p-6 bg-white dark:bg-slate-900">
-			<div className="h-[95%] max-h-[830px] overflow-y-auto">
+		<div className="flex-grow bg-white dark:bg-slate-900">
+			<ChatNav />
+			<div className="h-[95%] max-h-[750px] px-6 overflow-y-auto">
 				<ChatItem user={user} />
 				<ChatItem />
 				<ChatItem />
@@ -73,52 +77,30 @@ function Chat() {
 				<ChatItem user={user} />
 				<ChatItem />
 			</div>
-			<div className=" border-[2px] h-fit rounded-lg bg-offwhite focus-within:border-sky-600">
-				<form className="flex w-full" onSubmit={handleSubmit}>
-					<button className="float-left">
-						<PlusIcon />
-					</button>
-					<input
-						name="message"
-						value={chat.message}
-						type="text"
-						onChange={handleChange}
-						placeholder="Send a message"
-						className="w-full outline-none text-lg px-4 bg-transparent"
-					></input>
-					<button className="float-right  bg-transparent rounded-[50%] p-2">
-						<PaperAirplaneIcon className="w-8 h-8 text-gray-400 hover:text-sky-500 rotate-90 transition-all" />
-					</button>
-				</form>
-			</div>
-			{/* <section className="w-1/3">
-				<div></div>
-			</section>
-			<section className="w-2/3 p-6">
-				<div className="h-5/6">
-					<p className="">one</p>
-					<p>two</p>
-					<p>three</p>
-					<p>four</p>
-					<button onClick={getMessage}>Get message</button>
-				</div>
+
+			<div className="w-full px-6 py-4 mt-2">
 				<div
-					className="flex gap-2 items-center 
-				justify-center w-full h-12 bg-slate-300"
+					className="flex items-center justify-end border-[2px] h-fit rounded-lg 
+					bg-offwhite focus-within:border-sky-600"
 				>
-					<form className="w-full" onSubmit={handleSubmit}>
+					<form className="flex w-full" onSubmit={handleSubmit}>
+						<button className="float-left">
+							<PlusIcon />
+						</button>
 						<input
 							name="message"
 							value={chat.message}
 							type="text"
 							onChange={handleChange}
-							placeholder="Enter message"
-							className="w-2/3"
+							placeholder="Send a message"
+							className="w-full outline-none text-lg px-4 bg-transparent"
 						></input>
-						<button className="text-center w-12 h-12">Send</button>
+						<button className="float-right  bg-transparent rounded-[50%] p-2">
+							<PaperAirplaneIcon className="w-8 h-8 text-gray-400 hover:text-sky-500 rotate-90 transition-all" />
+						</button>
 					</form>
 				</div>
-			</section> */}
+			</div>
 		</div>
 	);
 }
