@@ -37,6 +37,8 @@ const logout = () => {
 	localStorage.removeItem("user");
 };
 
+const getCurrentUser = () => {};
+
 const authService = {
 	register,
 	logout,

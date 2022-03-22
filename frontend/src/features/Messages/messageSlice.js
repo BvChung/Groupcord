@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import chatService from "./chatLogService";
+import chatService from "./messageService";
 
 // Is useState() but for all in redux
 const initialState = {
-	chatLog: [],
+	messageArr: [],
 	isLoading: false,
 	isSuccess: false,
 	isError: false,
@@ -11,7 +11,7 @@ const initialState = {
 };
 
 export const createChatMessage = createAsyncThunk(
-	"chatLog/create",
+	"message/create",
 	async (messageData, thunkAPI) => {
 		try {
 			// thunkAPI has a method to get any state value from the redux store
@@ -30,7 +30,7 @@ export const createChatMessage = createAsyncThunk(
 );
 
 export const getChatMessage = createAsyncThunk(
-	"chatLog/get",
+	"message/get",
 	async (_, thunkAPI) => {
 		try {
 			// thunkAPI has a method to get any state value from the redux store
@@ -48,8 +48,8 @@ export const getChatMessage = createAsyncThunk(
 	}
 );
 
-const chatLogSlice = createSlice({
-	name: "chatLog",
+const messageSlice = createSlice({
+	name: "message",
 	initialState,
 	reducers: {
 		resetState: (state) => initialState,
@@ -61,7 +61,7 @@ const chatLogSlice = createSlice({
 		builder.addCase(createChatMessage.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
-			state.chatLog.push(action.payload);
+			state.messageArr.push(action.payload);
 		});
 		builder.addCase(createChatMessage.rejected, (state, action) => {
 			state.isLoading = false;
@@ -74,7 +74,7 @@ const chatLogSlice = createSlice({
 		builder.addCase(getChatMessage.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
-			state.chatLog = action.payload;
+			state.messageArr = action.payload;
 		});
 		builder.addCase(getChatMessage.rejected, (state, action) => {
 			state.isLoading = false;
@@ -84,5 +84,5 @@ const chatLogSlice = createSlice({
 	},
 });
 
-export const { resetState } = chatLogSlice.actions;
-export default chatLogSlice.reducer;
+export const { resetState } = messageSlice.actions;
+export default messageSlice.reducer;
