@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	createChatMessage,
@@ -13,7 +13,10 @@ import ChatNav from "./ChatNav";
 
 function Chat() {
 	const dispatch = useDispatch();
-	const value = useSelector((state) => state.messages);
+	const { allMessages } = useSelector((state) => state.messages.messageArr);
+
+	// console.log(msg);
+	// console.log(allMessages);
 
 	// const [socket, setSocket] = useState("");
 	// useEffect(() => {
@@ -42,7 +45,6 @@ function Chat() {
 			message: chat.message,
 		};
 
-		// console.log(userMessage);
 		dispatch(createChatMessage(userMessage));
 
 		setChat({
@@ -51,31 +53,30 @@ function Chat() {
 		console.log(chat);
 
 		dispatch(resetState());
-
-		// From redux store:messages
-		console.log(value.messageArr);
 	}
-	// console.log(chat);
 
-	function getMessage() {
+	// const getMessage = useCallback(() => {
+	// 	dispatch(getChatMessage());
+	// }, [dispatch]);
+
+	useEffect(() => {
 		dispatch(getChatMessage());
-		console.log(value);
-	}
-
-	const user = true;
+	}, [dispatch]);
 
 	return (
 		<div className="flex-grow bg-white dark:bg-slate-900">
 			<ChatNav />
 			<div className="h-[95%] max-h-[750px] px-6 overflow-y-auto">
-				<ChatItem user={user} />
-				<ChatItem />
-				<ChatItem />
-				<ChatItem user={user} />
-				<ChatItem user={user} />
-				<ChatItem user={user} />
-				<ChatItem user={user} />
-				<ChatItem />
+				{allMessages &&
+					allMessages.map((message) => {
+						return (
+							<ChatItem
+								key={message._id}
+								userId={message.user}
+								message={message.message}
+							/>
+						);
+					})}
 			</div>
 
 			<div className="w-full px-6 py-4 mt-2">
