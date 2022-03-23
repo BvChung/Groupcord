@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { UserAddIcon } from "@heroicons/react/solid";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -39,6 +39,10 @@ function Register() {
 		dispatch(registerUser(userData));
 	}
 
+	const resetAfterLogin = useCallback(() => {
+		dispatch(resetState());
+	}, [dispatch]);
+
 	const { user, registerError, isSuccess, isLoading, message } = useSelector(
 		(state) => state.auth
 	);
@@ -48,6 +52,7 @@ function Register() {
 		if (registerError) {
 			toast.error(message);
 		}
+		console.log("register render");
 
 		if (isSuccess || user) {
 			// If user logins or registers navigate('/') to dashboard
@@ -55,8 +60,18 @@ function Register() {
 		}
 
 		// reset state in store
-		dispatch(resetState());
-	}, [user, isSuccess, message, registerError, navigate, dispatch]);
+		return () => {
+			resetAfterLogin();
+		};
+	}, [
+		user,
+		isSuccess,
+		message,
+		registerError,
+		resetAfterLogin,
+		navigate,
+		dispatch,
+	]);
 
 	return (
 		<div

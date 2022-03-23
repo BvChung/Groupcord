@@ -57,17 +57,24 @@ function Login() {
 		}
 	}, [message, loginError]);
 
+	const resetAfterLogin = useCallback(() => {
+		dispatch(resetState());
+	}, [dispatch]);
+
 	useEffect(() => {
 		displayError();
+		console.log("login render");
 
 		if (isSuccess || user) {
 			// If user logins or registers navigate('/') to dashboard
+
 			navigate("/dashboard");
 		}
 
 		// Reset state in store
-		dispatch(resetState());
-	}, [user, isSuccess, navigate, dispatch, displayError]);
+
+		resetAfterLogin();
+	}, [user, isSuccess, navigate, resetAfterLogin, dispatch, displayError]);
 	// [user, loginError, isSuccess, message, navigate, dispatch]
 
 	return (
