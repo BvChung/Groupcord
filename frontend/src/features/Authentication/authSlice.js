@@ -8,6 +8,7 @@ const initialState = {
 	user: user ? user : null,
 	loginError: false,
 	registerError: false,
+	loggedIn: false,
 	isSuccess: false,
 	isLoading: false,
 	message: "",
@@ -84,6 +85,7 @@ export const authSlice = createSlice({
 		},
 		resetUser: (state) => {
 			state.user = null;
+			state.loggedIn = false;
 		},
 	},
 	// Create extra reducers for the pending, fulfilled and rejected states
@@ -111,6 +113,7 @@ export const authSlice = createSlice({
 			.addCase(loginUser.fulfilled, (state, action) => {
 				state.isLoading = false;
 				state.isSuccess = true;
+				state.loggedIn = true;
 				state.user = action.payload;
 			})
 			.addCase(loginUser.rejected, (state, action) => {

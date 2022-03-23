@@ -30,7 +30,7 @@ export const createChatMessage = createAsyncThunk(
 );
 
 export const getChatMessage = createAsyncThunk(
-	"message/get",
+	"message/getAll",
 	async (_, thunkAPI) => {
 		try {
 			// thunkAPI has a method to get any state value from the redux store
@@ -66,7 +66,7 @@ const messageSlice = createSlice({
 		builder.addCase(createChatMessage.rejected, (state, action) => {
 			state.isLoading = false;
 			state.isError = true;
-			state.errorMessage = action.payload;
+			state.errorMessage = [...action.payload];
 		});
 		builder.addCase(getChatMessage.pending, (state) => {
 			state.isLoading = true;
