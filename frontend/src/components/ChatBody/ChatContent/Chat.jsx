@@ -1,9 +1,8 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	createChatMessage,
 	getChatMessage,
-	resetState,
 } from "../../../features/Messages/messageSlice";
 import { io } from "socket.io-client";
 import { GrSend } from "react-icons/gr";
@@ -11,17 +10,25 @@ import { PaperAirplaneIcon, PlusIcon } from "@heroicons/react/solid";
 import ChatItem from "./ChatItem";
 import ChatNav from "./ChatNav";
 
+const socket = io.connect("http://localhost:3001");
+
 function Chat() {
+	const [messageRecieved, setMessageRecieved] = useState({
+		message: "",
+	});
+
+	const sendMessage = (message) => {
+		socket.emit("send_message", message);
+	};
+
+	useEffect(() => {
+		socket.on("receive_message", (data) => {
+			console.log(data.message);
+		});
+	}, []);
+
 	const dispatch = useDispatch();
 	const { allMessages } = useSelector((state) => state.messages.messageArr);
-
-	// console.log(msg);
-	// console.log(allMessages);
-
-	// const [socket, setSocket] = useState("");
-	// useEffect(() => {
-	// 	setSocket(io("ws://localhost:3001"));
-	// }, []);
 
 	const [chat, setChat] = useState({
 		message: "",
@@ -46,13 +53,11 @@ function Chat() {
 		};
 
 		dispatch(createChatMessage(userMessage));
+		sendMessage(userMessage);
 
 		setChat({
 			message: "",
 		});
-		console.log(chat);
-
-		dispatch(resetState());
 	}
 
 	// const getMessage = useCallback(() => {

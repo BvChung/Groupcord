@@ -67,12 +67,10 @@ function Login() {
 
 		if (isSuccess || user) {
 			// If user logins or registers navigate('/') to dashboard
-
 			navigate("/dashboard");
 		}
 
 		// Reset state in store
-
 		resetAfterLogin();
 	}, [user, isSuccess, navigate, resetAfterLogin, dispatch, displayError]);
 	// [user, loginError, isSuccess, message, navigate, dispatch]
