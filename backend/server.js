@@ -13,6 +13,28 @@ connectDatabase();
 const app = express();
 const server = http.createServer(app);
 
+const io = new Server(server, {
+	cors: {
+		origin: "http://localhost:3000",
+		methods: ["GET", "POST"],
+	},
+});
+
+io.on("connection", (socket) => {
+	console.log(`A user connected ${socket.id}`.brightMagenta.underline);
+
+	socket.on("send_message", (data) => {
+		console.log(data);
+
+		// broadcast sends message to everyone connected to server except you
+		socket.broadcast.emit("receive_message", data);
+	});
+
+	socket.on("disconnect", () => {
+		console.log(`A user disconnected ${socket.id}`.brightRed.underline);
+	});
+});
+
 // middleware
 app.use(cors());
 app.use(express.json());
@@ -29,21 +51,8 @@ app.use(errorHandler);
 // 	console.log(`Server started on port ${port}`);
 // });
 
-const io = new Server(server, {
-	cors: {
-		origin: "http://localhost:3000",
-		methods: ["GET", "POST"],
-	},
-});
-
-io.on("connection", (socket) => {
-	console.log(`A user connected ${socket.id}`.brightMagenta.underline);
-
-	socket.on("disconnect", () => {
-		console.log(`A user disconnected ${socket.id}`.brightRed.underline);
-	});
-});
-
 server.listen(port, () => {
 	console.log(`Server started on port: ${port}`.brightWhite);
 });
+
+module.exports = { io };

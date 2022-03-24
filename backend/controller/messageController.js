@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
-
 const Messages = require("../models/messageModel");
+const { io } = require("../server");
+console.log(io);
 
 // @desc Get chatlogs
 // @route GET /api/v1/chatlogs
@@ -31,6 +32,8 @@ const setMessages = asyncHandler(async (req, res) => {
 		message: req.body.message,
 		user: req.user.id,
 	});
+
+	io.broadcast.emit("receive_message", chatlog);
 
 	res.status(200).json(chatlog);
 });

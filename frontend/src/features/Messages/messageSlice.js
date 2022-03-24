@@ -53,6 +53,8 @@ const messageSlice = createSlice({
 	initialState,
 	reducers: {
 		resetState: (state) => initialState,
+		messageFromSender: (state, message) =>
+			state.messageArr.allMessages.push(message),
 	},
 	extraReducers: (builder) => {
 		builder.addCase(createChatMessage.pending, (state) => {
@@ -61,12 +63,12 @@ const messageSlice = createSlice({
 		builder.addCase(createChatMessage.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
-			state.messageArr.push(action.payload);
+			state.messageArr.allMessages.push(action.payload);
 		});
 		builder.addCase(createChatMessage.rejected, (state, action) => {
 			state.isLoading = false;
 			state.isError = true;
-			state.errorMessage = [...action.payload];
+			state.errorMessage = action.payload;
 		});
 		builder.addCase(getChatMessage.pending, (state) => {
 			state.isLoading = true;
