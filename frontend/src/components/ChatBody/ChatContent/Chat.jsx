@@ -13,6 +13,27 @@ import ChatNav from "./ChatNav";
 const socket = io.connect("http://localhost:3001");
 
 function Chat() {
+	const dispatch = useDispatch();
+	const { allMessages } = useSelector((state) => state.messages.messageArr);
+	const msg = useSelector((state) => state.messages);
+	console.log(allMessages);
+	console.log(msg);
+
+	const [userMessage, setUserMessage] = useState({
+		message: "",
+	});
+
+	function handleChange(e) {
+		const { value, name } = e.target;
+
+		setUserMessage((prevMessage) => {
+			return {
+				...prevMessage,
+				[name]: value,
+			};
+		});
+	}
+
 	const [messageRecieved, setMessageRecieved] = useState({
 		message: "",
 	});
@@ -27,35 +48,17 @@ function Chat() {
 		});
 	}, []);
 
-	const dispatch = useDispatch();
-	const { allMessages } = useSelector((state) => state.messages.messageArr);
-
-	const [chat, setChat] = useState({
-		message: "",
-	});
-
-	function handleChange(e) {
-		const { value, name } = e.target;
-
-		setChat((prevMessage) => {
-			return {
-				...prevMessage,
-				[name]: value,
-			};
-		});
-	}
-
 	function handleSubmit(e) {
 		e.preventDefault();
 
 		const userMessage = {
-			message: chat.message,
+			message: userMessage.message,
 		};
 
 		dispatch(createChatMessage(userMessage));
 		sendMessage(userMessage);
 
-		setChat({
+		setUserMessage({
 			message: "",
 		});
 	}
@@ -95,7 +98,7 @@ function Chat() {
 						</button>
 						<input
 							name="message"
-							value={chat.message}
+							value={userMessage.message}
 							type="text"
 							onChange={handleChange}
 							placeholder="Send a message"

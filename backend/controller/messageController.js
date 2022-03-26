@@ -1,7 +1,5 @@
 const asyncHandler = require("express-async-handler");
 const Messages = require("../models/messageModel");
-const { io } = require("../server");
-console.log(io);
 
 // @desc Get chatlogs
 // @route GET /api/v1/chatlogs
