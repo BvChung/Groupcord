@@ -21,6 +21,8 @@ const getMessages = asyncHandler(async (req, res) => {
 // @route POST /api/v1/chatlogs
 // @access Private
 const setMessages = asyncHandler(async (req, res) => {
+	const io = req.app.get("socketio");
+
 	if (!req.body.message) {
 		res.status(400);
 		throw new Error("Please add a text field");
@@ -31,7 +33,9 @@ const setMessages = asyncHandler(async (req, res) => {
 		user: req.user.id,
 	});
 
-	io.broadcast.emit("receive_message", chatlog);
+	// io.on("connection", (socket) => {
+	// 	console.log(`A user connected ${socket.id}`.brightMagenta.underline);
+	// });
 
 	res.status(200).json(chatlog);
 });

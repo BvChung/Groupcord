@@ -8,6 +8,7 @@ const initialState = {
 	isSuccess: false,
 	isError: false,
 	errorMessage: "",
+	newMessage: {},
 };
 
 export const createChatMessage = createAsyncThunk(
@@ -48,6 +49,17 @@ export const getChatMessage = createAsyncThunk(
 	}
 );
 
+export const updateChatMessage = createAsyncThunk(
+	"message/update",
+	async (message) => {
+		try {
+			return message;
+		} catch (err) {
+			console.error(err);
+		}
+	}
+);
+
 const messageSlice = createSlice({
 	name: "message",
 	initialState,
@@ -59,11 +71,13 @@ const messageSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(createChatMessage.pending, (state) => {
 			state.isLoading = true;
+			state.newMessage = {};
 		});
 		builder.addCase(createChatMessage.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
 			state.messageArr.allMessages.push(action.payload);
+			state.newMessage = action.payload;
 		});
 		builder.addCase(createChatMessage.rejected, (state, action) => {
 			state.isLoading = false;
@@ -82,6 +96,9 @@ const messageSlice = createSlice({
 			state.isLoading = false;
 			state.isError = true;
 			state.errorMessage = action.payload;
+		});
+		builder.addCase(updateChatMessage.fulfilled, (state, action) => {
+			state.messageArr.allMessages.push(action.payload);
 		});
 	},
 });
