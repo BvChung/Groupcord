@@ -10,8 +10,8 @@ function Utilities() {
 	const { darkMode } = useSelector((state) => state.theme);
 
 	const toggleTheme = useCallback(() => {
-		dispatch(changeTheme());
 		console.log("theme render");
+		dispatch(changeTheme());
 	}, [dispatch]);
 
 	return (

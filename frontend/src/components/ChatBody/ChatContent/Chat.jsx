@@ -1,23 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	createChatMessage,
 	getChatMessage,
+	updateChatMessage,
 } from "../../../features/Messages/messageSlice";
 import { io } from "socket.io-client";
-import { GrSend } from "react-icons/gr";
-import { PaperAirplaneIcon, PlusIcon } from "@heroicons/react/solid";
 import ChatItem from "./ChatItem";
 import ChatNav from "./ChatNav";
+import { PaperAirplaneIcon, PlusIcon } from "@heroicons/react/solid";
 
 const socket = io.connect("http://localhost:3001");
 
 function Chat() {
 	const dispatch = useDispatch();
-	const { allMessages } = useSelector((state) => state.messages.messageArr);
-	const msg = useSelector((state) => state.messages);
+	const allMessages = useSelector(
+		(state) => state.messages.messageArr.allMessages
+	);
 	console.log(allMessages);
-	console.log(msg);
+
+	const messageToSocket = useSelector((state) => state.messages.newMessage);
+	// console.log(messageToSocket);
 
 	const [userMessage, setUserMessage] = useState({
 		message: "",
@@ -34,42 +37,50 @@ function Chat() {
 		});
 	}
 
-	const [messageRecieved, setMessageRecieved] = useState({
-		message: "",
-	});
-
-	const sendMessage = (message) => {
+	const sendMessage = useCallback((message) => {
 		socket.emit("send_message", message);
-	};
+	}, []);
+	const sendSocketMessage = useCallback(
+		(data) => {
+			dispatch(updateChatMessage(data));
+		},
+		[dispatch]
+	);
+	const loadMessages = useCallback(() => {
+		dispatch(getChatMessage());
+	}, [dispatch]);
 
 	useEffect(() => {
 		socket.on("receive_message", (data) => {
-			console.log(data.message);
+			console.log(data);
+			sendSocketMessage(data);
+			// dispatch(updateChatMessage(data));
 		});
-	}, []);
+	}, [sendSocketMessage]);
 
 	function handleSubmit(e) {
 		e.preventDefault();
 
-		const userMessage = {
-			message: userMessage.message,
-		};
-
-		dispatch(createChatMessage(userMessage));
-		sendMessage(userMessage);
+		dispatch(
+			createChatMessage({
+				message: userMessage.message,
+			})
+		);
 
 		setUserMessage({
 			message: "",
 		});
 	}
 
-	// const getMessage = useCallback(() => {
-	// 	dispatch(getChatMessage());
-	// }, [dispatch]);
+	useEffect(() => {
+		if (Object.keys(messageToSocket).length !== 0) {
+			sendMessage(messageToSocket);
+		}
+	}, [messageToSocket, sendMessage]);
 
 	useEffect(() => {
-		dispatch(getChatMessage());
-	}, [dispatch]);
+		loadMessages();
+	}, [loadMessages]);
 
 	return (
 		<div className="flex-grow bg-white dark:bg-slate-900">
