@@ -24,8 +24,6 @@ io.on("connection", (socket) => {
 	console.log(`A user connected ${socket.id}`.brightMagenta.underline);
 
 	socket.on("send_message", (data) => {
-		console.log(data);
-
 		// broadcast sends message to everyone connected to server except you
 		socket.broadcast.emit("receive_message", data);
 	});
@@ -47,12 +45,6 @@ app.use("/api/v1/users", require("./routes/userRoutes"));
 // Error handler that converts standard Express error html to a JSON error message using custom middleware
 app.use(errorHandler);
 
-// app.listen(port, () => {
-// 	console.log(`Server started on port ${port}`);
-// });
-
 server.listen(port, () => {
 	console.log(`Server started on port: ${port}`.brightWhite);
 });
-
-module.exports = { io };
