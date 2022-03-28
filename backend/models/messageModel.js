@@ -9,9 +9,21 @@ const messageSchema = mongoose.Schema(
 			required: true,
 			ref: "User",
 		},
+		username: {
+			type: String,
+			required: [true, "Please add a username"],
+		},
 		message: {
 			type: String,
 			required: [true, "Please add a text value"],
+		},
+		timeCreated: {
+			type: String,
+			required: [true, "Please add when message was created"],
+		},
+		dateCreated: {
+			type: String,
+			required: [true, "Please add when message was created"],
 		},
 	},
 	{

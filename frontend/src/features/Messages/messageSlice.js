@@ -3,7 +3,7 @@ import chatService from "./messageService";
 
 // Is useState() but for all in redux
 const initialState = {
-	messageArr: [],
+	messageArr: {},
 	isLoading: false,
 	isSuccess: false,
 	isError: false,
@@ -51,8 +51,9 @@ export const getChatMessage = createAsyncThunk(
 
 export const updateChatMessage = createAsyncThunk(
 	"message/update",
-	async (message) => {
+	async (message, thunkAPI) => {
 		try {
+			console.log(thunkAPI.getState().messages.messageArr.allMessages);
 			return message;
 		} catch (err) {
 			console.error(err);
@@ -98,6 +99,7 @@ const messageSlice = createSlice({
 			state.errorMessage = action.payload;
 		});
 		builder.addCase(updateChatMessage.fulfilled, (state, action) => {
+			console.log(Object.values(state.messageArr.allMessages));
 			state.messageArr.allMessages.push(action.payload);
 		});
 	},

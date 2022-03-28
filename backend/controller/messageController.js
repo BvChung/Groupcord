@@ -21,21 +21,30 @@ const getMessages = asyncHandler(async (req, res) => {
 // @route POST /api/v1/chatlogs
 // @access Private
 const setMessages = asyncHandler(async (req, res) => {
-	const io = req.app.get("socketio");
-
 	if (!req.body.message) {
 		res.status(400);
 		throw new Error("Please add a text field");
 	}
 
-	const chatlog = await Messages.create({
-		message: req.body.message,
-		user: req.user.id,
+	const timeNow = new Date();
+
+	const convertedTime = timeNow.toLocaleString("en-US", {
+		hour: "numeric",
+		minute: "numeric",
 	});
 
-	// io.on("connection", (socket) => {
-	// 	console.log(`A user connected ${socket.id}`.brightMagenta.underline);
-	// });
+	const convertedDate = timeNow.toLocaleString("en-US", {
+		day: "numeric",
+		month: "numeric",
+	});
+
+	const chatlog = await Messages.create({
+		user: req.user.id,
+		username: req.user.username,
+		message: req.body.message,
+		timeCreated: convertedTime,
+		dateCreated: convertedDate,
+	});
 
 	res.status(200).json(chatlog);
 });
