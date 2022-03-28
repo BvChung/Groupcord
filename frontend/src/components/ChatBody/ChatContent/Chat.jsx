@@ -36,28 +36,6 @@ function Chat() {
 			};
 		});
 	}
-
-	const sendMessage = useCallback((message) => {
-		socket.emit("send_message", message);
-	}, []);
-	const sendSocketMessage = useCallback(
-		(data) => {
-			dispatch(updateChatMessage(data));
-		},
-		[dispatch]
-	);
-	const loadMessages = useCallback(() => {
-		dispatch(getChatMessage());
-	}, [dispatch]);
-
-	useEffect(() => {
-		socket.on("receive_message", (data) => {
-			console.log(data);
-			sendSocketMessage(data);
-			// dispatch(updateChatMessage(data));
-		});
-	}, [sendSocketMessage]);
-
 	function handleSubmit(e) {
 		e.preventDefault();
 
@@ -67,40 +45,78 @@ function Chat() {
 			})
 		);
 
+		allMessages.find((msg) => {
+			console.log(msg);
+		});
+
 		setUserMessage({
 			message: "",
 		});
 	}
 
-	useEffect(() => {
-		if (Object.keys(messageToSocket).length !== 0) {
-			sendMessage(messageToSocket);
-		}
-	}, [messageToSocket, sendMessage]);
+	const sendMessage = useCallback((message) => {
+		socket.emit("send_message", message);
+	}, []);
+
+	const updateWithSocketMessage = useCallback(
+		(data) => {
+			dispatch(updateChatMessage(data));
+		},
+		[dispatch]
+	);
+
+	const loadMessages = useCallback(() => {
+		dispatch(getChatMessage());
+	}, [dispatch]);
 
 	useEffect(() => {
 		loadMessages();
 	}, [loadMessages]);
 
+	useEffect(() => {
+		if (Object.keys(messageToSocket).length !== 0) {
+			console.log("send to socket");
+			sendMessage(messageToSocket);
+		}
+	}, [messageToSocket, sendMessage]);
+
+	useEffect(() => {
+		socket.on("receive_message", (data) => {
+			console.log("update with socket");
+
+			updateWithSocketMessage(data);
+		});
+	}, [updateWithSocketMessage]);
+
+	const timeNow = new Date();
+
+	const date = timeNow.toLocaleString("en-US", {
+		day: "numeric",
+		month: "numeric",
+	});
+
 	return (
 		<div className="flex-grow bg-white dark:bg-slate-900">
 			<ChatNav />
-			<div className="h-[95%] max-h-[750px] px-6 overflow-y-auto">
+			<div className="h-[95%] max-h-[750px] px-12 overflow-y-auto">
 				{allMessages &&
 					allMessages.map((message) => {
 						return (
 							<ChatItem
 								key={message._id}
 								userId={message.user}
+								username={message.username}
 								message={message.message}
+								timeCreated={message.timeCreated}
+								dateCreated={message.dateCreated}
 							/>
 						);
 					})}
 			</div>
 
-			<div className="w-full px-6 py-4 mt-2">
+			<div className="flex w-full justify-center items-center px-6 py-4 mt-2">
 				<div
-					className="flex items-center justify-end border-[2px] h-fit rounded-lg 
+					className="flex items-center justify-end w-full max-w-5xl border-[2px] h-fit rounded-lg 
 					bg-offwhite focus-within:border-sky-600"
 				>
 					<form className="flex w-full" onSubmit={handleSubmit}>
@@ -113,7 +129,7 @@ function Chat() {
 							type="text"
 							onChange={handleChange}
 							placeholder="Send a message"
-							className="w-full outline-none text-lg px-4 bg-transparent"
+							className="w-full max-w-5xl outline-none text-lg px-4 bg-transparent"
 						></input>
 						<button className="float-right  bg-transparent rounded-[50%] p-2">
 							<PaperAirplaneIcon className="w-8 h-8 text-gray-400 hover:text-sky-500 rotate-90 transition-all" />
