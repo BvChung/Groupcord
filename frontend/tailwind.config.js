@@ -24,11 +24,6 @@ module.exports = {
 				sans: ["Inter var", ...defaultTheme.fontFamily.sans],
 			},
 			colors: {
-				purple1: "#3D3E66",
-				purple2: "#494B83",
-				purple3: "#6264A7",
-				purple4: "#B2b5ff",
-				purple5: "#E9EAF6",
 				gray1: "#212529",
 				gray2: "#424242",
 				gray3: "#616161",
