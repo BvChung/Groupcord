@@ -9,6 +9,7 @@ import {
 	resetUser,
 } from "../../../features/Authentication/authSlice";
 import { changeTheme } from "../../../features/Theme/themeSlice";
+import AccountMenu from "./AccountMenu";
 
 function ChatNav() {
 	const navigate = useNavigate();
@@ -39,6 +40,7 @@ function ChatNav() {
 		>
 			<div>
 				<ul className="flex flex-row justify-center items-center gap-6">
+					<AccountMenu />
 					{user ? (
 						<li>
 							<button

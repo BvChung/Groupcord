@@ -19,9 +19,9 @@ function ChatItem({ userId, username, message, timeCreated, dateCreated }) {
 
 	return (
 		<div
-			className={`flex items-center justify-end my-6 first:mt-0 last:mb-0 ${messagePosition}`}
+			className={`flex items-center justify-end my-6 first:mt-0 last:mb-0 fade ${messagePosition}`}
 		>
-			<div className={` max-w-[50%] h-fit p-4 break-words ${messageStyle}`}>
+			<div className={`max-w-[50%] h-fit p-4 break-words ${messageStyle}`}>
 				<div className="flex gap-4 ">
 					<span className="font-medium text-gray-700">{username}</span>
 					{date !== dateCreated && (

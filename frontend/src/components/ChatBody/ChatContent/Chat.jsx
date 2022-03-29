@@ -10,14 +10,14 @@ import ChatItem from "./ChatItem";
 import ChatNav from "./ChatNav";
 import { PaperAirplaneIcon, PlusIcon } from "@heroicons/react/solid";
 
-const socket = io.connect("http://localhost:3001");
+let socket;
 
 function Chat() {
 	const dispatch = useDispatch();
 	const allMessages = useSelector(
 		(state) => state.messages.messageArr.allMessages
 	);
-	console.log(allMessages);
+	// console.log(allMessages);
 
 	const messageToSocket = useSelector((state) => state.messages.newMessage);
 	// console.log(messageToSocket);
@@ -45,10 +45,6 @@ function Chat() {
 			})
 		);
 
-		allMessages.find((msg) => {
-			console.log(msg);
-		});
-
 		setUserMessage({
 			message: "",
 		});
@@ -70,6 +66,7 @@ function Chat() {
 	}, [dispatch]);
 
 	useEffect(() => {
+		socket = io.connect("http://localhost:3001");
 		loadMessages();
 	}, [loadMessages]);
 
@@ -82,36 +79,38 @@ function Chat() {
 
 	useEffect(() => {
 		socket.on("receive_message", (data) => {
-			console.log("update with socket");
-
 			updateWithSocketMessage(data);
 		});
 	}, [updateWithSocketMessage]);
 
-	const timeNow = new Date();
+	// const timeNow = new Date();
 
-	const date = timeNow.toLocaleString("en-US", {
-		day: "numeric",
-		month: "numeric",
-	});
-
+	// const date = timeNow.toLocaleString("en-US", {
+	// 	day: "numeric",
+	// 	month: "numeric",
+	// });
 	return (
 		<div className="flex-grow bg-white dark:bg-slate-900">
 			<ChatNav />
-			<div className="h-[95%] max-h-[750px] px-12 overflow-y-auto">
+			<div className="h-[95%] max-h-[750px] px-12 overflow-y-auto transition-all fade">
 				{allMessages &&
-					allMessages.map((message) => {
-						return (
-							<ChatItem
-								key={message._id}
-								userId={message.user}
-								username={message.username}
-								message={message.message}
-								timeCreated={message.timeCreated}
-								dateCreated={message.dateCreated}
-							/>
-						);
-					})}
+					allMessages
+						.filter(
+							(message, i, arr) =>
+								i === arr.findIndex((position) => position._id === message._id)
+						)
+						.map((message) => {
+							return (
+								<ChatItem
+									key={message._id}
+									userId={message.user}
+									username={message.username}
+									message={message.message}
+									timeCreated={message.timeCreated}
+									dateCreated={message.dateCreated}
+								/>
+							);
+						})}
 			</div>
 
 			<div className="flex w-full justify-center items-center px-6 py-4 mt-2">
@@ -131,8 +130,8 @@ function Chat() {
 							placeholder="Send a message"
 							className="w-full max-w-5xl outline-none text-lg px-4 bg-transparent"
 						></input>
-						<button className="float-right  bg-transparent rounded-[50%] p-2">
-							<PaperAirplaneIcon className="w-8 h-8 text-gray-400 hover:text-sky-500 rotate-90 transition-all" />
+						<button className="float-right bg-transparent rounded-[50%] p-2">
+							<PaperAirplaneIcon className="w-8 h-8 text-gray-400 hover:transition-all hover:-rotate-[-180] hover:text-sky-500 rotate-90 transition-all" />
 						</button>
 					</form>
 				</div>
