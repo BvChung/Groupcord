@@ -3,7 +3,7 @@ import axios from "axios";
 // Axios connects the frontend to the backend
 
 // Makes http req. to the API_URL and returns data
-const API_URL = "/api/v1/users";
+const API_URL = "/api/users";
 
 // Register user
 const register = async (userData) => {

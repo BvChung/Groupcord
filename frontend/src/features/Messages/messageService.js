@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "/api/v1/messages";
+const API_URL = "/api/messages";
 
 const createMessage = async (messageData, token) => {
 	const configuration = {
