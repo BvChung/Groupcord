@@ -4,7 +4,7 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 
 // @desc Register new user
-// @route POST /api/v1/users
+// @route POST /api/users
 // @access Public
 const registerUser = asyncHandler(async (req, res) => {
 	const { name, username, email, password } = req.body;
@@ -49,8 +49,8 @@ const registerUser = asyncHandler(async (req, res) => {
 	}
 });
 
-// @desc Login new user
-// @route POST /api/v1/
+// @desc Login user
+// @route POST /api/
 // @access Public
 const loginUser = asyncHandler(async (req, res) => {
 	const { email, password } = req.body;
@@ -74,10 +74,47 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 // @desc Get user data
-// @route GET /api/v1/users/currentUser
+// @route GET /api/users/me
 // @access Private
 const getCurrentUser = asyncHandler(async (req, res) => {
 	return res.status(200).json(req.user);
+});
+
+// @desc Update user data
+// @route PUT /api/users/me
+// @access Private
+const updateUser = asyncHandler(async (req, res) => {
+	const currentUser = await User.findById(req.user._id);
+
+	const { name, username, email, password } = req.body;
+
+	// If user updates password then hash it
+	let hashedPassword;
+	if (password) {
+		const salt = await bcrypt.genSalt(10);
+		hashedPassword = await bcrypt.hash(password, salt);
+	}
+
+	if (!currentUser) {
+		res.status(400);
+		throw new Error("User not found");
+	}
+
+	// Update user information
+	const updatedUser = await User.findByIdAndUpdate(
+		req.user._id,
+		{
+			name,
+			username,
+			email,
+			password: password ? hashedPassword : password,
+		},
+		{
+			new: true,
+		}
+	);
+
+	return res.status(200).json(updatedUser);
 });
 
 // Generate a JWT: used to validate user
@@ -87,4 +124,4 @@ const generateToken = (id) => {
 	});
 };
 
-module.exports = { registerUser, loginUser, getCurrentUser };
+module.exports = { registerUser, loginUser, getCurrentUser, updateUser };

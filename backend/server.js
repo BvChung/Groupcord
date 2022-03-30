@@ -39,8 +39,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // When front end reaches /api/chatlogs app looks into route folder to establish route
-app.use("/api/v1/messages", require("./routes/messageRoutes"));
-app.use("/api/v1/users", require("./routes/userRoutes"));
+app.use("/api/messages", require("./routes/messageRoutes"));
+app.use("/api/users", require("./routes/userRoutes"));
 
 // Error handler that converts standard Express error html to a JSON error message using custom middleware
 app.use(errorHandler);

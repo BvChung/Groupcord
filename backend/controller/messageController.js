@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const Messages = require("../models/messageModel");
 
 // @desc Get chatlogs
-// @route GET /api/v1/chatlogs
+// @route GET /api/chatlogs
 // @access Private
 const getMessages = asyncHandler(async (req, res) => {
 	// Return messages based on user JWT
@@ -11,14 +11,14 @@ const getMessages = asyncHandler(async (req, res) => {
 	// Return all messages
 	const all = await Messages.find({});
 
-	res.status(200).json({
+	return res.status(200).json({
 		currentUserMessage: chatlog,
 		allMessages: all,
 	});
 });
 
 // @desc Set chatlogs
-// @route POST /api/v1/chatlogs
+// @route POST /api/chatlogs
 // @access Private
 const setMessages = asyncHandler(async (req, res) => {
 	if (!req.body.message) {
@@ -46,11 +46,11 @@ const setMessages = asyncHandler(async (req, res) => {
 		dateCreated: convertedDate,
 	});
 
-	res.status(200).json(chatlog);
+	return res.status(200).json(chatlog);
 });
 
 // @desc Update chatlogs
-// @route PUT /api/v1/chatlogs
+// @route PUT /api/chatlogs
 // @access Private
 const updateMessages = asyncHandler(async (req, res) => {
 	// Get the chatlog
@@ -82,11 +82,11 @@ const updateMessages = asyncHandler(async (req, res) => {
 		}
 	);
 
-	res.status(200).json(updatedChatlog);
+	return res.status(200).json(updatedChatlog);
 });
 
 // @desc Delete chatlogs
-// @route DELETE /api/v1/chatlogs
+// @route DELETE /api/chatlogs
 // @access Private
 const deleteMessages = asyncHandler(async (req, res) => {
 	const chatlog = await Messages.findById(req.params.id);
@@ -110,7 +110,7 @@ const deleteMessages = asyncHandler(async (req, res) => {
 
 	await chatlog.remove();
 
-	res.status(200).json({ id: req.params.id });
+	return res.status(200).json({ id: req.params.id });
 });
 
 module.exports = { getMessages, setMessages, updateMessages, deleteMessages };
