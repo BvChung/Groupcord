@@ -1,34 +1,13 @@
-import { useCallback } from "react";
 import { SunIcon, MoonIcon } from "@heroicons/react/outline";
 import { BsGithub } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import {
-	logoutUser,
-	resetState,
-	resetUser,
-} from "../../../features/Authentication/authSlice";
 import { changeTheme } from "../../../features/Theme/themeSlice";
 import AccountMenu from "./AccountMenu";
+import Menu from "./Menu";
 
 function ChatNav() {
-	const navigate = useNavigate();
 	const dispatch = useDispatch();
-
-	const { user } = useSelector((state) => state.auth);
 	const { darkMode } = useSelector((state) => state.theme);
-
-	const onLogout = () => {
-		dispatch(logoutUser());
-		dispatch(resetState());
-		dispatch(resetUser());
-
-		changePage();
-	};
-
-	const changePage = useCallback(() => {
-		navigate("/");
-	}, [navigate]);
 
 	function toggleTheme() {
 		dispatch(changeTheme());
@@ -40,19 +19,8 @@ function ChatNav() {
 		>
 			<div>
 				<ul className="flex flex-row justify-center items-center gap-6">
+					<Menu />
 					<AccountMenu />
-					{user ? (
-						<li>
-							<button
-								onClick={onLogout}
-								className="text-sm p-2 rounded-lg bg-slate-700"
-							>
-								Logout
-							</button>
-						</li>
-					) : (
-						""
-					)}
 					<li>
 						{darkMode ? (
 							<MoonIcon

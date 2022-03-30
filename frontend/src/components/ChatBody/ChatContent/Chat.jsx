@@ -8,9 +8,10 @@ import {
 import { io } from "socket.io-client";
 import ChatItem from "./ChatItem";
 import ChatNav from "./ChatNav";
+import Menu from "./Menu";
 import { PaperAirplaneIcon, PlusIcon } from "@heroicons/react/solid";
 
-let socket;
+const socket = io.connect("http://localhost:3001");
 
 function Chat() {
 	const dispatch = useDispatch();
@@ -66,13 +67,12 @@ function Chat() {
 	}, [dispatch]);
 
 	useEffect(() => {
-		socket = io.connect("http://localhost:3001");
 		loadMessages();
 	}, [loadMessages]);
 
 	useEffect(() => {
 		if (Object.keys(messageToSocket).length !== 0) {
-			console.log("send to socket");
+			// console.log("send to socket");
 			sendMessage(messageToSocket);
 		}
 	}, [messageToSocket, sendMessage]);
