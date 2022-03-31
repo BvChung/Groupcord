@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { SunIcon, MoonIcon } from "@heroicons/react/outline";
 import { BsGithub } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
@@ -9,6 +10,14 @@ function ChatNav() {
 	const dispatch = useDispatch();
 	const { darkMode } = useSelector((state) => state.theme);
 
+	const [open, setOpen] = useState(false);
+	const handleClickOpen = () => {
+		setOpen(true);
+	};
+	const handleClose = () => {
+		setOpen(false);
+	};
+
 	function toggleTheme() {
 		dispatch(changeTheme());
 	}
@@ -19,8 +28,8 @@ function ChatNav() {
 		>
 			<div>
 				<ul className="flex flex-row justify-center items-center gap-6">
-					<Menu />
-					<AccountMenu />
+					<Menu handleClickOpen={handleClickOpen} />
+					<AccountMenu open={open} handleClose={handleClose} />
 					<li>
 						{darkMode ? (
 							<MoonIcon

@@ -143,7 +143,7 @@ MenuSection.propTypes = {
 	label: PropTypes.string.isRequired,
 };
 
-export default function WrappedMenuItems() {
+export default function WrappedMenuItems({ handleClickOpen }) {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const logout = () => {
@@ -186,13 +186,6 @@ export default function WrappedMenuItems() {
 		buttonRef.current.focus();
 	};
 
-	const createHandleMenuClick = (menuItem) => {
-		return () => {
-			console.log(`Clicked on ${menuItem}`);
-			close();
-		};
-	};
-
 	return (
 		<>
 			<TriggerButton
@@ -217,7 +210,10 @@ export default function WrappedMenuItems() {
 				<MenuSection label="Account">
 					<StyledMenuItem
 						className="mb-1"
-						onClick={createHandleMenuClick("Refresh")}
+						onClick={() => {
+							handleClickOpen();
+							close();
+						}}
 					>
 						<div className="flex items-center gap-2">
 							<IdentificationIcon className="h-6 w-6" />

@@ -14,6 +14,8 @@ function Login() {
 	const { user, loginError, isSuccess, isLoading, message } = useSelector(
 		(state) => state.auth
 	);
+	// const auth = useSelector((state) => state.auth);
+	// console.log(auth);
 
 	const [form, setForm] = useState({
 		guestAccount: false,
@@ -71,7 +73,9 @@ function Login() {
 		}
 
 		// Reset state in store
-		resetAfterLogin();
+		return () => {
+			resetAfterLogin();
+		};
 	}, [user, isSuccess, navigate, resetAfterLogin, dispatch, displayError]);
 	// [user, loginError, isSuccess, message, navigate, dispatch]
 

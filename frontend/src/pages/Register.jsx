@@ -39,14 +39,14 @@ function Register() {
 		dispatch(registerUser(userData));
 	}
 
-	const resetAfterLogin = useCallback(() => {
+	const resetAfterRegister = useCallback(() => {
 		dispatch(resetState());
 	}, [dispatch]);
 
 	const { user, registerError, isSuccess, isLoading, message } = useSelector(
 		(state) => state.auth
 	);
-	// console.log(user, isLoading, isError, isSuccess, message);
+	// console.log(user, isLoading, registerError, isSuccess, message);
 
 	useEffect(() => {
 		if (registerError) {
@@ -61,14 +61,14 @@ function Register() {
 
 		// reset state in store
 		return () => {
-			resetAfterLogin();
+			resetAfterRegister();
 		};
 	}, [
 		user,
 		isSuccess,
 		message,
 		registerError,
-		resetAfterLogin,
+		resetAfterRegister,
 		navigate,
 		dispatch,
 	]);

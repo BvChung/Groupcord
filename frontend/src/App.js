@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
@@ -25,7 +24,7 @@ export default function App() {
 					</Routes>
 				</div>
 			</BrowserRouter>
-			<ToastContainer autoClose={2500} />
+			<ToastContainer autoClose={2000} theme={darkMode ? "dark" : "light"} />
 		</>
 	);
 }
