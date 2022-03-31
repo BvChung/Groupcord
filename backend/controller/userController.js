@@ -86,35 +86,53 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
 	const currentUser = await User.findById(req.user._id);
 
-	const { name, username, email, password } = req.body;
-
-	// If user updates password then hash it
-	let hashedPassword;
-	if (password) {
-		const salt = await bcrypt.genSalt(10);
-		hashedPassword = await bcrypt.hash(password, salt);
-	}
-
 	if (!currentUser) {
 		res.status(400);
 		throw new Error("User not found");
 	}
 
+	const { username, email, currentPassword, newPassword } = req.body;
+
+	// If user updates password then hash it
+	let hashedPassword;
+
+	if (
+		currentPassword &&
+		!(await bcrypt.compare(currentPassword, currentUser.password))
+	) {
+		res.status(400);
+		throw new Error("Current password does not exist");
+	}
+
+	if (
+		currentPassword &&
+		newPassword &&
+		(await bcrypt.compare(currentPassword, currentUser.password))
+	) {
+		const salt = await bcrypt.genSalt(10);
+		hashedPassword = await bcrypt.hash(newPassword, salt);
+	}
+
 	// Update user information
-	const updatedUser = await User.findByIdAndUpdate(
+	await User.findByIdAndUpdate(
 		req.user._id,
 		{
-			name,
 			username,
 			email,
-			password: password ? hashedPassword : password,
+			password: hashedPassword ? hashedPassword : currentUser.password,
 		},
 		{
 			new: true,
 		}
 	);
 
-	return res.status(200).json(updatedUser);
+	return res.status(200).json({
+		_id: currentUser.id,
+		name: currentUser.name,
+		username: username ? username : currentUser.username,
+		email: email ? email : currentUser.email,
+		token: generateToken(currentUser._id),
+	});
 });
 
 // Generate a JWT: used to validate user

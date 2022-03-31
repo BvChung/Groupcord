@@ -26,6 +26,7 @@ const authWithToken = asyncHandler(async (req, res, next) => {
 
 			// Get user from the token
 			// .select("-password") removes the password from req.user
+			// req.user = await User.findById(decodedToken.id).select("-password");
 			req.user = await User.findById(decodedToken.id).select("-password");
 			// console.log(req.user);
 
