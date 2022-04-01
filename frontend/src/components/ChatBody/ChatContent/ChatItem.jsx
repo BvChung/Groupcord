@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 function ChatItem({ userId, username, message, timeCreated, dateCreated }) {
 	const { user } = useSelector((state) => state.auth);
 
-	const messagePosition = userId === user._id ? "" : "";
+	const messagePosition = userId === user._id ? "justify-end" : "";
 	const messageStyle =
 		userId === user._id
 			? "bg-sky-200 text-gray-900 rounded-l-md rounded-tr-md"
@@ -19,11 +19,15 @@ function ChatItem({ userId, username, message, timeCreated, dateCreated }) {
 
 	return (
 		<div
-			className={`flex items-center justify-end my-6 first:mt-0 last:mb-0 fade ${messagePosition}`}
+			className={`flex items-center my-6 first:mt-0 last:mb-0 fade ${messagePosition}`}
 		>
-			<div className={`max-w-[50%] h-fit p-4 break-words ${messageStyle}`}>
+			<div
+				className={`max-w-[60%] md:max-w-[50%] h-fit p-4 break-words ${messageStyle}`}
+			>
 				<div className="flex gap-4 ">
-					<span className="font-medium text-gray-700">{username}</span>
+					{userId !== user._id && (
+						<span className="font-medium text-gray-700">{username}</span>
+					)}
 					{date !== dateCreated && (
 						<span className="text-gray-600">{dateCreated}</span>
 					)}

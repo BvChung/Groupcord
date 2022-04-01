@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	createChatMessage,
@@ -26,6 +26,9 @@ function Chat() {
 	const [userMessage, setUserMessage] = useState({
 		message: "",
 	});
+
+	const refMessage = useRef(null);
+	const scrollToMessage = () => refMessage.current.scrollIntoView();
 
 	function handleChange(e) {
 		const { value, name } = e.target;
@@ -71,6 +74,10 @@ function Chat() {
 	}, [loadMessages]);
 
 	useEffect(() => {
+		scrollToMessage();
+	}, [allMessages]);
+
+	useEffect(() => {
 		if (Object.keys(messageToSocket).length !== 0) {
 			// console.log("send to socket");
 			sendMessage(messageToSocket);
@@ -83,16 +90,13 @@ function Chat() {
 		});
 	}, [updateWithSocketMessage]);
 
-	// const timeNow = new Date();
-
-	// const date = timeNow.toLocaleString("en-US", {
-	// 	day: "numeric",
-	// 	month: "numeric",
-	// });
 	return (
 		<div className="flex-grow bg-white dark:bg-slate-900">
 			<ChatNav />
-			<div className="h-[95%] max-h-[750px] px-12 overflow-y-auto transition-all fade">
+			<div
+				className="h-[85%] px-4 md:px-6 lg:px-12 xl:px-16 2xl:px-24 py-6 
+				overflow-y-auto transition-all fade"
+			>
 				{allMessages &&
 					allMessages
 						.filter(
@@ -111,9 +115,10 @@ function Chat() {
 								/>
 							);
 						})}
+				<div ref={refMessage}></div>
 			</div>
 
-			<div className="flex w-full justify-center items-center px-6 py-4 mt-2">
+			<div className="flex w-full justify-center items-center px-6">
 				<div
 					className="flex items-center justify-end w-full max-w-5xl border-[2px] h-fit rounded-lg 
 					bg-offwhite focus-within:border-sky-600"

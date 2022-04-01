@@ -65,7 +65,7 @@ function Login() {
 
 	useEffect(() => {
 		displayError();
-		console.log("login render");
+		console.count("login render");
 
 		if (isSuccess || user) {
 			// If user logins or registers navigate('/') to dashboard

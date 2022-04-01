@@ -23,7 +23,7 @@ function ChatNav() {
 	}
 	return (
 		<nav
-			className="flex items-center justify-end w-full px-6 py-4 mb-2  h-16 
+			className="flex items-center justify-end w-full px-6 py-4 h-16 
 		border-b-2 border-gray-200 dark:bg-slate-900"
 		>
 			<div>
