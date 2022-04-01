@@ -7,8 +7,8 @@ function ChatItem({ userId, username, message, timeCreated, dateCreated }) {
 	const messagePosition = userId === user._id ? "justify-end" : "";
 	const messageStyle =
 		userId === user._id
-			? "bg-sky-200 text-gray-900 rounded-l-md rounded-tr-md"
-			: "bg-gray-200 text-gray-900 rounded-r-md rounded-tl-md";
+			? "bg-sky-200 text-gray-900 rounded-l-lg rounded-tr-lg"
+			: "bg-gray-200 text-gray-900 rounded-r-lg rounded-tl-lg";
 
 	const timeNow = new Date();
 
