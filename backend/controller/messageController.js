@@ -42,6 +42,7 @@ const setMessages = asyncHandler(async (req, res) => {
 		user: req.user.id,
 		username: req.user.username,
 		message: req.body.message,
+		group: req.body.group,
 		timeCreated: convertedTime,
 		dateCreated: convertedDate,
 	});

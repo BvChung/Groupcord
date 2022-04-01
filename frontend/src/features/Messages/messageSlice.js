@@ -3,12 +3,13 @@ import chatService from "./messageService";
 
 // Is useState() but for all in redux
 const initialState = {
-	messageArr: {},
 	isLoading: false,
 	isSuccess: false,
 	isError: false,
 	errorMessage: "",
+	messageArr: {},
 	newMessage: {},
+	messageGroup: "Global",
 };
 
 export const createChatMessage = createAsyncThunk(
@@ -60,6 +61,22 @@ export const updateChatMessage = createAsyncThunk(
 	}
 );
 
+export const updateChatGroup = createAsyncThunk(
+	"message/updateGroup",
+	async (group) => {
+		try {
+			return group;
+		} catch (err) {
+			console.error(err);
+		}
+	}
+);
+
+// builder.addCase(updateChatMessage.rejected, (state, action) => {
+// 	state.isError = true;
+// 	state.errorMessage = action.payload;
+// });
+
 const messageSlice = createSlice({
 	name: "message",
 	initialState,
@@ -99,6 +116,10 @@ const messageSlice = createSlice({
 		});
 		builder.addCase(updateChatMessage.fulfilled, (state, action) => {
 			state.messageArr.allMessages.push(action.payload);
+		});
+		builder.addCase(updateChatGroup.fulfilled, (state, action) => {
+			state.messageArr.messageGroup = action.payload;
+			console.log(state.messageArr.messageGroup);
 		});
 	},
 });
