@@ -22,7 +22,7 @@ export default function FormDialog({ open, handleClose }) {
 		(state) => state.auth
 	);
 	// console.log(user);
-	console.log(auth);
+	// console.log(auth);
 
 	const [formData, setFormData] = useState({
 		username: user.username,
