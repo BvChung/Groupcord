@@ -24,7 +24,7 @@ function ChatNav() {
 	return (
 		<nav
 			className="flex items-center justify-end w-full px-6 py-4 h-16 
-		border-b-2 border-gray-200 dark:bg-slate-900"
+		border-b-2 border-gray-200 dark:bg-gray-800"
 		>
 			<div>
 				<ul className="flex flex-row justify-center items-center gap-6">

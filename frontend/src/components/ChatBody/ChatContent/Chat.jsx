@@ -21,7 +21,9 @@ function Chat() {
 	// console.log(allMessages);
 
 	const messageToSocket = useSelector((state) => state.messages.newMessage);
+	const { messageGroup } = useSelector((state) => state.messages);
 	// console.log(messageToSocket);
+	console.log(messageGroup);
 
 	const [userMessage, setUserMessage] = useState({
 		message: "",
@@ -46,6 +48,7 @@ function Chat() {
 		dispatch(
 			createChatMessage({
 				message: userMessage.message,
+				group: messageGroup,
 			})
 		);
 
@@ -90,8 +93,14 @@ function Chat() {
 		});
 	}, [updateWithSocketMessage]);
 
+	const [inputActive, setInputActive] = useState(false);
+	function toggleInputActive() {
+		setInputActive((prev) => !prev);
+	}
+	console.log(inputActive);
+
 	return (
-		<div className="flex-grow bg-white dark:bg-slate-900">
+		<div className="flex-grow bg-white dark:bg-slate-800">
 			<ChatNav />
 			<div
 				className="h-[85%] px-4 md:px-6 lg:px-12 xl:px-16 2xl:px-24 py-6 
@@ -123,7 +132,11 @@ function Chat() {
 					className="flex items-center justify-end w-full max-w-5xl border-[2px] h-fit rounded-lg 
 					bg-offwhite focus-within:border-sky-600"
 				>
-					<form className="flex w-full" onSubmit={handleSubmit}>
+					<form
+						onFocus={toggleInputActive}
+						className="flex w-full"
+						onSubmit={handleSubmit}
+					>
 						<button className="float-left">
 							<PlusIcon />
 						</button>
@@ -136,7 +149,7 @@ function Chat() {
 							className="w-full max-w-5xl outline-none text-lg px-4 bg-transparent"
 						></input>
 						<button className="float-right bg-transparent rounded-[50%] p-2">
-							<PaperAirplaneIcon className="w-8 h-8 text-gray-400 hover:transition-all hover:-rotate-[-180] hover:text-sky-500 rotate-90 transition-all" />
+							<PaperAirplaneIcon className="w-6 h-6 text-gray-400 hover:transition-all hover:-rotate-[-180] hover:text-sky-500 rotate-90 transition-all" />
 						</button>
 					</form>
 				</div>

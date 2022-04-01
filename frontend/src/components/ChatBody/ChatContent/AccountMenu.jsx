@@ -21,6 +21,7 @@ export default function FormDialog({ open, handleClose }) {
 	const { updateError, message, isSuccess } = useSelector(
 		(state) => state.auth
 	);
+
 	// console.log(user);
 	// console.log(auth);
 
