@@ -65,6 +65,7 @@ export const updateChatGroup = createAsyncThunk(
 	"message/updateGroup",
 	async (group) => {
 		try {
+			console.log(group);
 			return group;
 		} catch (err) {
 			console.error(err);
@@ -118,8 +119,8 @@ const messageSlice = createSlice({
 			state.messageArr.allMessages.push(action.payload);
 		});
 		builder.addCase(updateChatGroup.fulfilled, (state, action) => {
-			state.messageArr.messageGroup = action.payload;
-			console.log(state.messageArr.messageGroup);
+			state.messageGroup = action.payload;
+			console.log(state.messageGroup);
 		});
 	},
 });

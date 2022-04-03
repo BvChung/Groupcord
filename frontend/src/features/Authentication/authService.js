@@ -1,4 +1,5 @@
 import axios from "axios";
+import { configuration } from "../helperFunctions";
 
 // Axios connects the frontend to the backend
 
@@ -36,13 +37,11 @@ const login = async (userData) => {
 
 // Update user
 const update = async (userData, token) => {
-	const configuration = {
-		headers: {
-			Authorization: `Bearer ${token}`,
-		},
-	};
-
-	const response = await axios.put(`${API_URL}/me`, userData, configuration);
+	const response = await axios.put(
+		`${API_URL}/me`,
+		userData,
+		configuration(token)
+	);
 
 	if (!response) return;
 
