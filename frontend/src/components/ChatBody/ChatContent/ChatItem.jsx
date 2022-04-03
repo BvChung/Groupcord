@@ -1,14 +1,21 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
-function ChatItem({ userId, username, message, timeCreated, dateCreated }) {
+function ChatItem({
+	messageId,
+	userId,
+	username,
+	message,
+	timeCreated,
+	dateCreated,
+}) {
 	const { user } = useSelector((state) => state.auth);
 
 	const messagePosition = userId === user._id ? "justify-end" : "";
 	const messageStyle =
 		userId === user._id
 			? "bg-sky-200 text-gray-900 rounded-l-lg rounded-tr-lg"
-			: "bg-gray-200 text-gray-900 rounded-r-lg rounded-tl-lg";
+			: "bg-secondary2 dark:bg-secondary3 text-gray-900 rounded-r-lg rounded-tl-lg";
 
 	const timeNow = new Date();
 
@@ -19,6 +26,9 @@ function ChatItem({ userId, username, message, timeCreated, dateCreated }) {
 
 	return (
 		<div
+			onClick={() => {
+				console.log(messageId);
+			}}
 			className={`flex items-center my-6 first:mt-0 last:mb-0 fade ${messagePosition}`}
 		>
 			<div

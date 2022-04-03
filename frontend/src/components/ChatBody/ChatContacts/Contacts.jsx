@@ -4,12 +4,21 @@ import { GlobeIcon } from "@heroicons/react/solid";
 import { SearchIcon } from "@heroicons/react/solid";
 import ContactItem from "./ContactItem";
 import { useSelector } from "react-redux";
+import ContactMenu from "./ContactMenu";
 
 function Contacts() {
 	const [active, setActive] = useState(false);
 	function toggleActive() {
 		setActive((prevActive) => !prevActive);
 	}
+
+	const [open, setOpen] = useState(false);
+	const handleClickOpen = () => {
+		setOpen(true);
+	};
+	const handleClose = () => {
+		setOpen(false);
+	};
 
 	const [input, setInput] = useState({
 		text: "",
@@ -29,12 +38,12 @@ function Contacts() {
 	const { messageGroup } = useSelector((state) => state.messages);
 	const globalActive =
 		messageGroup === "Global"
-			? "bg-slate-200  dark:bg-slate-800 border-l-2 border-l-sky-500"
+			? "bg-slate-200 dark:bg-slate-800 border-l-sky-600 border-l-2 dark:border-l-sky-500"
 			: "border-l-2 border-l-sky-900";
 
 	return (
-		<div className="hidden md:flex flex-col w-[40%] max-w-[350px] bg-offwhite dark:bg-slate-900">
-			<div className="flex items-center justify-between mb-8 px-6 py-4 pb-4 h-16 border-b-2 border-b-gray-300 shadow-sm">
+		<div className="hidden md:flex flex-col w-[40%] max-w-[350px] bg-offwhite dark:bg-dark2">
+			<div className="flex items-center justify-between mb-4 px-6 py-4 pb-4 h-16 border-b-2 dark:border-b-dark4 shadow-sm">
 				<p className="text-gray1 text-2xl font-bold dark:text-white">
 					Messages
 				</p>
@@ -43,18 +52,20 @@ function Contacts() {
 				</button>
 			</div>
 
-			<div className="px-4 h-full">
+			<div className="mx-[10px] h-95% py-4 px-2 dark:bg-dark3 rounded-md">
 				<div
 					className="flex items-center justify-center gap-2 mb-6 h-14 bg-sky-500 rounded-3xl shadow-md
 				active:shadow-lg hover:bg-sky-600 cursor-pointer transition-all
 				dark:bg-sky-700 dark:hover:bg-sky-600"
 					onClick={() => {
-						console.log("new conversation");
+						handleClickOpen();
 					}}
 				>
 					<PlusIcon className="w-6 h-6 text-white" />
 					<span className="font-medium text-white">New Message</span>
 				</div>
+
+				<ContactMenu open={open} handleClose={handleClose} />
 
 				<div
 					className="flex-grow h-full max-h-[715px] bg-transparent overflow-y-auto px-1
@@ -66,10 +77,6 @@ function Contacts() {
 						<GlobeIcon className="h-7 w-7 text-sky-500 dark:text-sky-600" />
 						<span className="dark:text-white">Global</span>
 					</div>
-					<ContactItem />
-					<ContactItem />
-					<ContactItem />
-					<ContactItem />
 					<ContactItem />
 				</div>
 			</div>

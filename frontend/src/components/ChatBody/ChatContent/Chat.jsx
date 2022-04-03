@@ -10,6 +10,7 @@ import ChatItem from "./ChatItem";
 import ChatNav from "./ChatNav";
 import Menu from "./Menu";
 import { PaperAirplaneIcon, PlusIcon } from "@heroicons/react/solid";
+import { nanoid } from "nanoid";
 
 const socket = io.connect("http://localhost:3001");
 
@@ -18,7 +19,9 @@ function Chat() {
 	const allMessages = useSelector(
 		(state) => state.messages.messageArr.allMessages
 	);
+	const { messageArr } = useSelector((state) => state.messages);
 	// console.log(allMessages);
+	// console.log(messageArr);
 
 	const messageToSocket = useSelector((state) => state.messages.newMessage);
 	const { messageGroup } = useSelector((state) => state.messages);
@@ -97,33 +100,33 @@ function Chat() {
 	function toggleInputActive() {
 		setInputActive((prev) => !prev);
 	}
-	console.log(inputActive);
+	// console.log(inputActive);
 
 	return (
-		<div className="flex-grow bg-white dark:bg-slate-800">
+		<div className="flex-grow bg-white dark:bg-dark3 border-l-2 dark:border-dark3 ">
 			<ChatNav />
 			<div
 				className="h-[85%] px-4 md:px-6 lg:px-12 xl:px-16 2xl:px-24 py-6 
 				overflow-y-auto transition-all fade"
 			>
-				{allMessages &&
-					allMessages
-						.filter(
-							(message, i, arr) =>
-								i === arr.findIndex((position) => position._id === message._id)
-						)
-						.map((message) => {
-							return (
-								<ChatItem
-									key={message._id}
-									userId={message.user}
-									username={message.username}
-									message={message.message}
-									timeCreated={message.timeCreated}
-									dateCreated={message.dateCreated}
-								/>
-							);
-						})}
+				{allMessages
+					?.filter(
+						(message, i, arr) =>
+							i === arr.findIndex((position) => position._id === message._id)
+					)
+					?.map((message) => {
+						return (
+							<ChatItem
+								key={message._id}
+								messageId={message._id}
+								userId={message.user}
+								username={message.username}
+								message={message.message}
+								timeCreated={message.timeCreated}
+								dateCreated={message.dateCreated}
+							/>
+						);
+					})}
 				<div ref={refMessage}></div>
 			</div>
 
