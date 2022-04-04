@@ -8,9 +8,9 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useSelector, useDispatch } from "react-redux";
 import {
-	updateUser,
+	createChatConversations,
 	resetState,
-} from "../../../features/Authentication/authSlice";
+} from "../../../features/Conversations/conversationSlice";
 import { toast } from "react-toastify";
 
 export default function FormDialog({ open, handleClose }) {
@@ -27,7 +27,7 @@ export default function FormDialog({ open, handleClose }) {
 
 	const [formData, setFormData] = useState({
 		groupName: "",
-		invitedUser: "",
+		messageReceiver: "",
 	});
 
 	// console.log(formData);
@@ -47,16 +47,7 @@ export default function FormDialog({ open, handleClose }) {
 		e.preventDefault();
 		console.log(formData);
 
-		// const sentData = {
-		// 	username: formData.username,
-		// 	email: formData.email,
-		// 	groupName:
-		// 		formData.groupName === "" ? undefined : formData.groupName,
-		// 	invitedUsers:
-		// 		formData.invitedUsers === "" ? undefined : formData.invitedUsers,
-		// };
-
-		// dispatch(updateUser(sentData));
+		dispatch(createChatConversations(formData));
 	}
 
 	function resetFormData() {
@@ -64,7 +55,7 @@ export default function FormDialog({ open, handleClose }) {
 			return {
 				...prevData,
 				groupName: "",
-				invitedUser: "",
+				messageReceiver: "",
 			};
 		});
 	}
@@ -120,6 +111,17 @@ export default function FormDialog({ open, handleClose }) {
 						variant="standard"
 					/>
 					<TextField
+						name="messageReceiver"
+						value={formData.messageReceiver}
+						onChange={handleFormData}
+						margin="dense"
+						id="messageReceiver"
+						label="Receiver Name"
+						type="text"
+						fullWidth
+						variant="standard"
+					/>
+					{/* <TextField
 						name="invitedUser"
 						value={formData.invitedUser}
 						onChange={handleFormData}
@@ -129,7 +131,7 @@ export default function FormDialog({ open, handleClose }) {
 						type="text"
 						fullWidth
 						variant="standard"
-					/>
+					/> */}
 				</DialogContent>
 				<DialogActions>
 					<Button
@@ -143,6 +145,7 @@ export default function FormDialog({ open, handleClose }) {
 					<Button
 						onClick={(e) => {
 							handleSubmit(e);
+							// handleClose();
 						}}
 					>
 						Save

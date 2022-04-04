@@ -17,16 +17,16 @@ const socket = io.connect("http://localhost:3001");
 function Chat() {
 	const dispatch = useDispatch();
 	const allMessages = useSelector(
-		(state) => state.messages.messageArr.allMessages
+		(state) => state.messages?.messageArr?.allMessages
 	);
-	const { messageArr } = useSelector((state) => state.messages);
+	const { messageArr } = useSelector((state) => state?.messages);
 	// console.log(allMessages);
 	// console.log(messageArr);
 
-	const messageToSocket = useSelector((state) => state.messages.newMessage);
-	const { messageGroup } = useSelector((state) => state.messages);
+	const messageToSocket = useSelector((state) => state?.messages?.newMessage);
+	const { messageGroup } = useSelector((state) => state?.messages);
 	// console.log(messageToSocket);
-	console.log(messageGroup);
+	// console.log("messageGroup:", messageGroup);
 
 	const [userMessage, setUserMessage] = useState({
 		message: "",

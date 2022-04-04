@@ -1,12 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { PlusIcon, PencilAltIcon } from "@heroicons/react/outline";
 import { GlobeIcon } from "@heroicons/react/solid";
 import { SearchIcon } from "@heroicons/react/solid";
 import ContactItem from "./ContactItem";
-import { useSelector } from "react-redux";
 import ContactMenu from "./ContactMenu";
+import { useSelector, useDispatch } from "react-redux";
+import { getChatConversations } from "../../../features/Conversations/conversationSlice";
+import { updateChatGroup } from "../../../features/Messages/messageSlice";
 
 function Contacts() {
+	const dispatch = useDispatch();
+	const conv = useSelector((state) => state?.conversations);
+	// console.log(conv);
+	const { allConversations } = useSelector(
+		(state) => state?.conversations?.groups
+	);
+	// console.count(allConversations);
+
+	const loadConversations = useCallback(() => {
+		dispatch(getChatConversations());
+	}, [dispatch]);
+
+	useEffect(() => {
+		loadConversations();
+	}, [loadConversations]);
+
 	const [active, setActive] = useState(false);
 	function toggleActive() {
 		setActive((prevActive) => !prevActive);
@@ -35,11 +53,24 @@ function Contacts() {
 		});
 	}
 
-	const { messageGroup } = useSelector((state) => state.messages);
+	const [groupActive, setGroupActive] = useState({ activeIndex: -1 });
+	function toggleGroupActive(i) {
+		setGroupActive({
+			activeIndex: i,
+		});
+	}
+
+	const { messageGroup } = useSelector((state) => state?.messages);
 	const globalActive =
-		messageGroup === "Global"
-			? "bg-slate-200 dark:bg-slate-800 border-l-sky-600 border-l-2 dark:border-l-sky-500"
-			: "border-l-2 border-l-sky-900";
+		groupActive.activeIndex === -1
+			? "bg-gray6 dark:bg-slate-800 border-l-sky-600 border-l-2 dark:border-l-sky-600"
+			: "border-l-2 border-l-gray4 dark:border-l-gray-500";
+	// const globalActive =
+	// 	messageGroup === "Global"
+	// 		? "bg-slate-200 dark:bg-slate-800 border-l-sky-600 border-l-2 dark:border-l-sky-500"
+	// 		: "border-l-2 border-l-sky-900";
+
+	// console.count("render");
 
 	return (
 		<div className="hidden md:flex flex-col w-[40%] max-w-[350px] bg-offwhite dark:bg-dark2">
@@ -68,16 +99,32 @@ function Contacts() {
 				<ContactMenu open={open} handleClose={handleClose} />
 
 				<div
-					className="flex-grow h-full max-h-[715px] bg-transparent overflow-y-auto px-1
+					className="flex-grow h-full max-h-[715px] bg-transparent py-1 overflow-y-auto pr-4
 				rounded-lg "
 				>
 					<div
-						className={`flex items-center w-full h-12 pl-4 gap-2 hover:bg-slate-200 ${globalActive}`}
+						onClick={() => {
+							toggleGroupActive(-1);
+							dispatch(updateChatGroup("Global"));
+						}}
+						className={`flex items-center w-full h-12 pl-4 gap-2 
+							hover:bg-slate-200 dark:hover:bg-slate-800 ${globalActive}`}
 					>
 						<GlobeIcon className="h-7 w-7 text-sky-500 dark:text-sky-600" />
 						<span className="dark:text-white">Global</span>
 					</div>
-					<ContactItem />
+					{allConversations?.map((group, i) => {
+						return (
+							<ContactItem
+								key={group._id}
+								groupId={group._id}
+								groupName={group.groupName}
+								indexNumber={i}
+								groupActive={groupActive}
+								toggleGroupActive={toggleGroupActive}
+							/>
+						);
+					})}
 				</div>
 			</div>
 			{/* <div
