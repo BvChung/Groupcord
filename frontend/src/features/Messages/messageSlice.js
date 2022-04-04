@@ -55,8 +55,8 @@ export const updateChatMessage = createAsyncThunk(
 	async (message) => {
 		try {
 			return message;
-		} catch (err) {
-			console.error(err);
+		} catch (error) {
+			console.error(error);
 		}
 	}
 );
@@ -67,8 +67,8 @@ export const updateChatGroup = createAsyncThunk(
 		try {
 			console.log(group);
 			return group;
-		} catch (err) {
-			console.error(err);
+		} catch (error) {
+			console.error(error);
 		}
 	}
 );
@@ -78,7 +78,7 @@ export const updateChatGroup = createAsyncThunk(
 // 	state.errorMessage = action.payload;
 // });
 
-const messageSlice = createSlice({
+export const messageSlice = createSlice({
 	name: "message",
 	initialState,
 	reducers: {
@@ -120,7 +120,7 @@ const messageSlice = createSlice({
 		});
 		builder.addCase(updateChatGroup.fulfilled, (state, action) => {
 			state.messageGroup = action.payload;
-			console.log(state.messageGroup);
+			// console.log(state.messageGroup);
 		});
 	},
 });
