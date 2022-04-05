@@ -68,7 +68,7 @@ function Login() {
 
 		if (isSuccess || user) {
 			// If user logins or registers navigate('/') to dashboard
-			navigate("/dashboard");
+			navigate("/chat");
 		}
 
 		// Reset state in store

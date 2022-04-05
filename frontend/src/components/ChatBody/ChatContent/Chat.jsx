@@ -17,16 +17,16 @@ const socket = io.connect("http://localhost:3001");
 function Chat() {
 	const dispatch = useDispatch();
 	const allMessages = useSelector(
-		(state) => state.messages?.messageArr?.allMessages
+		(state) => state?.messages?.messageArr?.allMessages
 	);
-	const { messageArr } = useSelector((state) => state?.messages);
+	const { groupMessages } = useSelector((state) => state?.messages?.messageArr);
 	// console.log(allMessages);
-	// console.log(messageArr);
+	console.log(groupMessages);
 
 	const messageToSocket = useSelector((state) => state?.messages?.newMessage);
 	const { messageGroup } = useSelector((state) => state?.messages);
 	// console.log(messageToSocket);
-	// console.log("messageGroup:", messageGroup);
+	console.log("messageGroup:", messageGroup);
 
 	const [userMessage, setUserMessage] = useState({
 		message: "",
@@ -51,7 +51,7 @@ function Chat() {
 		dispatch(
 			createChatMessage({
 				message: userMessage.message,
-				group: messageGroup,
+				groupId: messageGroup,
 			})
 		);
 
@@ -77,7 +77,10 @@ function Chat() {
 
 	useEffect(() => {
 		loadMessages();
-	}, [loadMessages]);
+	}, [messageGroup, loadMessages]);
+	// useEffect(() => {
+	// 	loadMessages();
+	// }, [loadMessages]);
 
 	useEffect(() => {
 		scrollToMessage();
@@ -109,7 +112,7 @@ function Chat() {
 				className="h-[85%] px-4 md:px-6 lg:px-12 xl:px-16 2xl:px-24 py-6 
 				overflow-y-auto transition-all fade"
 			>
-				{allMessages
+				{groupMessages
 					?.filter(
 						(message, i, arr) =>
 							i === arr.findIndex((position) => position._id === message._id)
