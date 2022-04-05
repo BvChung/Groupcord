@@ -5,11 +5,15 @@ const Messages = require("../models/messageModel");
 // @route GET /api/chatlogs
 // @access Private
 const getMessages = asyncHandler(async (req, res) => {
+	// console.log(req.query);
+	const { groupId } = req.query;
+	// console.log(groupId);
+
 	// Return messages based on user JWT
 	const chatlog = await Messages.find({ user: req.user.id });
 
 	// find() has to match type in mongodb schema
-	const group = await Messages.find({ group: "1" });
+	const group = await Messages.find({ groupId: groupId });
 
 	// Return all messages
 	const all = await Messages.find({});
@@ -25,6 +29,9 @@ const getMessages = asyncHandler(async (req, res) => {
 // @route POST /api/chatlogs
 // @access Private
 const setMessages = asyncHandler(async (req, res) => {
+	const { groupId } = req.body;
+	// console.log(groupId);
+
 	if (!req.body.message) {
 		res.status(400);
 		throw new Error("Please add a text field");
@@ -44,9 +51,9 @@ const setMessages = asyncHandler(async (req, res) => {
 
 	const chatlog = await Messages.create({
 		user: req.user.id,
+		groupId: groupId,
 		username: req.user.username,
 		message: req.body.message,
-		group: req.body.group,
 		timeCreated: convertedTime,
 		dateCreated: convertedDate,
 	});

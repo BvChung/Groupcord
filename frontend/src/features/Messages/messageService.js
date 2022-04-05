@@ -12,8 +12,11 @@ const createMessage = async (messageData, token) => {
 	return response.data;
 };
 
-const getMessage = async (token) => {
-	const response = await axios.get(API_URL, configuration(token));
+const getMessage = async (groupId, token) => {
+	const response = await axios.get(
+		`${API_URL}?groupId=${groupId}`,
+		configuration(token)
+	);
 
 	if (!response) return;
 

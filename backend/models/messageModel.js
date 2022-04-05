@@ -13,18 +13,19 @@ const messageSchema = mongoose.Schema(
 			type: String,
 			required: [true, "Please add a username"],
 		},
+		groupId: {
+			type: String,
+			required: [true, "Please add a groupId value"],
+		},
 		message: {
 			type: String,
 			required: [true, "Please add a text value"],
 		},
-		group: {
-			type: String,
-		},
-		timeCreated: {
+		dateCreated: {
 			type: String,
 			required: [true, "Please add when message was created"],
 		},
-		dateCreated: {
+		timeCreated: {
 			type: String,
 			required: [true, "Please add when message was created"],
 		},

@@ -37,7 +37,9 @@ export const getChatMessage = createAsyncThunk(
 		try {
 			// thunkAPI has a method to get any state value from the redux store
 			const token = thunkAPI.getState().auth.user.token;
-			return await chatService.getMessage(token);
+			const groupId = thunkAPI.getState().messages.messageGroup;
+			// console.log(groupId);
+			return await chatService.getMessage(groupId, token);
 		} catch (error) {
 			const message =
 				(error.response &&
@@ -63,10 +65,10 @@ export const updateChatMessage = createAsyncThunk(
 
 export const updateChatGroup = createAsyncThunk(
 	"message/updateGroup",
-	async (group) => {
+	async (groupId) => {
 		try {
-			console.log(group);
-			return group;
+			console.log(`To backend:`, groupId);
+			return groupId;
 		} catch (error) {
 			console.error(error);
 		}
@@ -83,8 +85,6 @@ export const messageSlice = createSlice({
 	initialState,
 	reducers: {
 		resetState: (state) => initialState,
-		messageFromSender: (state, message) =>
-			state.messageArr.allMessages.push(message),
 	},
 	extraReducers: (builder) => {
 		builder.addCase(createChatMessage.pending, (state) => {
@@ -94,7 +94,8 @@ export const messageSlice = createSlice({
 		builder.addCase(createChatMessage.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
-			state.messageArr.allMessages.push(action.payload);
+			// state.messageArr.allMessages.push(action.payload);
+			state.messageArr.groupMessages.push(action.payload);
 			state.newMessage = action.payload;
 		});
 		builder.addCase(createChatMessage.rejected, (state, action) => {

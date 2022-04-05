@@ -21,7 +21,7 @@ export default function App() {
 						<Route path="/" element={<Login />}></Route>
 						<Route path="/register" element={<Register />}></Route>
 						<Route
-							path="/dashboard"
+							path="/chat"
 							element={user ? <Dashboard /> : <Navigate to="/" />}
 						></Route>
 					</Routes>
