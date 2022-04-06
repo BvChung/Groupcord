@@ -15,11 +15,17 @@ const registerUser = asyncHandler(async (req, res) => {
 	}
 
 	// Check if user exists in the database based on email
-	const userExists = await User.findOne({ email });
+	const emailExists = await User.findOne({ email });
+	const usernameExists = await User.findOne({ username });
 
-	if (userExists) {
+	if (emailExists) {
 		res.status(400);
 		throw new Error("User with email already exists");
+	}
+
+	if (usernameExists) {
+		res.status(400);
+		throw new Error("Username already exists");
 	}
 
 	// Hash(encrypt) password
@@ -135,6 +141,19 @@ const updateUser = asyncHandler(async (req, res) => {
 	});
 });
 
+// @desc Get all registered user's username/id except for current user
+// @route GET /api/users/all
+// @access Private
+const getAllUsers = asyncHandler(async (req, res) => {
+	const users = await User.find({}).select("username");
+
+	const returnedUsers = users.filter((user) => {
+		return user.username !== req.user.username;
+	});
+
+	return res.status(200).json(returnedUsers);
+});
+
 // Generate a JWT: used to validate user
 const generateToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -142,4 +161,10 @@ const generateToken = (id) => {
 	});
 };
 
-module.exports = { registerUser, loginUser, getCurrentUser, updateUser };
+module.exports = {
+	registerUser,
+	loginUser,
+	getCurrentUser,
+	updateUser,
+	getAllUsers,
+};
