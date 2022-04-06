@@ -23,6 +23,7 @@ function ChatItem({
 		day: "numeric",
 		month: "numeric",
 	});
+	// console.log(typeof messageId);
 
 	return (
 		<div

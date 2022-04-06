@@ -21,12 +21,12 @@ function Chat() {
 	);
 	const { groupMessages } = useSelector((state) => state?.messages?.messageArr);
 	// console.log(allMessages);
-	console.log(groupMessages);
+	// console.log(groupMessages);
 
 	const messageToSocket = useSelector((state) => state?.messages?.newMessage);
 	const { messageGroup } = useSelector((state) => state?.messages);
 	// console.log(messageToSocket);
-	console.log("messageGroup:", messageGroup);
+	// console.log("messageGroup:", messageGroup);
 
 	const [userMessage, setUserMessage] = useState({
 		message: "",

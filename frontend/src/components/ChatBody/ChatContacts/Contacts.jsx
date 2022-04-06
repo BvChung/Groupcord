@@ -10,12 +10,12 @@ import { updateChatGroup } from "../../../features/Messages/messageSlice";
 
 function Contacts() {
 	const dispatch = useDispatch();
-	const conv = useSelector((state) => state?.conversations);
-	// console.log(conv);
-	const { allConversations } = useSelector(
+	const { groups } = useSelector((state) => state?.conversations);
+	// console.log(groups);
+	const { userConversations } = useSelector(
 		(state) => state?.conversations?.groups
 	);
-	// console.count(allConversations);
+	// console.count(userConversations);
 
 	const loadConversations = useCallback(() => {
 		dispatch(getChatConversations());
@@ -93,7 +93,7 @@ function Contacts() {
 					}}
 				>
 					<PlusIcon className="w-6 h-6 text-white" />
-					<span className="font-medium text-white">New Message</span>
+					<span className="font-medium text-white">Create Group</span>
 				</div>
 
 				<ContactMenu open={open} handleClose={handleClose} />
@@ -113,7 +113,7 @@ function Contacts() {
 						<GlobeIcon className="h-7 w-7 text-sky-500 dark:text-sky-600" />
 						<span className="dark:text-white">Global</span>
 					</div>
-					{allConversations?.map((group, i) => {
+					{userConversations?.map((group, i) => {
 						return (
 							<ContactItem
 								key={group._id}
@@ -146,3 +146,15 @@ function Contacts() {
 }
 
 export default Contacts;
+
+const ex = [
+	{ _id: "6233a3e6f4cef1bba5c015c4", username: "GuestAccount" },
+	{ _id: "623441a4573f4a2aa70371f2", username: "brandon" },
+	{ _id: "62466d6c627e80838c408f56", username: "1" },
+];
+
+const filter = ex.filter((ex) => {
+	return ex._id !== "6233a3e6f4cef1bba5c015c4";
+});
+
+console.log(filter);

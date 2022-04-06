@@ -11,7 +11,9 @@ import {
 	createChatConversations,
 	resetState,
 } from "../../../features/Conversations/conversationSlice";
+import { getAllUsers } from "../../../features/Authentication/authSlice";
 import { toast } from "react-toastify";
+import ContactUsers from "./ContactUsers";
 
 export default function FormDialog({ open, handleClose }) {
 	const dispatch = useDispatch();
@@ -22,12 +24,17 @@ export default function FormDialog({ open, handleClose }) {
 		(state) => state.auth
 	);
 
+	const { allUserData } = useSelector((state) => state.auth);
+	console.log(allUserData);
+	useEffect(() => {
+		dispatch(getAllUsers());
+	}, []);
+
 	// console.log(user);
 	// console.log(auth);
 
 	const [formData, setFormData] = useState({
 		groupName: "",
-		messageReceiver: "",
 	});
 
 	// console.log(formData);
@@ -55,10 +62,11 @@ export default function FormDialog({ open, handleClose }) {
 			return {
 				...prevData,
 				groupName: "",
-				messageReceiver: "",
 			};
 		});
 	}
+
+	useEffect(() => {}, []);
 
 	// const displayError = useCallback(() => {
 	// 	if (updateError) {
@@ -96,9 +104,11 @@ export default function FormDialog({ open, handleClose }) {
 					resetFormData();
 				}}
 			>
-				<DialogTitle className="text-center">Create Conversation</DialogTitle>
-				<DialogContent>
-					<DialogContentText>Change personal information</DialogContentText>
+				<div className="w-96 p-6 bg-gray-100">
+					<div className="text-center text-xl font-semibold">
+						Create Conversation
+					</div>
+
 					<TextField
 						name="groupName"
 						value={formData.groupName}
@@ -106,17 +116,6 @@ export default function FormDialog({ open, handleClose }) {
 						margin="dense"
 						id="groupName"
 						label="Group name"
-						type="text"
-						fullWidth
-						variant="standard"
-					/>
-					<TextField
-						name="messageReceiver"
-						value={formData.messageReceiver}
-						onChange={handleFormData}
-						margin="dense"
-						id="messageReceiver"
-						label="Receiver Name"
 						type="text"
 						fullWidth
 						variant="standard"
@@ -132,25 +131,27 @@ export default function FormDialog({ open, handleClose }) {
 						fullWidth
 						variant="standard"
 					/> */}
-				</DialogContent>
-				<DialogActions>
-					<Button
-						onClick={() => {
-							handleClose();
-							resetFormData();
-						}}
-					>
-						Cancel
-					</Button>
-					<Button
-						onClick={(e) => {
-							handleSubmit(e);
-							// handleClose();
-						}}
-					>
-						Save
-					</Button>
-				</DialogActions>
+
+					<ContactUsers allUserData={allUserData} />
+					<DialogActions>
+						<Button
+							onClick={() => {
+								handleClose();
+								resetFormData();
+							}}
+						>
+							Cancel
+						</Button>
+						<Button
+							onClick={(e) => {
+								handleSubmit(e);
+								// handleClose();
+							}}
+						>
+							Save
+						</Button>
+					</DialogActions>
+				</div>
 			</Dialog>
 		</>
 	);
