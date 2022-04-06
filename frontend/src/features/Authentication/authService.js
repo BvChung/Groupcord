@@ -57,11 +57,20 @@ const logout = () => {
 	localStorage.removeItem("user");
 };
 
+const getAll = async (token) => {
+	const response = await axios.get(`${API_URL}/all`, configuration(token));
+
+	if (!response) return;
+
+	return response.data;
+};
+
 const authService = {
 	register,
 	logout,
 	login,
 	update,
+	getAll,
 };
 
 export default authService;
