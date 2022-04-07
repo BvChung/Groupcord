@@ -17,6 +17,7 @@ const getMessage = async (groupId, token) => {
 		`${API_URL}?groupId=${groupId}`,
 		configuration(token)
 	);
+	// console.log(groupId);
 
 	if (!response) return;
 

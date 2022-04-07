@@ -125,6 +125,7 @@ export const authSlice = createSlice({
 		},
 		resetUser: (state) => {
 			state.user = null;
+			state.allUserData = {};
 			state.loggedIn = false;
 		},
 	},

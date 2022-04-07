@@ -37,7 +37,7 @@ export const getChatMessage = createAsyncThunk(
 		try {
 			// thunkAPI has a method to get any state value from the redux store
 			const token = thunkAPI.getState().auth.user.token;
-			const groupId = thunkAPI.getState().messages.messageGroup;
+			const { groupId } = thunkAPI.getState().conversations.groupInfo;
 			// console.log(groupId);
 			return await chatService.getMessage(groupId, token);
 		} catch (error) {
@@ -63,17 +63,17 @@ export const updateChatMessage = createAsyncThunk(
 	}
 );
 
-export const updateChatGroup = createAsyncThunk(
-	"message/updateGroup",
-	async (groupId) => {
-		try {
-			console.log(`To backend:`, groupId);
-			return groupId;
-		} catch (error) {
-			console.error(error);
-		}
-	}
-);
+// export const updateChatGroup = createAsyncThunk(
+// 	"message/updateGroup",
+// 	async (groupId) => {
+// 		try {
+// 			console.log(`To backend:`, groupId);
+// 			return groupId;
+// 		} catch (error) {
+// 			console.error(error);
+// 		}
+// 	}
+// );
 
 // builder.addCase(updateChatMessage.rejected, (state, action) => {
 // 	state.isError = true;
@@ -84,7 +84,7 @@ export const messageSlice = createSlice({
 	name: "message",
 	initialState,
 	reducers: {
-		resetState: (state) => initialState,
+		resetMessageState: (state) => initialState,
 	},
 	extraReducers: (builder) => {
 		builder.addCase(createChatMessage.pending, (state) => {
@@ -119,12 +119,8 @@ export const messageSlice = createSlice({
 		builder.addCase(updateChatMessage.fulfilled, (state, action) => {
 			state.messageArr.allMessages.push(action.payload);
 		});
-		builder.addCase(updateChatGroup.fulfilled, (state, action) => {
-			state.messageGroup = action.payload;
-			// console.log(state.messageGroup);
-		});
 	},
 });
 
-export const { resetState } = messageSlice.actions;
+export const { resetMessageState } = messageSlice.actions;
 export default messageSlice.reducer;
