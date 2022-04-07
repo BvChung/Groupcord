@@ -7,6 +7,8 @@ import {
 	resetState,
 	resetUser,
 } from "../../../features/Authentication/authSlice";
+import { resetMessageState } from "../../../features/Messages/messageSlice";
+import { resetGroupState } from "../../../features/Conversations/conversationSlice";
 import PropTypes from "prop-types";
 import MenuUnstyled from "@mui/base/MenuUnstyled";
 import MenuItemUnstyled, {
@@ -150,6 +152,8 @@ export default function WrappedMenuItems({ handleClickOpen }) {
 		dispatch(logoutUser());
 		dispatch(resetState());
 		dispatch(resetUser());
+		dispatch(resetMessageState());
+		dispatch(resetGroupState());
 
 		changePage();
 	};
