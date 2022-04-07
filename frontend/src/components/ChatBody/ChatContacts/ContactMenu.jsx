@@ -11,9 +11,7 @@ import {
 	createChatConversations,
 	resetState,
 } from "../../../features/Conversations/conversationSlice";
-import { getAllUsers } from "../../../features/Authentication/authSlice";
 import { toast } from "react-toastify";
-import ContactUsers from "./ContactUsers";
 
 export default function FormDialog({ open, handleClose }) {
 	const dispatch = useDispatch();
@@ -23,12 +21,6 @@ export default function FormDialog({ open, handleClose }) {
 	const { updateError, message, isSuccess } = useSelector(
 		(state) => state.auth
 	);
-
-	const { allUserData } = useSelector((state) => state.auth);
-	console.log(allUserData);
-	useEffect(() => {
-		dispatch(getAllUsers());
-	}, []);
 
 	// console.log(user);
 	// console.log(auth);
@@ -52,9 +44,14 @@ export default function FormDialog({ open, handleClose }) {
 
 	function handleSubmit(e) {
 		e.preventDefault();
+
+		if (formData.groupName === "") return;
+
 		console.log(formData);
 
 		dispatch(createChatConversations(formData));
+
+		handleClose();
 	}
 
 	function resetFormData() {
@@ -65,8 +62,6 @@ export default function FormDialog({ open, handleClose }) {
 			};
 		});
 	}
-
-	useEffect(() => {}, []);
 
 	// const displayError = useCallback(() => {
 	// 	if (updateError) {
@@ -132,7 +127,6 @@ export default function FormDialog({ open, handleClose }) {
 						variant="standard"
 					/> */}
 
-					<ContactUsers allUserData={allUserData} />
 					<DialogActions>
 						<Button
 							onClick={() => {
@@ -145,7 +139,6 @@ export default function FormDialog({ open, handleClose }) {
 						<Button
 							onClick={(e) => {
 								handleSubmit(e);
-								// handleClose();
 							}}
 						>
 							Save

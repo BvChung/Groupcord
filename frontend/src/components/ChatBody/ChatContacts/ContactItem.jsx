@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { UserCircleIcon } from "@heroicons/react/outline";
+import { UserGroupIcon } from "@heroicons/react/solid";
 import { updateChatGroup } from "../../../features/Messages/messageSlice";
+import { updateActiveChatGroup } from "../../../features/Conversations/conversationSlice";
+import { DotsHorizontalIcon } from "@heroicons/react/outline";
 
 function ContactItem({
 	indexNumber,
 	groupId,
 	groupName,
+	groupOwner,
+	members,
 	groupActive,
 	toggleGroupActive,
 }) {
@@ -15,26 +19,43 @@ function ContactItem({
 
 	const activeStyle =
 		activeIndex === indexNumber
-			? "bg-slate-200 dark:bg-slate-800 border-l-sky-800 border-l-2 dark:border-l-sky-600 "
-			: "border-l-2 border-l-gray-200 dark:border-l-gray-500";
+			? "bg-slate-200 dark:bg-slate-800 border-l-sky-800 border-l-[3px] dark:border-l-sky-500 "
+			: "border-l-[3px] border-l-gray-200 dark:border-l-gray-500";
 
 	// border-l-2 border-l-sky-200 dark:border-l-sky-900 hover:bg-slate-200 dark:hover:bg-slate-800
+
+	const groupInfo = {
+		groupId,
+		groupOwner,
+		members,
+	};
 
 	return (
 		<div
 			onClick={() => {
 				toggleGroupActive(indexNumber);
-				dispatch(updateChatGroup(groupId));
+				dispatch(updateActiveChatGroup(groupInfo));
+				// dispatch(updateActiveChatGroup(groupId, groupOwner));
+				// dispatch(updateChatGroup(groupId));
 				// console.log(`groupname: ${groupName} groupId: ${groupId}`);
 			}}
-			className={`flex items-center w-full h-12 pl-4 gap-2 
+			className={`flex items-center justify-between w-full h-12 px-4 gap-2 
 				hover:bg-slate-200 dark:hover:bg-slate-800 ${activeStyle}`}
 		>
-			<UserCircleIcon className="h-7 w-7 text-sky-500 dark:text-sky-600" />
-			<div className="flex items-center gap-2 dark:text-white">
-				<span>{groupName}</span>
-				{/* <span>32 mins ago</span> */}
+			<div className="flex gap-2">
+				<UserGroupIcon className="h-7 w-7 text-sky-500 dark:text-sky-600" />
+				<div className="flex items-center gap-2 dark:text-white">
+					<span>{groupName}</span>
+					{/* <span>32 mins ago</span> */}
+				</div>
 			</div>
+			{activeIndex === indexNumber ? (
+				<button className="justify-end">
+					<DotsHorizontalIcon className="w-5 h-5" />
+				</button>
+			) : (
+				""
+			)}
 		</div>
 	);
 }

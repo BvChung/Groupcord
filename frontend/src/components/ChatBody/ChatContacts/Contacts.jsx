@@ -7,15 +7,16 @@ import ContactMenu from "./ContactMenu";
 import { useSelector, useDispatch } from "react-redux";
 import { getChatConversations } from "../../../features/Conversations/conversationSlice";
 import { updateChatGroup } from "../../../features/Messages/messageSlice";
+import { updateActiveChatGroup } from "../../../features/Conversations/conversationSlice";
 
 function Contacts() {
 	const dispatch = useDispatch();
-	const { groups } = useSelector((state) => state?.conversations);
+	// const groups = useSelector((state) => state?.conversations);
 	// console.log(groups);
 	const { userConversations } = useSelector(
 		(state) => state?.conversations?.groups
 	);
-	// console.count(userConversations);
+	console.log(userConversations);
 
 	const loadConversations = useCallback(() => {
 		dispatch(getChatConversations());
@@ -60,15 +61,11 @@ function Contacts() {
 		});
 	}
 
-	const { messageGroup } = useSelector((state) => state?.messages);
+	// const { messageGroup } = useSelector((state) => state?.messages);
 	const globalActive =
 		groupActive.activeIndex === -1
-			? "bg-gray6 dark:bg-slate-800 border-l-sky-600 border-l-2 dark:border-l-sky-600"
-			: "border-l-2 border-l-gray4 dark:border-l-gray-500";
-	// const globalActive =
-	// 	messageGroup === "Global"
-	// 		? "bg-slate-200 dark:bg-slate-800 border-l-sky-600 border-l-2 dark:border-l-sky-500"
-	// 		: "border-l-2 border-l-sky-900";
+			? "bg-gray6 dark:bg-slate-800 border-l-sky-600 border-l-[3px] dark:border-l-sky-500"
+			: "border-l-[3px] border-l-gray4 dark:border-l-gray-500";
 
 	// console.count("render");
 
@@ -105,7 +102,12 @@ function Contacts() {
 					<div
 						onClick={() => {
 							toggleGroupActive(-1);
-							dispatch(updateChatGroup("Global"));
+							dispatch(
+								updateActiveChatGroup({
+									groupId: "Global",
+								})
+							);
+							// dispatch(updateChatGroup("Global"));
 						}}
 						className={`flex items-center w-full h-12 pl-4 gap-2 
 							hover:bg-slate-200 dark:hover:bg-slate-800 ${globalActive}`}
@@ -119,6 +121,8 @@ function Contacts() {
 								key={group._id}
 								groupId={group._id}
 								groupName={group.groupName}
+								groupOwner={group.groupOwner}
+								members={group.members}
 								indexNumber={i}
 								groupActive={groupActive}
 								toggleGroupActive={toggleGroupActive}
@@ -146,15 +150,3 @@ function Contacts() {
 }
 
 export default Contacts;
-
-const ex = [
-	{ _id: "6233a3e6f4cef1bba5c015c4", username: "GuestAccount" },
-	{ _id: "623441a4573f4a2aa70371f2", username: "brandon" },
-	{ _id: "62466d6c627e80838c408f56", username: "1" },
-];
-
-const filter = ex.filter((ex) => {
-	return ex._id !== "6233a3e6f4cef1bba5c015c4";
-});
-
-console.log(filter);
