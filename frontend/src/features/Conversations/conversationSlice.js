@@ -5,6 +5,9 @@ const initialState = {
 	groupName: "",
 	receiverName: "",
 	groups: {},
+	groupInfo: {
+		groupId: "Global",
+	},
 	isLoading: false,
 	isSuccess: false,
 	isError: false,
@@ -49,11 +52,42 @@ export const getChatConversations = createAsyncThunk(
 	}
 );
 
+export const updateGroupMembers = createAsyncThunk(
+	"group/members",
+	async (memberId, thunkAPI) => {
+		try {
+			const token = thunkAPI.getState().auth.user.token;
+			const { groupId } = thunkAPI.getState().conversations.groupInfo;
+			return await conversationService.addMembers(memberId, groupId, token);
+		} catch (error) {
+			const message =
+				(error.response &&
+					error.response.data &&
+					error.response.data.message) ||
+				error.message ||
+				error.toString();
+			return thunkAPI.rejectWithValue(message);
+		}
+	}
+);
+
+export const updateActiveChatGroup = createAsyncThunk(
+	"group/active",
+	async (groupInfo) => {
+		try {
+			// maybe send object
+			return groupInfo;
+		} catch (error) {
+			console.error(error);
+		}
+	}
+);
+
 export const conversationSlice = createSlice({
 	name: "conversation",
 	initialState,
 	reducers: {
-		resetState: (state) => initialState,
+		resetGroupState: (state) => initialState,
 	},
 	extraReducers: (builder) => {
 		builder.addCase(createChatConversations.pending, (state) => {
@@ -80,8 +114,24 @@ export const conversationSlice = createSlice({
 			state.isLoading = false;
 			state.isError = true;
 		});
+		builder.addCase(updateGroupMembers.pending, (state) => {
+			state.isLoading = true;
+		});
+		builder.addCase(updateGroupMembers.fulfilled, (state, action) => {
+			state.isLoading = false;
+			state.isSuccess = true;
+		});
+		builder.addCase(updateGroupMembers.rejected, (state) => {
+			state.isLoading = false;
+			state.isError = true;
+		});
+		builder.addCase(updateActiveChatGroup.fulfilled, (state, action) => {
+			// state.activeChatGroup = action.payload;
+			state.groupInfo = action.payload;
+			console.log(`Action payload:`, action.payload);
+		});
 	},
 });
 
-export const { resetState } = conversationSlice.actions;
+export const { resetGroupState } = conversationSlice.actions;
 export default conversationSlice.reducer;

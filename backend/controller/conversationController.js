@@ -19,15 +19,32 @@ const getConversation = asyncHandler(async (req, res) => {
 // @desc Update each groups members
 // @route PUT /api/conversation
 // @access Private
-const addConversationMembers = asyncHandler(async (req, res) => {
-	const { id } = req.params;
+const addGroupMembers = asyncHandler(async (req, res) => {
+	const { groupId } = req.params;
+	const { memberId } = req.body;
+
+	// console.log(groupId, memberId);
+
+	const updatedGroup = await Conversation.findByIdAndUpdate(
+		groupId,
+		{
+			$addToSet: {
+				members: memberId,
+			},
+		},
+		{
+			new: true,
+		}
+	);
+
+	return res.status(200).json(updatedGroup);
 });
 
 // @desc Create conversation
 // @route POST /api/conversation
 // @access Private
 const createConversation = asyncHandler(async (req, res) => {
-	const { groupName, members } = req.body;
+	const { groupName } = req.body;
 
 	// if (!) {
 	// 	res.status(400);
@@ -43,4 +60,8 @@ const createConversation = asyncHandler(async (req, res) => {
 	return res.status(200).json(conversation);
 });
 
-module.exports = { getConversation, createConversation };
+module.exports = {
+	getConversation,
+	createConversation,
+	addGroupMembers,
+};
