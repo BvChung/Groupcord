@@ -20,13 +20,10 @@ function Chat() {
 		(state) => state?.messages?.messageArr?.allMessages
 	);
 	const { groupMessages } = useSelector((state) => state?.messages?.messageArr);
-	// console.log(allMessages);
 	// console.log(groupMessages);
 
 	const messageToSocket = useSelector((state) => state?.messages?.newMessage);
-	const { messageGroup } = useSelector((state) => state?.messages);
-	// console.log(messageToSocket);
-	// console.log("messageGroup:", messageGroup);
+	const { groupId } = useSelector((state) => state?.conversations.groupInfo);
 
 	const [userMessage, setUserMessage] = useState({
 		message: "",
@@ -51,7 +48,7 @@ function Chat() {
 		dispatch(
 			createChatMessage({
 				message: userMessage.message,
-				groupId: messageGroup,
+				groupId: groupId,
 			})
 		);
 
@@ -77,10 +74,7 @@ function Chat() {
 
 	useEffect(() => {
 		loadMessages();
-	}, [messageGroup, loadMessages]);
-	// useEffect(() => {
-	// 	loadMessages();
-	// }, [loadMessages]);
+	}, [groupId, loadMessages]);
 
 	useEffect(() => {
 		scrollToMessage();
@@ -103,10 +97,9 @@ function Chat() {
 	function toggleInputActive() {
 		setInputActive((prev) => !prev);
 	}
-	// console.log(inputActive);
 
 	return (
-		<div className="flex-grow bg-white dark:bg-dark3 border-l-2 dark:border-dark3 ">
+		<div className="flex-grow bg-white dark:bg-dark3 border-l-2 dark:border-dark2 ">
 			<ChatNav />
 			<div
 				className="h-[85%] px-4 md:px-6 lg:px-12 xl:px-16 2xl:px-24 py-6 

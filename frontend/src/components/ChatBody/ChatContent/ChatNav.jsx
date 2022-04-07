@@ -5,10 +5,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { changeTheme } from "../../../features/Theme/themeSlice";
 import AccountMenu from "./AccountMenu";
 import Menu from "./Menu";
+import AddMembers from "./AddMembers";
 
 function ChatNav() {
 	const dispatch = useDispatch();
 	const { darkMode } = useSelector((state) => state.theme);
+	const { activeChatGroup } = useSelector((state) => state.conversations);
 
 	const [open, setOpen] = useState(false);
 	const handleClickOpen = () => {
@@ -28,8 +30,10 @@ function ChatNav() {
 		>
 			<div>
 				<ul className="flex flex-row justify-center items-center gap-6">
+					{activeChatGroup !== "Global" && <AddMembers />}
 					<Menu handleClickOpen={handleClickOpen} />
 					<AccountMenu open={open} handleClose={handleClose} />
+
 					<li>
 						{darkMode ? (
 							<MoonIcon
