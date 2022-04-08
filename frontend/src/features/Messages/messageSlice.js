@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import chatService from "./messageService";
+import { errorMessage } from "../helperFunctions";
 
 // Is useState() but for all in redux
 const initialState = {
@@ -20,13 +21,7 @@ export const createChatMessage = createAsyncThunk(
 			const token = thunkAPI.getState().auth.user.token;
 			return await chatService.createMessage(messageData, token);
 		} catch (error) {
-			const message =
-				(error.response &&
-					error.response.data &&
-					error.response.data.message) ||
-				error.message ||
-				error.toString();
-			return thunkAPI.rejectWithValue(message);
+			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
 	}
 );
@@ -41,13 +36,7 @@ export const getChatMessage = createAsyncThunk(
 			// console.log(groupId);
 			return await chatService.getMessage(groupId, token);
 		} catch (error) {
-			const message =
-				(error.response &&
-					error.response.data &&
-					error.response.data.message) ||
-				error.message ||
-				error.toString();
-			return thunkAPI.rejectWithValue(message);
+			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
 	}
 );

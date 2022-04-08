@@ -1,8 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const Messages = require("../models/messageModel");
 
-// @desc Get chatlogs
-// @route GET /api/chatlogs
+// @desc Get messages
+// @route GET /api/messages
 // @access Private
 const getMessages = asyncHandler(async (req, res) => {
 	// console.log(req.query);
@@ -25,8 +25,8 @@ const getMessages = asyncHandler(async (req, res) => {
 	});
 });
 
-// @desc Set chatlogs
-// @route POST /api/chatlogs
+// @desc Set messages
+// @route POST /api/messages
 // @access Private
 const setMessages = asyncHandler(async (req, res) => {
 	const { groupId } = req.body;
@@ -61,8 +61,8 @@ const setMessages = asyncHandler(async (req, res) => {
 	return res.status(200).json(chatlog);
 });
 
-// @desc Update chatlogs
-// @route PUT /api/chatlogs
+// @desc Update messages
+// @route PUT /api/messages
 // @access Private
 const updateMessages = asyncHandler(async (req, res) => {
 	// Get the chatlog
@@ -97,8 +97,8 @@ const updateMessages = asyncHandler(async (req, res) => {
 	return res.status(200).json(updatedChatlog);
 });
 
-// @desc Delete chatlogs
-// @route DELETE /api/chatlogs
+// @desc Delete messages
+// @route DELETE /api/messages
 // @access Private
 const deleteMessages = asyncHandler(async (req, res) => {
 	const chatlog = await Messages.findById(req.params.id);
