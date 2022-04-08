@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllUsers } from "../../../features/Authentication/authSlice";
 import { updateGroupMembers } from "../../../features/Conversations/conversationSlice";
 import PropTypes from "prop-types";
 import MenuUnstyled from "@mui/base/MenuUnstyled";
@@ -13,6 +12,7 @@ import { styled } from "@mui/system";
 import Divider from "@mui/material/Divider";
 import { PlusIcon } from "@heroicons/react/outline";
 import { UserIcon } from "@heroicons/react/solid";
+import { nanoid } from "nanoid";
 
 export default function AddMembers() {
 	const [anchorEl, setAnchorEl] = React.useState(null);
@@ -45,20 +45,20 @@ export default function AddMembers() {
 
 	const dispatch = useDispatch();
 
-	const { allUserData } = useSelector((state) => state.auth);
-	const { user } = useSelector((state) => state.auth);
+	// const { allUserData } = useSelector((state) => state.auth);
 	// console.log(allUserData);
+	const { user } = useSelector((state) => state.auth);
 	// console.log(user);
-
-	useEffect(() => {
-		dispatch(getAllUsers());
-	}, [dispatch]);
 
 	const { userConversations } = useSelector(
 		(state) => state?.conversations?.groups
 	);
-
-	// console.log(userConversations);
+	const { groupInfo } = useSelector((state) => state?.conversations);
+	// console.log(groupInfo);
+	const { filteredMembers } = useSelector((state) => state?.conversations);
+	console.log(filteredMembers);
+	const { members } = useSelector((state) => state?.conversations.groupInfo);
+	// console.log(members);
 
 	return (
 		<>
@@ -81,26 +81,38 @@ export default function AddMembers() {
 				components={{ Root: Popper, Listbox: StyledListbox }}
 				componentsProps={{ listbox: { id: "simple-menu" } }}
 			>
+				<MenuSection label="Members">
+					{members?.map((user) => {
+						return (
+							<StyledMenuItem className="mb-1" key={user._id}>
+								<div className="flex items-center gap-2">
+									<UserIcon className="h-6 w-6 text-slate-800" />
+									<span className="font-sans">{user.username}</span>
+								</div>
+							</StyledMenuItem>
+						);
+					})}
+				</MenuSection>
+				<Divider />
 				<MenuSection label="Add Users">
-					{Object.keys(allUserData).length !== 0 &&
-						allUserData?.map((user) => {
-							return (
-								<StyledMenuItem
-									className="mb-1"
-									onClick={() => {
-										console.log(user._id);
-										dispatch(updateGroupMembers(user._id));
-										// close();
-									}}
-									key={user._id}
-								>
-									<div className="flex items-center gap-2">
-										<UserIcon className="h-6 w-6 text-slate-800" />
-										<span className="font-sans">{user.username}</span>
-									</div>
-								</StyledMenuItem>
-							);
-						})}
+					{filteredMembers?.map((user) => {
+						return (
+							<StyledMenuItem
+								className="mb-1"
+								onClick={() => {
+									console.log(user._id);
+									dispatch(updateGroupMembers(user._id));
+									// close();
+								}}
+								key={user._id}
+							>
+								<div className="flex items-center gap-2">
+									<UserIcon className="h-6 w-6 text-slate-800" />
+									<span className="font-sans">{user.username}</span>
+								</div>
+							</StyledMenuItem>
+						);
+					})}
 				</MenuSection>
 			</MenuUnstyled>
 		</>

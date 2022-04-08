@@ -47,8 +47,6 @@ export default function FormDialog({ open, handleClose }) {
 
 		if (formData.groupName === "") return;
 
-		console.log(formData);
-
 		dispatch(createChatConversations(formData));
 
 		handleClose();

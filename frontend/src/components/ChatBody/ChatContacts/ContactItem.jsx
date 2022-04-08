@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { UserGroupIcon } from "@heroicons/react/solid";
-import { updateChatGroup } from "../../../features/Messages/messageSlice";
 import { updateActiveChatGroup } from "../../../features/Conversations/conversationSlice";
 import { DotsHorizontalIcon } from "@heroicons/react/outline";
 
@@ -35,9 +34,6 @@ function ContactItem({
 			onClick={() => {
 				toggleGroupActive(indexNumber);
 				dispatch(updateActiveChatGroup(groupInfo));
-				// dispatch(updateActiveChatGroup(groupId, groupOwner));
-				// dispatch(updateChatGroup(groupId));
-				// console.log(`groupname: ${groupName} groupId: ${groupId}`);
 			}}
 			className={`flex items-center justify-between w-full h-12 px-4 gap-2 
 				hover:bg-slate-200 dark:hover:bg-slate-800 ${activeStyle}`}
@@ -49,12 +45,10 @@ function ContactItem({
 					{/* <span>32 mins ago</span> */}
 				</div>
 			</div>
-			{activeIndex === indexNumber ? (
+			{activeIndex === indexNumber && (
 				<button className="justify-end">
 					<DotsHorizontalIcon className="w-5 h-5" />
 				</button>
-			) : (
-				""
 			)}
 		</div>
 	);

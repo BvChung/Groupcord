@@ -5,8 +5,7 @@ import { SearchIcon } from "@heroicons/react/solid";
 import ContactItem from "./ContactItem";
 import ContactMenu from "./ContactMenu";
 import { useSelector, useDispatch } from "react-redux";
-import { getChatConversations } from "../../../features/Conversations/conversationSlice";
-import { updateChatGroup } from "../../../features/Messages/messageSlice";
+import { getChatGroups } from "../../../features/Conversations/conversationSlice";
 import { updateActiveChatGroup } from "../../../features/Conversations/conversationSlice";
 
 function Contacts() {
@@ -16,10 +15,10 @@ function Contacts() {
 	const { userConversations } = useSelector(
 		(state) => state?.conversations?.groups
 	);
-	console.log(userConversations);
+	// console.log(userConversations);
 
 	const loadConversations = useCallback(() => {
-		dispatch(getChatConversations());
+		dispatch(getChatGroups());
 	}, [dispatch]);
 
 	useEffect(() => {
@@ -61,13 +60,10 @@ function Contacts() {
 		});
 	}
 
-	// const { messageGroup } = useSelector((state) => state?.messages);
 	const globalActive =
 		groupActive.activeIndex === -1
 			? "bg-gray6 dark:bg-slate-800 border-l-sky-600 border-l-[3px] dark:border-l-sky-500"
 			: "border-l-[3px] border-l-gray4 dark:border-l-gray-500";
-
-	// console.count("render");
 
 	return (
 		<div className="hidden md:flex flex-col w-[40%] max-w-[350px] bg-offwhite dark:bg-dark2">
@@ -105,9 +101,10 @@ function Contacts() {
 							dispatch(
 								updateActiveChatGroup({
 									groupId: "Global",
+									groupOwner: "",
+									members: [],
 								})
 							);
-							// dispatch(updateChatGroup("Global"));
 						}}
 						className={`flex items-center w-full h-12 pl-4 gap-2 
 							hover:bg-slate-200 dark:hover:bg-slate-800 ${globalActive}`}
