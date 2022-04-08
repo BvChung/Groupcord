@@ -23,9 +23,17 @@ const createConversation = async (conversationData, token) => {
 	return response.data;
 };
 
+const getMembers = async (token) => {
+	const response = await axios.get(`${API_URL}/members`, configuration(token));
+
+	if (!response) return;
+
+	return response.data;
+};
+
 const addMembers = async (memberId, groupId, token) => {
 	const response = await axios.put(
-		`${API_URL}/${groupId}`,
+		`${API_URL}/members/${groupId}`,
 		{ memberId },
 		configuration(token)
 	);
@@ -38,6 +46,7 @@ const addMembers = async (memberId, groupId, token) => {
 const conversationService = {
 	getConversation,
 	createConversation,
+	getMembers,
 	addMembers,
 };
 

@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Conversation = require("../models/conversationModel");
+const User = require("../models/userModel");
 
 // @desc Get chat groups based on user
 // @route Get /api/conversation
@@ -7,13 +8,21 @@ const Conversation = require("../models/conversationModel");
 
 const getConversation = asyncHandler(async (req, res) => {
 	// const userConversations = await Conversation.find({ user: req.user.id });
-	const userConversations = await Conversation.find({ members: req.user.id });
-	const allConversations = await Conversation.find({});
+	const userConversations = await Conversation.find({ membersId: req.user.id });
 
 	return res.status(200).json({
 		userConversations,
-		allConversations,
 	});
+});
+
+const getMembers = asyncHandler(async (req, res) => {
+	const users = await User.find({}).select("username");
+
+	const returnedUsers = users.filter((user) => {
+		return user.username !== req.user.username;
+	});
+
+	return res.status(200).json(returnedUsers);
 });
 
 // @desc Update each groups members
@@ -23,13 +32,14 @@ const addGroupMembers = asyncHandler(async (req, res) => {
 	const { groupId } = req.params;
 	const { memberId } = req.body;
 
-	// console.log(groupId, memberId);
+	const user = await User.findById(memberId).select("username");
 
-	const updatedGroup = await Conversation.findByIdAndUpdate(
+	await Conversation.findByIdAndUpdate(
 		groupId,
 		{
 			$addToSet: {
-				members: memberId,
+				membersId: memberId,
+				members: { _id: memberId, username: user.username },
 			},
 		},
 		{
@@ -37,7 +47,7 @@ const addGroupMembers = asyncHandler(async (req, res) => {
 		}
 	);
 
-	return res.status(200).json(updatedGroup);
+	return res.status(200).json(memberId);
 });
 
 // @desc Create conversation
@@ -54,7 +64,8 @@ const createConversation = asyncHandler(async (req, res) => {
 	const conversation = await Conversation.create({
 		groupOwner: req.user.id,
 		groupName,
-		members: req.user.id,
+		membersId: req.user.id,
+		members: { _id: req.user.id, username: req.user.username },
 	});
 
 	return res.status(200).json(conversation);
@@ -63,5 +74,6 @@ const createConversation = asyncHandler(async (req, res) => {
 module.exports = {
 	getConversation,
 	createConversation,
+	getMembers,
 	addGroupMembers,
 };

@@ -8,7 +8,8 @@ const conversationSchema = mongoose.Schema(
 			required: true,
 			ref: "User",
 		},
-		members: [mongoose.Schema.Types.ObjectId],
+		membersId: [mongoose.Schema.Types.ObjectId],
+		members: [Object],
 		groupName: {
 			type: String,
 		},

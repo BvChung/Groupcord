@@ -1,13 +1,14 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import conversationService from "./conversationService";
+import { filterMembers, errorMessage } from "../helperFunctions";
 
 const initialState = {
-	groupName: "",
-	receiverName: "",
+	registeredMembers: {},
 	groups: {},
 	groupInfo: {
 		groupId: "Global",
 	},
+	filteredMembers: {},
 	isLoading: false,
 	isSuccess: false,
 	isError: false,
@@ -23,31 +24,31 @@ export const createChatConversations = createAsyncThunk(
 				token
 			);
 		} catch (error) {
-			const message =
-				(error.response &&
-					error.response.data &&
-					error.response.data.message) ||
-				error.message ||
-				error.toString();
-			return thunkAPI.rejectWithValue(message);
+			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
 	}
 );
 
-export const getChatConversations = createAsyncThunk(
+export const getChatGroups = createAsyncThunk(
 	"conversation/get",
 	async (_, thunkAPI) => {
 		try {
 			const token = thunkAPI.getState().auth.user.token;
 			return await conversationService.getConversation(token);
 		} catch (error) {
-			const message =
-				(error.response &&
-					error.response.data &&
-					error.response.data.message) ||
-				error.message ||
-				error.toString();
-			return thunkAPI.rejectWithValue(message);
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+
+export const getAvailableMembers = createAsyncThunk(
+	"group/getMembers",
+	async (_, thunkAPI) => {
+		try {
+			const token = thunkAPI.getState().auth.user.token;
+			return await conversationService.getMembers(token);
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
 	}
 );
@@ -60,13 +61,7 @@ export const updateGroupMembers = createAsyncThunk(
 			const { groupId } = thunkAPI.getState().conversations.groupInfo;
 			return await conversationService.addMembers(memberId, groupId, token);
 		} catch (error) {
-			const message =
-				(error.response &&
-					error.response.data &&
-					error.response.data.message) ||
-				error.message ||
-				error.toString();
-			return thunkAPI.rejectWithValue(message);
+			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
 	}
 );
@@ -102,15 +97,15 @@ export const conversationSlice = createSlice({
 			state.isLoading = false;
 			state.isError = true;
 		});
-		builder.addCase(getChatConversations.pending, (state) => {
+		builder.addCase(getChatGroups.pending, (state) => {
 			state.isLoading = true;
 		});
-		builder.addCase(getChatConversations.fulfilled, (state, action) => {
+		builder.addCase(getChatGroups.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
 			state.groups = action.payload;
 		});
-		builder.addCase(getChatConversations.rejected, (state) => {
+		builder.addCase(getChatGroups.rejected, (state) => {
 			state.isLoading = false;
 			state.isError = true;
 		});
@@ -120,15 +115,23 @@ export const conversationSlice = createSlice({
 		builder.addCase(updateGroupMembers.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
+			console.log(action.payload);
 		});
 		builder.addCase(updateGroupMembers.rejected, (state) => {
 			state.isLoading = false;
 			state.isError = true;
 		});
+		builder.addCase(getAvailableMembers.fulfilled, (state, action) => {
+			state.registeredMembers = action.payload;
+		});
 		builder.addCase(updateActiveChatGroup.fulfilled, (state, action) => {
-			// state.activeChatGroup = action.payload;
 			state.groupInfo = action.payload;
-			console.log(`Action payload:`, action.payload);
+			// console.log(`Action payload:`, action.payload);
+
+			state.filteredMembers = filterMembers(
+				state.registeredMembers,
+				state.groupInfo.members
+			);
 		});
 	},
 });

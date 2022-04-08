@@ -3,6 +3,7 @@ const router = express.Router();
 const {
 	getConversation,
 	createConversation,
+	getMembers,
 	addGroupMembers,
 } = require("../controller/conversationController");
 
@@ -13,6 +14,8 @@ router
 	.get(authWithToken, getConversation)
 	.post(authWithToken, createConversation);
 
-router.route("/:groupId").put(authWithToken, addGroupMembers);
+router.route("/members").get(authWithToken, getMembers);
+
+router.route("/members/:groupId").put(authWithToken, addGroupMembers);
 
 module.exports = router;
