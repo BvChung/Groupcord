@@ -11,10 +11,14 @@ import Chat from "./ChatContent/Chat";
 function ChatBody() {
 	const [openMenu, setOpenMenu] = useState(true);
 
+	function toggleMenu() {
+		setOpenMenu((prev) => !prev);
+	}
+
 	return (
 		<div className="flex flex-grow">
 			{openMenu && <Contacts />}
-			<Chat />
+			<Chat toggleMenu={toggleMenu} />
 		</div>
 	);
 }

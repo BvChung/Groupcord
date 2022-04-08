@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SunIcon, MoonIcon } from "@heroicons/react/outline";
+import { SunIcon, MoonIcon, MenuIcon } from "@heroicons/react/outline";
 import { BsGithub } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
 import { changeTheme } from "../../../features/Theme/themeSlice";
@@ -7,10 +7,10 @@ import AccountMenu from "./AccountMenu";
 import Menu from "./Menu";
 import AddMembers from "./AddMembers";
 
-function ChatNav() {
+function ChatNav({ toggleMenu }) {
 	const dispatch = useDispatch();
 	const { darkMode } = useSelector((state) => state.theme);
-	const { activeChatGroup } = useSelector((state) => state.conversations);
+	const { groupId } = useSelector((state) => state.conversations.groupInfo);
 
 	const [open, setOpen] = useState(false);
 	const handleClickOpen = () => {
@@ -30,7 +30,10 @@ function ChatNav() {
 		>
 			<div>
 				<ul className="flex flex-row justify-center items-center gap-6">
-					{activeChatGroup !== "Global" && <AddMembers />}
+					<button onClick={toggleMenu}>
+						<MenuIcon className="h-8 w-8" />
+					</button>
+					{groupId !== "Global" && <AddMembers />}
 					<Menu handleClickOpen={handleClickOpen} />
 					<AccountMenu open={open} handleClose={handleClose} />
 

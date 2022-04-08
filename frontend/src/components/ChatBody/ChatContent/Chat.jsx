@@ -14,7 +14,7 @@ import { nanoid } from "nanoid";
 
 const socket = io.connect("http://localhost:3001");
 
-function Chat() {
+function Chat({ toggleMenu }) {
 	const dispatch = useDispatch();
 	const allMessages = useSelector(
 		(state) => state?.messages?.messageArr?.allMessages
@@ -100,9 +100,9 @@ function Chat() {
 
 	return (
 		<div className="flex-grow bg-white dark:bg-dark3 border-l-2 dark:border-dark2 ">
-			<ChatNav />
+			<ChatNav toggleMenu={toggleMenu} />
 			<div
-				className="h-[85%] px-4 md:px-6 lg:px-12 xl:px-16 2xl:px-24 py-6 
+				className="h-[85%] max-h-[780px]  px-4 md:px-6 lg:px-12 xl:px-16 2xl:px-24 py-6 
 				overflow-y-auto transition-all fade"
 			>
 				{groupMessages
@@ -126,7 +126,7 @@ function Chat() {
 				<div ref={refMessage}></div>
 			</div>
 
-			<div className="flex w-full justify-center items-center px-6">
+			<div className="flex h-[8%] w-full justify-center items-center px-6">
 				<div
 					className="flex items-center justify-end w-full max-w-5xl border-[2px] h-fit rounded-lg 
 					bg-offwhite focus-within:border-sky-600"
