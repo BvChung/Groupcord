@@ -1,7 +1,10 @@
 import * as React from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateGroupMembers } from "../../../features/Conversations/conversationSlice";
+import {
+	addGroupMembers,
+	removeGroupMembers,
+} from "../../../features/conversations/conversationSlice";
 import PropTypes from "prop-types";
 import MenuUnstyled from "@mui/base/MenuUnstyled";
 import MenuItemUnstyled, {
@@ -10,7 +13,7 @@ import MenuItemUnstyled, {
 import PopperUnstyled from "@mui/base/PopperUnstyled";
 import { styled } from "@mui/system";
 import Divider from "@mui/material/Divider";
-import { PlusIcon } from "@heroicons/react/outline";
+import { PlusIcon, XIcon, CheckIcon } from "@heroicons/react/outline";
 import { UserIcon } from "@heroicons/react/solid";
 import { nanoid } from "nanoid";
 
@@ -55,9 +58,13 @@ export default function AddMembers() {
 	);
 	const { groupInfo } = useSelector((state) => state?.conversations);
 	// console.log(groupInfo);
+	const { groupOwner } = useSelector((state) => state?.conversations.groupInfo);
+
 	const { filteredMembers } = useSelector((state) => state?.conversations);
-	console.log(filteredMembers);
+	// console.log(filteredMembers);
 	const { members } = useSelector((state) => state?.conversations.groupInfo);
+	const currentAccountId = useSelector((state) => state.auth.user._id);
+	// console.log(currentAccountId);
 	// console.log(members);
 
 	return (
@@ -85,35 +92,63 @@ export default function AddMembers() {
 					{members?.map((user) => {
 						return (
 							<StyledMenuItem className="mb-1" key={user._id}>
-								<div className="flex items-center gap-2">
-									<UserIcon className="h-6 w-6 text-slate-800" />
-									<span className="font-sans">{user.username}</span>
+								<div className="flex items-center justify-between pr-2">
+									<div className="flex items-center gap-2">
+										<UserIcon
+											className={`h-6 w-6  ${
+												groupOwner === user._id
+													? "text-sky-600"
+													: "text-slate-800"
+											}`}
+										/>
+										<span className="font-sans">{user.username}</span>
+									</div>
+									{currentAccountId === groupOwner && groupOwner !== user._id && (
+										<button
+											onClick={() => {
+												dispatch(removeGroupMembers(user._id));
+												// close();
+											}}
+											className="p-[4px] text-red-800 hover:bg-red-600 hover:text-white rounded-full"
+										>
+											<XIcon className="h-4 w-4" />
+										</button>
+									)}
 								</div>
 							</StyledMenuItem>
 						);
 					})}
 				</MenuSection>
-				<Divider />
-				<MenuSection label="Add Users">
-					{filteredMembers?.map((user) => {
-						return (
-							<StyledMenuItem
-								className="mb-1"
-								onClick={() => {
-									console.log(user._id);
-									dispatch(updateGroupMembers(user._id));
-									// close();
-								}}
-								key={user._id}
-							>
-								<div className="flex items-center gap-2">
-									<UserIcon className="h-6 w-6 text-slate-800" />
-									<span className="font-sans">{user.username}</span>
-								</div>
-							</StyledMenuItem>
-						);
-					})}
-				</MenuSection>
+				{currentAccountId === groupOwner &&
+					Object.keys(filteredMembers).length !== 0 && <Divider />}
+				{currentAccountId === groupOwner &&
+					Object.keys(filteredMembers).length !== 0 && (
+						<MenuSection label="Add Users">
+							{filteredMembers?.map((user) => {
+								return (
+									<StyledMenuItem className="mb-1" key={user._id}>
+										<div className="flex items-center justify-between pr-2">
+											<div className="flex items-center gap-2">
+												<UserIcon className="h-6 w-6 text-slate-800" />
+												<span className="font-sans">{user.username}</span>
+											</div>
+											{
+												<button
+													onClick={() => {
+														dispatch(addGroupMembers(user._id));
+														// close();
+													}}
+													className="p-[4px] text-green-800 hover:bg-green-600 hover:text-white rounded-full"
+												>
+													<CheckIcon className="h-4 w-4" />
+												</button>
+											}
+										</div>
+									</StyledMenuItem>
+								);
+							})}
+						</MenuSection>
+					)}
 			</MenuUnstyled>
 		</>
 	);
@@ -139,10 +174,11 @@ const StyledListbox = styled("ul")(
   box-sizing: border-box;
   padding: 4px;
   margin: 10px 0;
-  min-width: 200px;
+  min-width: 225px;
+  max-height: 400px;
   background: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
   border: 1px solid ${theme.palette.mode === "dark" ? grey[800] : grey[300]};
-  border-radius: 0.75em;
+  border-radius: 0.4em;
   color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
   overflow: auto;
   outline: 0px;

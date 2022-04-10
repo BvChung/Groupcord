@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { SunIcon, MoonIcon } from "@heroicons/react/outline";
 import { BsGithub } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
-import { changeTheme } from "../../features/Theme/themeSlice";
+import { changeTheme } from "../../features/theme/themeSlice";
 
 function Utilities() {
 	const dispatch = useDispatch();

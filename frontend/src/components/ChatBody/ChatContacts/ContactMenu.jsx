@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
 	createChatConversations,
 	resetState,
-} from "../../../features/Conversations/conversationSlice";
+} from "../../../features/conversations/conversationSlice";
 import { toast } from "react-toastify";
 
 export default function FormDialog({ open, handleClose }) {

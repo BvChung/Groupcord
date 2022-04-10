@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
 	updateUser,
 	resetState,
-} from "../../../features/Authentication/authSlice";
+} from "../../../features/authentication/authSlice";
 import { toast } from "react-toastify";
 
 export default function FormDialog({ open, handleClose }) {

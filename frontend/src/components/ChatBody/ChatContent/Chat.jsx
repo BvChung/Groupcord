@@ -1,28 +1,25 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	createChatMessage,
 	getChatMessage,
 	updateChatMessage,
-} from "../../../features/Messages/messageSlice";
-import { io } from "socket.io-client";
+} from "../../../features/messages/messageSlice";
 import ChatItem from "./ChatItem";
 import ChatNav from "./ChatNav";
-import Menu from "./Menu";
 import { PaperAirplaneIcon, PlusIcon } from "@heroicons/react/solid";
-import { nanoid } from "nanoid";
-
-const socket = io.connect("http://localhost:3001");
+import { SocketContext } from "../../../appContext/socketContext";
 
 function Chat({ toggleMenu }) {
+	const socket = useContext(SocketContext);
+
 	const dispatch = useDispatch();
-	const allMessages = useSelector(
-		(state) => state?.messages?.messageArr?.allMessages
-	);
+
 	const { groupMessages } = useSelector((state) => state?.messages?.messageArr);
 	// console.log(groupMessages);
 
-	const messageToSocket = useSelector((state) => state?.messages?.newMessage);
+	const { messageToSocket } = useSelector((state) => state?.messages);
+
 	const { groupId } = useSelector((state) => state?.conversations.groupInfo);
 
 	const [userMessage, setUserMessage] = useState({
@@ -57,9 +54,25 @@ function Chat({ toggleMenu }) {
 		});
 	}
 
-	const sendMessage = useCallback((message) => {
-		socket.emit("send_message", message);
-	}, []);
+	// Loading messages/ joining chat room
+	const loadMessages = useCallback(() => {
+		dispatch(getChatMessage());
+	}, [dispatch]);
+
+	useEffect(() => {
+		loadMessages();
+		socket.emit("join_room", groupId, (message) => {
+			// console.log(message);
+		});
+	}, [groupId, socket, loadMessages]);
+
+	// --------------- Socket.io
+	const sendMessage = useCallback(
+		(message) => {
+			socket.emit("send_message", message);
+		},
+		[socket]
+	);
 
 	const updateWithSocketMessage = useCallback(
 		(data) => {
@@ -67,18 +80,6 @@ function Chat({ toggleMenu }) {
 		},
 		[dispatch]
 	);
-
-	const loadMessages = useCallback(() => {
-		dispatch(getChatMessage());
-	}, [dispatch]);
-
-	useEffect(() => {
-		loadMessages();
-	}, [groupId, loadMessages]);
-
-	useEffect(() => {
-		scrollToMessage();
-	}, [allMessages]);
 
 	useEffect(() => {
 		if (Object.keys(messageToSocket).length !== 0) {
@@ -89,9 +90,16 @@ function Chat({ toggleMenu }) {
 
 	useEffect(() => {
 		socket.on("receive_message", (data) => {
-			updateWithSocketMessage(data);
+			if ("_id" in data) {
+				updateWithSocketMessage(data);
+			}
 		});
-	}, [updateWithSocketMessage]);
+	}, [updateWithSocketMessage, socket]);
+
+	// ---------------
+	useEffect(() => {
+		scrollToMessage();
+	}, [groupMessages]);
 
 	const [inputActive, setInputActive] = useState(false);
 	function toggleInputActive() {
@@ -105,24 +113,19 @@ function Chat({ toggleMenu }) {
 				className="h-[85%] max-h-[780px]  px-4 md:px-6 lg:px-12 xl:px-16 2xl:px-24 py-6 
 				overflow-y-auto transition-all fade"
 			>
-				{groupMessages
-					?.filter(
-						(message, i, arr) =>
-							i === arr.findIndex((position) => position._id === message._id)
-					)
-					?.map((message) => {
-						return (
-							<ChatItem
-								key={message._id}
-								messageId={message._id}
-								userId={message.user}
-								username={message.username}
-								message={message.message}
-								timeCreated={message.timeCreated}
-								dateCreated={message.dateCreated}
-							/>
-						);
-					})}
+				{groupMessages?.map((message) => {
+					return (
+						<ChatItem
+							key={message._id}
+							messageId={message._id}
+							userId={message.user}
+							username={message.username}
+							message={message.message}
+							timeCreated={message.timeCreated}
+							dateCreated={message.dateCreated}
+						/>
+					);
+				})}
 				<div ref={refMessage}></div>
 			</div>
 
@@ -158,3 +161,23 @@ function Chat({ toggleMenu }) {
 }
 
 export default Chat;
+
+// ?.filter(
+// 	(message, i, arr) =>
+// 		i === arr.findIndex((position) => position._id === message._id)
+// )?.filter((message) => message.groupId === groupId)
+
+// const ex = {
+// 	user: "6233a3e6f4cef1bba5c015c4",
+// 	username: "GuestAccount",
+// 	groupId: "Global",
+// 	message: "2",
+// 	dateCreated: "4/9",
+// 	timeCreated: "5:30 AM",
+// 	_id: "62516030b3ce95661b300b5d",
+// 	createdAt: "2022-04-09T10:30:08.836Z",
+// 	updatedAt: "2022-04-09T10:30:08.836Z",
+// 	__v: 0,
+// };
+
+// console.log("_id" in ex);

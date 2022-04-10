@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SunIcon, MoonIcon, MenuIcon } from "@heroicons/react/outline";
 import { BsGithub } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
-import { changeTheme } from "../../../features/Theme/themeSlice";
+import { changeTheme } from "../../../features/theme/themeSlice";
 import AccountMenu from "./AccountMenu";
 import Menu from "./Menu";
 import AddMembers from "./AddMembers";
