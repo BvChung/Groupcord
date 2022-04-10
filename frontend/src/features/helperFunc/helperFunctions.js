@@ -22,3 +22,10 @@ export const filterMembers = (arr1, arr2) => {
 	});
 	return output;
 };
+
+export const filterDuplicateMessages = (messages) => {
+	return messages.filter(
+		(message, i, arr) =>
+			i === arr.findIndex((position) => position._id === message._id)
+	);
+};

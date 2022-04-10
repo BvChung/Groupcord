@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 import conversationService from "./conversationService";
-import { filterMembers, errorMessage } from "../helperFunctions";
+import { filterMembers, errorMessage } from "../helperFunc/helperFunctions";
 
 const initialState = {
 	registeredMembers: {},
@@ -41,7 +41,7 @@ export const getChatGroups = createAsyncThunk(
 	}
 );
 
-export const getAvailableMembers = createAsyncThunk(
+export const getRegisteredMembers = createAsyncThunk(
 	"group/getMembers",
 	async (_, thunkAPI) => {
 		try {
@@ -53,8 +53,8 @@ export const getAvailableMembers = createAsyncThunk(
 	}
 );
 
-export const updateGroupMembers = createAsyncThunk(
-	"group/members",
+export const addGroupMembers = createAsyncThunk(
+	"group/addMembers",
 	async (memberId, thunkAPI) => {
 		try {
 			const token = thunkAPI.getState().auth.user.token;
@@ -66,11 +66,23 @@ export const updateGroupMembers = createAsyncThunk(
 	}
 );
 
+export const removeGroupMembers = createAsyncThunk(
+	"group/removeMembers",
+	async (memberId, thunkAPI) => {
+		try {
+			const token = thunkAPI.getState().auth.user.token;
+			const { groupId } = thunkAPI.getState().conversations.groupInfo;
+			return await conversationService.removeMembers(memberId, groupId, token);
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+
 export const updateActiveChatGroup = createAsyncThunk(
 	"group/active",
 	async (groupInfo) => {
 		try {
-			// maybe send object
 			return groupInfo;
 		} catch (error) {
 			console.error(error);
@@ -91,7 +103,7 @@ export const conversationSlice = createSlice({
 		builder.addCase(createChatConversations.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
-			state.groups.allConversations.push(action.payload);
+			state.groups.push(action.payload);
 		});
 		builder.addCase(createChatConversations.rejected, (state) => {
 			state.isLoading = false;
@@ -103,31 +115,43 @@ export const conversationSlice = createSlice({
 		builder.addCase(getChatGroups.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
-			state.groups = action.payload;
+			state.groups = action.payload.userConversations;
 		});
 		builder.addCase(getChatGroups.rejected, (state) => {
 			state.isLoading = false;
 			state.isError = true;
 		});
-		builder.addCase(updateGroupMembers.pending, (state) => {
-			state.isLoading = true;
-		});
-		builder.addCase(updateGroupMembers.fulfilled, (state, action) => {
-			state.isLoading = false;
+		builder.addCase(addGroupMembers.fulfilled, (state, action) => {
 			state.isSuccess = true;
-			console.log(action.payload);
+			state.groupInfo.members = action.payload;
+			state.filteredMembers = filterMembers(
+				state.registeredMembers,
+				state.groupInfo.members
+			);
 		});
-		builder.addCase(updateGroupMembers.rejected, (state) => {
+		builder.addCase(addGroupMembers.rejected, (state) => {
+			state.isError = true;
+		});
+		builder.addCase(removeGroupMembers.fulfilled, (state, action) => {
+			state.isSuccess = true;
+			state.groupInfo.members = action.payload;
+			state.filteredMembers = filterMembers(
+				state.registeredMembers,
+				state.groupInfo.members
+			);
+			// current(state.groups).map((group) => {
+			// 	console.log(group);
+			// });
+		});
+		builder.addCase(removeGroupMembers.rejected, (state) => {
 			state.isLoading = false;
 			state.isError = true;
 		});
-		builder.addCase(getAvailableMembers.fulfilled, (state, action) => {
+		builder.addCase(getRegisteredMembers.fulfilled, (state, action) => {
 			state.registeredMembers = action.payload;
 		});
 		builder.addCase(updateActiveChatGroup.fulfilled, (state, action) => {
 			state.groupInfo = action.payload;
-			// console.log(`Action payload:`, action.payload);
-
 			state.filteredMembers = filterMembers(
 				state.registeredMembers,
 				state.groupInfo.members

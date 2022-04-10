@@ -1,30 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import chatService from "./messageService";
-import { errorMessage } from "../helperFunctions";
+import {
+	errorMessage,
+	filterDuplicateMessages,
+} from "../helperFunc/helperFunctions";
 
 // Is useState() but for all in redux
 const initialState = {
+	messageArr: {},
+	newMessage: {},
 	isLoading: false,
 	isSuccess: false,
 	isError: false,
 	errorMessage: "",
-	messageArr: {},
-	newMessage: {},
-	messageGroup: "Global",
 };
-
-export const createChatMessage = createAsyncThunk(
-	"message/create",
-	async (messageData, thunkAPI) => {
-		try {
-			// thunkAPI has a method to get any state value from the redux store
-			const token = thunkAPI.getState().auth.user.token;
-			return await chatService.createMessage(messageData, token);
-		} catch (error) {
-			return thunkAPI.rejectWithValue(errorMessage(error));
-		}
-	}
-);
 
 export const getChatMessage = createAsyncThunk(
 	"message/getAll",
@@ -35,6 +24,19 @@ export const getChatMessage = createAsyncThunk(
 			const { groupId } = thunkAPI.getState().conversations.groupInfo;
 			// console.log(groupId);
 			return await chatService.getMessage(groupId, token);
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+
+export const createChatMessage = createAsyncThunk(
+	"message/create",
+	async (messageData, thunkAPI) => {
+		try {
+			// thunkAPI has a method to get any state value from the redux store
+			const token = thunkAPI.getState().auth.user.token;
+			return await chatService.createMessage(messageData, token);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -52,23 +54,6 @@ export const updateChatMessage = createAsyncThunk(
 	}
 );
 
-// export const updateChatGroup = createAsyncThunk(
-// 	"message/updateGroup",
-// 	async (groupId) => {
-// 		try {
-// 			console.log(`To backend:`, groupId);
-// 			return groupId;
-// 		} catch (error) {
-// 			console.error(error);
-// 		}
-// 	}
-// );
-
-// builder.addCase(updateChatMessage.rejected, (state, action) => {
-// 	state.isError = true;
-// 	state.errorMessage = action.payload;
-// });
-
 export const messageSlice = createSlice({
 	name: "message",
 	initialState,
@@ -83,7 +68,6 @@ export const messageSlice = createSlice({
 		builder.addCase(createChatMessage.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
-			// state.messageArr.allMessages.push(action.payload);
 			state.messageArr.groupMessages.push(action.payload);
 			state.newMessage = action.payload;
 		});
@@ -106,7 +90,10 @@ export const messageSlice = createSlice({
 			state.errorMessage = action.payload;
 		});
 		builder.addCase(updateChatMessage.fulfilled, (state, action) => {
-			state.messageArr.allMessages.push(action.payload);
+			state.messageArr.groupMessages.push(action.payload);
+			state.messageArr.groupMessages = filterDuplicateMessages(
+				state.messageArr.groupMessages
+			);
 		});
 	},
 });

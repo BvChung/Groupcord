@@ -1,5 +1,5 @@
 import axios from "axios";
-import { configuration } from "../helperFunctions";
+import { configuration } from "../helperFunc/helperFunctions";
 
 // Axios connects the frontend to the backend
 
@@ -9,8 +9,6 @@ const API_URL = "/api/users";
 // Register user
 const register = async (userData) => {
 	const response = await axios.post(`${API_URL}/register`, userData);
-
-	if (!response) return;
 
 	// Save registered user to local storage
 	if (response.data) {
@@ -23,10 +21,6 @@ const register = async (userData) => {
 // Login user
 const login = async (userData) => {
 	const response = await axios.post(`${API_URL}`, userData);
-
-	if (!response) return;
-
-	// console.log(response.data);
 
 	if (response.data) {
 		localStorage.setItem("user", JSON.stringify(response.data));
@@ -42,8 +36,6 @@ const update = async (userData, token) => {
 		userData,
 		configuration(token)
 	);
-
-	if (!response) return;
 
 	if (response.data) {
 		localStorage.setItem("user", JSON.stringify(response.data));

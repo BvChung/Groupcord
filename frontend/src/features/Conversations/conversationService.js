@@ -1,12 +1,10 @@
 import axios from "axios";
-import { configuration } from "../helperFunctions";
+import { configuration } from "../helperFunc/helperFunctions";
 
 const API_URL = "/api/conversation";
 
 const getConversation = async (token) => {
 	const response = await axios.get(API_URL, configuration(token));
-
-	if (!response) return;
 
 	return response.data;
 };
@@ -18,27 +16,31 @@ const createConversation = async (conversationData, token) => {
 		configuration(token)
 	);
 
-	if (!response) return;
-
 	return response.data;
 };
 
 const getMembers = async (token) => {
 	const response = await axios.get(`${API_URL}/members`, configuration(token));
 
-	if (!response) return;
-
 	return response.data;
 };
 
 const addMembers = async (memberId, groupId, token) => {
 	const response = await axios.put(
-		`${API_URL}/members/${groupId}`,
+		`${API_URL}/add/${groupId}`,
 		{ memberId },
 		configuration(token)
 	);
 
-	if (!response) return;
+	return response.data;
+};
+
+const removeMembers = async (memberId, groupId, token) => {
+	const response = await axios.put(
+		`${API_URL}/remove/${groupId}`,
+		{ memberId },
+		configuration(token)
+	);
 
 	return response.data;
 };
@@ -48,6 +50,7 @@ const conversationService = {
 	createConversation,
 	getMembers,
 	addMembers,
+	removeMembers,
 };
 
 export default conversationService;
