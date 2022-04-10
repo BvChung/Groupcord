@@ -4,9 +4,10 @@ import {
 	createChatMessage,
 	getChatMessage,
 	updateChatMessage,
-} from "../../features/Messages/messageSlice";
+} from "../../features/messages/messageSlice";
 import Contacts from "./ChatContacts/Contacts";
 import Chat from "./ChatContent/Chat";
+import { SocketContext, socket } from "../../appContext/socketContext";
 
 function ChatBody() {
 	const [openMenu, setOpenMenu] = useState(true);
@@ -16,10 +17,12 @@ function ChatBody() {
 	}
 
 	return (
-		<div className="flex flex-grow">
-			{openMenu && <Contacts />}
-			<Chat toggleMenu={toggleMenu} />
-		</div>
+		<SocketContext.Provider value={socket}>
+			<div className="flex flex-grow">
+				{openMenu && <Contacts />}
+				<Chat toggleMenu={toggleMenu} />
+			</div>
+		</SocketContext.Provider>
 	);
 }
 

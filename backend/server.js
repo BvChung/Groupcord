@@ -7,6 +7,8 @@ const { Server } = require("socket.io");
 const colors = require("colors");
 const { errorHandler } = require("./middleware/errorMiddleware");
 const connectDatabase = require("./config/database");
+const jwt = require("jsonwebtoken");
+const getPreviousRoom = require("./helper/helperfunctions");
 
 connectDatabase();
 
@@ -18,19 +20,6 @@ const io = new Server(server, {
 		origin: "http://localhost:3000",
 		methods: ["GET", "POST"],
 	},
-});
-
-io.on("connection", (socket) => {
-	console.log(`A user connected ${socket.id}`.brightMagenta.underline);
-
-	socket.on("send_message", (data) => {
-		// broadcast sends message to everyone connected to server except you
-		socket.broadcast.emit("receive_message", data);
-	});
-
-	socket.on("disconnect", () => {
-		console.log(`A user disconnected ${socket.id}`.brightRed.underline);
-	});
 });
 
 // middleware
@@ -46,6 +35,37 @@ app.use("/api/conversation", require("./routes/conversationRoutes"));
 // Error handler that converts standard Express error html to a JSON error message using custom middleware
 app.use(errorHandler);
 
+// Socket.io data emission
+io.on("connection", (socket) => {
+	console.log(`A user connected ${socket.id}`.brightMagenta.underline);
+
+	socket.on("join_room", (room, joinRoomConfirm) => {
+		const previousRoom = getPreviousRoom(socket.rooms);
+		if (previousRoom) {
+			socket.leave(previousRoom);
+		}
+
+		console.log(`User ${socket.id} Joined room: ${room}`.brightGreen.underline);
+		socket.join(room);
+		joinRoomConfirm(`Joined ${room}`);
+	});
+
+	socket.on("send_message", (data) => {
+		console.log(data);
+		socket.to(data.groupId).emit("receive_message", data);
+	});
+
+	socket.on("msg", (data) => {
+		console.log(data);
+	});
+
+	socket.on("disconnect", () => {
+		console.log(`A user disconnected ${socket.id}`.brightRed.underline);
+	});
+});
+
 server.listen(port, () => {
 	console.log(`Server started on port: ${port}`.brightWhite);
 });
+
+module.exports = io;
