@@ -15,6 +15,22 @@ const getConversation = asyncHandler(async (req, res) => {
 	});
 });
 
+// @desc Create conversation
+// @route POST /api/conversation
+// @access Private
+const createConversation = asyncHandler(async (req, res) => {
+	const { groupName } = req.body;
+
+	const conversation = await Conversation.create({
+		groupOwner: req.user.id,
+		groupName,
+		membersId: req.user.id,
+		members: { _id: req.user.id, username: req.user.username },
+	});
+
+	return res.status(200).json(conversation);
+});
+
 const getMembers = asyncHandler(async (req, res) => {
 	const users = await User.find({}).select("username");
 
@@ -34,7 +50,7 @@ const addGroupMembers = asyncHandler(async (req, res) => {
 
 	const user = await User.findById(memberId).select("username");
 
-	await Conversation.findByIdAndUpdate(
+	const updatedMembers = await Conversation.findByIdAndUpdate(
 		groupId,
 		{
 			$addToSet: {
@@ -46,29 +62,34 @@ const addGroupMembers = asyncHandler(async (req, res) => {
 			new: true,
 		}
 	);
+	// console.log(updatedMembers.members);
 
-	return res.status(200).json(memberId);
+	return res.status(200).json(updatedMembers.members);
 });
 
-// @desc Create conversation
-// @route POST /api/conversation
+// @desc Update each groups members
+// @route PUT /api/conversation
 // @access Private
-const createConversation = asyncHandler(async (req, res) => {
-	const { groupName } = req.body;
+const removeGroupMembers = asyncHandler(async (req, res) => {
+	const { groupId } = req.params;
+	const { memberId } = req.body;
 
-	// if (!) {
-	// 	res.status(400);
-	// 	throw new Error("Please add the receiver's name");
-	// }
+	const user = await User.findById(memberId).select("username");
 
-	const conversation = await Conversation.create({
-		groupOwner: req.user.id,
-		groupName,
-		membersId: req.user.id,
-		members: { _id: req.user.id, username: req.user.username },
-	});
+	const updatedMembers = await Conversation.findByIdAndUpdate(
+		groupId,
+		{
+			$pull: {
+				membersId: memberId,
+				members: { _id: memberId, username: user.username },
+			},
+		},
+		{
+			new: true,
+		}
+	);
 
-	return res.status(200).json(conversation);
+	return res.status(200).json(updatedMembers.members);
 });
 
 module.exports = {
@@ -76,4 +97,5 @@ module.exports = {
 	createConversation,
 	getMembers,
 	addGroupMembers,
+	removeGroupMembers,
 };

@@ -5,6 +5,7 @@ const {
 	createConversation,
 	getMembers,
 	addGroupMembers,
+	removeGroupMembers,
 } = require("../controller/conversationController");
 
 const { authWithToken } = require("../middleware/authMiddleware");
@@ -16,6 +17,8 @@ router
 
 router.route("/members").get(authWithToken, getMembers);
 
-router.route("/members/:groupId").put(authWithToken, addGroupMembers);
+router.route("/add/:groupId").put(authWithToken, addGroupMembers);
+
+router.route("/remove/:groupId").put(authWithToken, removeGroupMembers);
 
 module.exports = router;

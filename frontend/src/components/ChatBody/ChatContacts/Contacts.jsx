@@ -5,25 +5,22 @@ import { SearchIcon } from "@heroicons/react/solid";
 import ContactItem from "./ContactItem";
 import ContactMenu from "./ContactMenu";
 import { useSelector, useDispatch } from "react-redux";
-import { getChatGroups } from "../../../features/Conversations/conversationSlice";
-import { updateActiveChatGroup } from "../../../features/Conversations/conversationSlice";
+import { getChatGroups } from "../../../features/conversations/conversationSlice";
+import { updateActiveChatGroup } from "../../../features/conversations/conversationSlice";
 
 function Contacts() {
 	const dispatch = useDispatch();
-	// const groups = useSelector((state) => state?.conversations);
-	// console.log(groups);
-	const { userConversations } = useSelector(
-		(state) => state?.conversations?.groups
-	);
-	// console.log(userConversations);
 
-	const loadConversations = useCallback(() => {
-		dispatch(getChatGroups());
-	}, [dispatch]);
+	const { groups } = useSelector((state) => state.conversations);
+	console.log(groups);
 
-	useEffect(() => {
-		loadConversations();
-	}, [loadConversations]);
+	// const loadConversations = useCallback(() => {
+	// 	dispatch(getChatGroups());
+	// }, [dispatch]);
+
+	// useEffect(() => {
+	// 	loadConversations();
+	// }, [loadConversations]);
 
 	const [active, setActive] = useState(false);
 	function toggleActive() {
@@ -112,20 +109,21 @@ function Contacts() {
 						<GlobeIcon className="h-7 w-7 text-sky-500 dark:text-sky-600" />
 						<span className="dark:text-white">Global</span>
 					</div>
-					{userConversations?.map((group, i) => {
-						return (
-							<ContactItem
-								key={group._id}
-								groupId={group._id}
-								groupName={group.groupName}
-								groupOwner={group.groupOwner}
-								members={group.members}
-								indexNumber={i}
-								groupActive={groupActive}
-								toggleGroupActive={toggleGroupActive}
-							/>
-						);
-					})}
+					{Object.keys(groups).length !== 0 &&
+						groups?.map((group, i) => {
+							return (
+								<ContactItem
+									key={group._id}
+									groupId={group._id}
+									groupName={group.groupName}
+									groupOwner={group.groupOwner}
+									members={group.members}
+									indexNumber={i}
+									groupActive={groupActive}
+									toggleGroupActive={toggleGroupActive}
+								/>
+							);
+						})}
 				</div>
 			</div>
 			{/* <div
