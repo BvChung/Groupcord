@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Messages = require("../models/messageModel");
+const io = require("../server");
 
 // @desc Get messages
 // @route GET /api/messages
@@ -15,12 +16,10 @@ const getMessages = asyncHandler(async (req, res) => {
 	// find() has to match type in mongodb schema
 	const group = await Messages.find({ groupId: groupId });
 
-	// Return all messages
-	const all = await Messages.find({});
+	// io.emit("msg", group);
 
 	return res.status(200).json({
 		currentUserMessage: chatlog,
-		allMessages: all,
 		groupMessages: group,
 	});
 });

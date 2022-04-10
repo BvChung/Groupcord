@@ -9,23 +9,20 @@ const User = require("../models/userModel");
 const registerUser = asyncHandler(async (req, res) => {
 	const { name, username, email, password } = req.body;
 
-	if (!name || !username || !email || !password) {
-		res.status(400);
-		throw new Error("Please fill in all fields");
-	}
-
 	// Check if user exists in the database based on email
 	const emailExists = await User.findOne({ email });
 	const usernameExists = await User.findOne({ username });
 
 	if (emailExists) {
 		res.status(400);
-		throw new Error("User with email already exists");
+		throw new Error(
+			"There already exists an account registered with this email address."
+		);
 	}
 
 	if (usernameExists) {
 		res.status(400);
-		throw new Error("Username already exists");
+		throw new Error("This username is unavailable.");
 	}
 
 	// Hash(encrypt) password

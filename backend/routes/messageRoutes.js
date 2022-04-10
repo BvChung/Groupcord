@@ -10,10 +10,6 @@ const {
 
 const { authWithToken } = require("../middleware/authMiddleware");
 
-// router.get("/", getMessages);
-// router.post("/", setMessages);
-// router.put("/:id", updateMessages);
-// router.delete("/:id", deleteMessages);
 router
 	.route("/")
 	.get(authWithToken, getMessages)

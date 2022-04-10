@@ -8,7 +8,7 @@ import {
 // Is useState() but for all in redux
 const initialState = {
 	messageArr: {},
-	newMessage: {},
+	messageToSocket: {},
 	isLoading: false,
 	isSuccess: false,
 	isError: false,
@@ -63,13 +63,13 @@ export const messageSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(createChatMessage.pending, (state) => {
 			state.isLoading = true;
-			state.newMessage = {};
+			state.messageToSocket = {};
 		});
 		builder.addCase(createChatMessage.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
 			state.messageArr.groupMessages.push(action.payload);
-			state.newMessage = action.payload;
+			state.messageToSocket = action.payload;
 		});
 		builder.addCase(createChatMessage.rejected, (state, action) => {
 			state.isLoading = false;

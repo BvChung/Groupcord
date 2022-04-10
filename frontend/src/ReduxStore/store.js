@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "../features/Authentication/authSlice";
-import messagesReducer from "../features/Messages/messageSlice";
-import themeReducer from "../features/Theme/themeSlice";
-import conversationReducer from "../features/Conversations/conversationSlice";
+import authReducer from "../features/authentication/authSlice";
+import messagesReducer from "../features/messages/messageSlice";
+import themeReducer from "../features/theme/themeSlice";
+import conversationReducer from "../features/conversations/conversationSlice";
 
 export const store = configureStore({
 	reducer: {
