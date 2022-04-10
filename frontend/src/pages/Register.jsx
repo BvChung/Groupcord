@@ -5,7 +5,7 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { registerUser, resetState } from "../features/Authentication/authSlice";
+import { registerUser, resetState } from "../features/authentication/authSlice";
 
 function Register() {
 	const navigate = useNavigate();
