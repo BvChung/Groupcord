@@ -1,3 +1,31 @@
+import { current } from "@reduxjs/toolkit";
+
+export const updateGroup = (state, currentGroup, payload) => {
+	return current(state).map((data) => {
+		if (data._id === currentGroup.groupId) {
+			return {
+				...payload,
+			};
+		} else {
+			return {
+				...data,
+			};
+		}
+	});
+};
+// const update = current(state.groups).map((data) => {
+// 	if (data._id === currentGroup.groupId) {
+// 		return {
+// 			...data,
+// 			members: action.payload,
+// 		};
+// 	} else {
+// 		return {
+// 			...data,
+// 		};
+// 	}
+// });
+
 export const configuration = (token) => {
 	return {
 		headers: {

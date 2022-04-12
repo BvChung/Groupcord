@@ -64,7 +64,7 @@ const addGroupMembers = asyncHandler(async (req, res) => {
 	);
 	// console.log(updatedMembers.members);
 
-	return res.status(200).json(updatedMembers.members);
+	return res.status(200).json(updatedMembers);
 });
 
 // @desc Update each groups members
@@ -89,7 +89,9 @@ const removeGroupMembers = asyncHandler(async (req, res) => {
 		}
 	);
 
-	return res.status(200).json(updatedMembers.members);
+	// console.log(updatedMembers);
+
+	return res.status(200).json(updatedMembers);
 });
 
 module.exports = {

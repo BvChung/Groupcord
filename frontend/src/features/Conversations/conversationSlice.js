@@ -1,28 +1,33 @@
 import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 import conversationService from "./conversationService";
-import { filterMembers, errorMessage } from "../helperFunc/helperFunctions";
+import {
+	filterMembers,
+	errorMessage,
+	updateGroup,
+} from "../helperFunc/helperFunctions";
 
 const initialState = {
 	registeredMembers: {},
 	groups: {},
 	groupInfo: {
 		groupId: "Global",
+		groupOwner: "",
+		members: [],
 	},
+	sendGroupToSocket: {},
+	sendMembersToSocket: {},
 	filteredMembers: {},
 	isLoading: false,
 	isSuccess: false,
 	isError: false,
 };
 
-export const createChatConversations = createAsyncThunk(
+export const createChatGroups = createAsyncThunk(
 	"conversation/create",
 	async (conversationData, thunkAPI) => {
 		try {
 			const token = thunkAPI.getState().auth.user.token;
-			return await conversationService.createConversation(
-				conversationData,
-				token
-			);
+			return await conversationService.createGroup(conversationData, token);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -34,7 +39,7 @@ export const getChatGroups = createAsyncThunk(
 	async (_, thunkAPI) => {
 		try {
 			const token = thunkAPI.getState().auth.user.token;
-			return await conversationService.getConversation(token);
+			return await conversationService.getGroup(token);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -81,11 +86,22 @@ export const removeGroupMembers = createAsyncThunk(
 
 export const updateActiveChatGroup = createAsyncThunk(
 	"group/active",
-	async (groupInfo) => {
+	async (groupInfo, thunkAPI) => {
 		try {
 			return groupInfo;
 		} catch (error) {
-			console.error(error);
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+
+export const updateMembersWithSocket = createAsyncThunk(
+	"group/updateWithSocket",
+	async (membersData, thunkAPI) => {
+		try {
+			return membersData;
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
 	}
 );
@@ -97,15 +113,16 @@ export const conversationSlice = createSlice({
 		resetGroupState: (state) => initialState,
 	},
 	extraReducers: (builder) => {
-		builder.addCase(createChatConversations.pending, (state) => {
+		builder.addCase(createChatGroups.pending, (state) => {
 			state.isLoading = true;
 		});
-		builder.addCase(createChatConversations.fulfilled, (state, action) => {
+		builder.addCase(createChatGroups.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
 			state.groups.push(action.payload);
+			// state.sendGroupToSocket = action.payload;
 		});
-		builder.addCase(createChatConversations.rejected, (state) => {
+		builder.addCase(createChatGroups.rejected, (state) => {
 			state.isLoading = false;
 			state.isError = true;
 		});
@@ -123,25 +140,36 @@ export const conversationSlice = createSlice({
 		});
 		builder.addCase(addGroupMembers.fulfilled, (state, action) => {
 			state.isSuccess = true;
-			state.groupInfo.members = action.payload;
+			state.groupInfo.members = action.payload.members;
 			state.filteredMembers = filterMembers(
 				state.registeredMembers,
 				state.groupInfo.members
 			);
+
+			state.sendGroupToSocket = action.payload;
+			state.sendMembersToSocket = action.payload.members;
+
+			// Update users groups when group owner adds member
+			const currentGroup = current(state.groupInfo);
+			state.groups = updateGroup(state.groups, currentGroup, action.payload);
 		});
 		builder.addCase(addGroupMembers.rejected, (state) => {
 			state.isError = true;
 		});
 		builder.addCase(removeGroupMembers.fulfilled, (state, action) => {
 			state.isSuccess = true;
-			state.groupInfo.members = action.payload;
+			state.groupInfo.members = action.payload.members;
 			state.filteredMembers = filterMembers(
 				state.registeredMembers,
 				state.groupInfo.members
 			);
-			// current(state.groups).map((group) => {
-			// 	console.log(group);
-			// });
+
+			state.sendGroupToSocket = action.payload;
+			state.sendMembersToSocket = action.payload.members;
+
+			// Updates users groups when group owner removes member
+			const currentGroup = current(state.groupInfo);
+			state.groups = updateGroup(state.groups, currentGroup, action.payload);
 		});
 		builder.addCase(removeGroupMembers.rejected, (state) => {
 			state.isLoading = false;
@@ -156,6 +184,9 @@ export const conversationSlice = createSlice({
 				state.registeredMembers,
 				state.groupInfo.members
 			);
+		});
+		builder.addCase(updateMembersWithSocket.fulfilled, (state, action) => {
+			state.groupInfo.members = action.payload;
 		});
 	},
 });

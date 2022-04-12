@@ -3,13 +3,13 @@ import { configuration } from "../helperFunc/helperFunctions";
 
 const API_URL = "/api/conversation";
 
-const getConversation = async (token) => {
+const getGroup = async (token) => {
 	const response = await axios.get(API_URL, configuration(token));
 
 	return response.data;
 };
 
-const createConversation = async (conversationData, token) => {
+const createGroup = async (conversationData, token) => {
 	const response = await axios.post(
 		API_URL,
 		conversationData,
@@ -46,8 +46,8 @@ const removeMembers = async (memberId, groupId, token) => {
 };
 
 const conversationService = {
-	getConversation,
-	createConversation,
+	getGroup,
+	createGroup,
 	getMembers,
 	addMembers,
 	removeMembers,
