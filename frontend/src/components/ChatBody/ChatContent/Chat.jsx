@@ -16,7 +16,6 @@ function Chat({ toggleMenu }) {
 	const dispatch = useDispatch();
 
 	const { groupMessages } = useSelector((state) => state?.messages?.messageArr);
-	// console.log(groupMessages);
 
 	const { messageToSocket } = useSelector((state) => state?.messages);
 
@@ -68,8 +67,8 @@ function Chat({ toggleMenu }) {
 
 	// --------------- Socket.io
 	const sendMessage = useCallback(
-		(message) => {
-			socket.emit("send_message", message);
+		(messageData) => {
+			socket.emit("send_message", messageData);
 		},
 		[socket]
 	);
@@ -167,17 +166,52 @@ export default Chat;
 // 		i === arr.findIndex((position) => position._id === message._id)
 // )?.filter((message) => message.groupId === groupId)
 
-// const ex = {
-// 	user: "6233a3e6f4cef1bba5c015c4",
-// 	username: "GuestAccount",
-// 	groupId: "Global",
-// 	message: "2",
-// 	dateCreated: "4/9",
-// 	timeCreated: "5:30 AM",
-// 	_id: "62516030b3ce95661b300b5d",
-// 	createdAt: "2022-04-09T10:30:08.836Z",
-// 	updatedAt: "2022-04-09T10:30:08.836Z",
-// 	__v: 0,
-// };
+const ex = [
+	{
+		user: "6233a3e6f4cef1bba5c015c4",
+		username: "GuestAccount",
+		groupId: "Global",
+		message: "2",
+		dateCreated: "4/9",
+		timeCreated: "5:30 AM",
+		members: [{ _id: "6233a3e6f4cef1bba5c015c4", username: "GuestAccount" }],
+		_id: "6252aa62c39b1b8c9981ee7b",
+		createdAt: "2022-04-09T10:30:08.836Z",
+		updatedAt: "2022-04-09T10:30:08.836Z",
+		__v: 0,
+	},
+	{
+		user: "6233a3e6f4cef1bba5c015c4",
+		username: "GuestAccount",
+		groupId: "Global",
+		message: "2",
+		dateCreated: "4/9",
+		timeCreated: "5:30 AM",
+		members: [{ _id: "6233a3e6f4cef1bba5c015c4", username: "GuestAccount" }],
+		_id: "6252aa62c39b1b8c9981ee7",
+		createdAt: "2022-04-09T10:30:08.836Z",
+		updatedAt: "2022-04-09T10:30:08.836Z",
+		__v: 0,
+	},
+];
 
+const id = "6252aa62c39b1b8c9981ee7b";
+const newMembers = [
+	{ _id: "6233a3e6f4cef1bba5c015c4", username: "GuestAccount" },
+	{ _id: "6233a3e6f4cef1bba5c015c4", username: "GuestAccount" },
+];
+
+const update = ex.map((group) => {
+	if (group._id === id) {
+		return {
+			...group,
+			members: newMembers,
+		};
+	} else {
+		return {
+			...group,
+		};
+	}
+});
+// console.log(update);
 // console.log("_id" in ex);

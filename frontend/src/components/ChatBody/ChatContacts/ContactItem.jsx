@@ -1,12 +1,11 @@
-import { useState, useContext } from "react";
-import { useDispatch } from "react-redux";
+import { useState, useContext, useCallback, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { UserGroupIcon } from "@heroicons/react/solid";
 import {
 	updateActiveChatGroup,
 	getChatGroups,
 } from "../../../features/conversations/conversationSlice";
 import { DotsHorizontalIcon } from "@heroicons/react/outline";
-import { SocketContext } from "../../../appContext/socketContext";
 
 function ContactItem({
 	indexNumber,
@@ -17,7 +16,6 @@ function ContactItem({
 	groupActive,
 	toggleGroupActive,
 }) {
-	const socket = useContext(SocketContext);
 	const dispatch = useDispatch();
 	const { activeIndex } = groupActive;
 
@@ -33,7 +31,6 @@ function ContactItem({
 		groupOwner,
 		members,
 	};
-	// console.log(groupName, members);
 
 	return (
 		<div

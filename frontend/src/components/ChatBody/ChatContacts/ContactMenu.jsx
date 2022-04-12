@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -8,12 +8,14 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useSelector, useDispatch } from "react-redux";
 import {
-	createChatConversations,
+	createChatGroups,
 	resetState,
 } from "../../../features/conversations/conversationSlice";
+import { SocketContext } from "../../../appContext/socketContext";
 import { toast } from "react-toastify";
 
-export default function FormDialog({ open, handleClose }) {
+export default function ContactMenu({ open, handleClose }) {
+	const socket = useContext(SocketContext);
 	const dispatch = useDispatch();
 
 	const { user } = useSelector((state) => state.auth);
@@ -21,6 +23,10 @@ export default function FormDialog({ open, handleClose }) {
 	const { updateError, message, isSuccess } = useSelector(
 		(state) => state.auth
 	);
+	const { sendGroupToSocket } = useSelector((state) => state.conversations);
+	// console.log(sendGroupToSocket);
+	const { groups } = useSelector((state) => state.conversations);
+	// console.log(groups);
 
 	// console.log(user);
 	// console.log(auth);
@@ -47,10 +53,28 @@ export default function FormDialog({ open, handleClose }) {
 
 		if (formData.groupName === "") return;
 
-		dispatch(createChatConversations(formData));
+		dispatch(createChatGroups(formData));
 
 		handleClose();
 	}
+
+	// const sendGroup = useCallback(
+	// 	(groupData) => {
+	// 		socket.emit("send_group", groupData);
+	// 	},
+	// 	[socket]
+	// );
+
+	// useEffect(() => {
+	// 	sendGroup();
+	// }, [sendGroupToSocket]);
+
+	// useEffect(() => {
+	// 	if (Object.keys(sendGroupToSocket).length !== 0) {
+	// 		// console.log("send to socket");
+	// 		sendGroup(sendGroupToSocket);
+	// 	}
+	// }, [sendGroupToSocket]);
 
 	function resetFormData() {
 		setFormData((prevData) => {

@@ -7,12 +7,15 @@ import ContactMenu from "./ContactMenu";
 import { useSelector, useDispatch } from "react-redux";
 import { getChatGroups } from "../../../features/conversations/conversationSlice";
 import { updateActiveChatGroup } from "../../../features/conversations/conversationSlice";
+import { SocketContext } from "../../../appContext/socketContext";
 
-function Contacts() {
+export default function ChatGroups() {
 	const dispatch = useDispatch();
 
 	const { groups } = useSelector((state) => state.conversations);
-	console.log(groups);
+	// console.log(groups);
+	const { groupInfo } = useSelector((state) => state.conversations);
+	// console.log(groupInfo);
 
 	// const loadConversations = useCallback(() => {
 	// 	dispatch(getChatGroups());
@@ -143,5 +146,3 @@ function Contacts() {
 		</div>
 	);
 }
-
-export default Contacts;

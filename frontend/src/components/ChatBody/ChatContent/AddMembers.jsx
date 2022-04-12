@@ -1,9 +1,10 @@
 import * as React from "react";
-import { useEffect } from "react";
+import { useEffect, useContext, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	addGroupMembers,
 	removeGroupMembers,
+	updateMembersWithSocket,
 } from "../../../features/conversations/conversationSlice";
 import PropTypes from "prop-types";
 import MenuUnstyled from "@mui/base/MenuUnstyled";
@@ -16,6 +17,7 @@ import Divider from "@mui/material/Divider";
 import { PlusIcon, XIcon, CheckIcon } from "@heroicons/react/outline";
 import { UserIcon } from "@heroicons/react/solid";
 import { nanoid } from "nanoid";
+import { SocketContext } from "../../../appContext/socketContext";
 
 export default function AddMembers() {
 	const [anchorEl, setAnchorEl] = React.useState(null);
@@ -48,11 +50,6 @@ export default function AddMembers() {
 
 	const dispatch = useDispatch();
 
-	// const { allUserData } = useSelector((state) => state.auth);
-	// console.log(allUserData);
-	const { user } = useSelector((state) => state.auth);
-	// console.log(user);
-
 	const { userConversations } = useSelector(
 		(state) => state?.conversations?.groups
 	);
@@ -63,9 +60,53 @@ export default function AddMembers() {
 	const { filteredMembers } = useSelector((state) => state?.conversations);
 	// console.log(filteredMembers);
 	const { members } = useSelector((state) => state?.conversations.groupInfo);
+	// console.log(members);
+	const { sendMembersToSocket } = useSelector((state) => state?.conversations);
+	const { sendGroupToSocket } = useSelector((state) => state?.conversations);
+	// console.log(sendGroupToSocket);
+
 	const currentAccountId = useSelector((state) => state.auth.user._id);
 	// console.log(currentAccountId);
 	// console.log(members);
+
+	// Web sockets
+	const socket = useContext(SocketContext);
+
+	const sendMemberId = (id) => {
+		socket.emit("send_id", id);
+	};
+
+	const sendMemberData = useCallback(
+		(data) => {
+			socket.emit("send_members", data);
+		},
+		[socket]
+	);
+
+	const sendGroupData = useCallback(
+		(data) => {
+			socket.emit("send_group", data);
+		},
+		[socket]
+	);
+
+	useEffect(() => {
+		sendGroupData(sendGroupToSocket);
+	}, [sendGroupData, sendGroupToSocket]);
+
+	useEffect(() => {
+		sendMemberData(sendMembersToSocket);
+	}, [sendMemberData, sendMembersToSocket]);
+
+	useEffect(() => {
+		socket.on("receive_members", (data) => {
+			dispatch(updateMembersWithSocket(data));
+		});
+	}, [socket, dispatch]);
+
+	// useEffect(() => {
+	// 	socket.emit("send_members", sendMembersToSocket);
+	// }, [sendMembersToSocket]);
 
 	return (
 		<>
@@ -107,6 +148,7 @@ export default function AddMembers() {
 										<button
 											onClick={() => {
 												dispatch(removeGroupMembers(user._id));
+												sendMemberId(user._id);
 												// close();
 											}}
 											className="p-[4px] text-red-800 hover:bg-red-600 hover:text-white rounded-full"
@@ -136,6 +178,7 @@ export default function AddMembers() {
 												<button
 													onClick={() => {
 														dispatch(addGroupMembers(user._id));
+														sendMemberId(user._id);
 														// close();
 													}}
 													className="p-[4px] text-green-800 hover:bg-green-600 hover:text-white rounded-full"
