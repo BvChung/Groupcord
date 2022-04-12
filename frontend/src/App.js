@@ -7,13 +7,14 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import Utilities from "./components/Utilities/Utilities";
+import { SocketContext, socket } from "./appContext/socketContext";
 
 export default function App() {
 	const { darkMode } = useSelector((state) => state.theme);
 	const { user } = useSelector((state) => state.auth);
 
 	return (
-		<>
+		<SocketContext.Provider value={socket}>
 			<BrowserRouter>
 				<div className={darkMode ? "dark" : ""}>
 					{!user && <Utilities />}
@@ -28,6 +29,6 @@ export default function App() {
 				</div>
 			</BrowserRouter>
 			<ToastContainer autoClose={2000} theme={darkMode ? "dark" : "light"} />
-		</>
+		</SocketContext.Provider>
 	);
 }
