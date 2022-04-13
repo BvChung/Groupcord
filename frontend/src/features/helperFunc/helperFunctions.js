@@ -14,28 +14,40 @@ export const updateGroup = (state, currentGroup, payload) => {
 	});
 };
 
-export const updateMembersGroups = (obj1, obj2) => {
-	const foundChatGroup = current(obj1).some((data) => data._id === obj2._id);
+export const updateMembersGroups = (state, payload) => {
+	const { groupData, memberChanged, action } = payload;
 
-	if (foundChatGroup) {
-		return current(obj1).map((data) => {
-			if (data._id === obj2._id) {
-				return {
-					...data,
-					members: obj2.members,
-					membersId: obj2.membersId,
-					createdAt: obj2.createdAt,
-					updatedAt: obj2.updatedAt,
-				};
-			} else {
-				return {
-					...data,
-				};
-			}
+	const foundChatGroup = current(state).some(
+		(data) => data._id === groupData._id
+	);
+
+	if (foundChatGroup && action === "removeMember") {
+		return current(state).filter((data) => {
+			return data._id !== groupData._id;
 		});
 	} else {
-		return [...current(obj1), obj2];
+		return [...current(state), groupData];
 	}
+
+	// if (foundChatGroup) {
+	// 	return current(state).map((data) => {
+	// 		if (data._id === groupData._id) {
+	// 			return {
+	// 				...data,
+	// 				members: groupData.members,
+	// 				membersId: groupData.membersId,
+	// 				createdAt: groupData.createdAt,
+	// 				updatedAt: groupData.updatedAt,
+	// 			};
+	// 		} else {
+	// 			return {
+	// 				...data,
+	// 			};
+	// 		}
+	// 	});
+	// } else {
+	// 	return [...current(state), groupData];
+	// }
 };
 
 export const configuration = (token) => {
