@@ -60,9 +60,7 @@ function Chat({ toggleMenu }) {
 
 	useEffect(() => {
 		loadMessages();
-		socket.emit("join_room", groupId, (message) => {
-			// console.log(message);
-		});
+		socket.emit("join_room", groupId);
 	}, [groupId, socket, loadMessages]);
 
 	// --------------- Socket.io
@@ -82,7 +80,6 @@ function Chat({ toggleMenu }) {
 
 	useEffect(() => {
 		if (Object.keys(messageToSocket).length !== 0) {
-			// console.log("send to socket");
 			sendMessage(messageToSocket);
 		}
 	}, [messageToSocket, sendMessage]);

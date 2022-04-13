@@ -15,11 +15,6 @@ function Dashboard() {
 	const { user } = useSelector((state) => state.auth);
 	// console.log(user);
 
-	useEffect(() => {
-		dispatch(getRegisteredMembers());
-		dispatch(getChatGroups());
-	}, [dispatch, socket]);
-
 	const createUser = useCallback(
 		(data) => {
 			socket.emit("user_connected", data);
@@ -28,14 +23,13 @@ function Dashboard() {
 	);
 
 	useEffect(() => {
+		dispatch(getRegisteredMembers());
+		dispatch(getChatGroups());
+	}, [dispatch]);
+
+	useEffect(() => {
 		createUser(user);
 	}, [user, createUser]);
-
-	//
-
-	const { registeredMembers } = useSelector((state) => state.conversations);
-	const { groupId } = useSelector((state) => state?.conversations.groupInfo);
-
 	return (
 		<>
 			<div className="flex flex-col dark:bg-slate-900 w-screen h-screen">

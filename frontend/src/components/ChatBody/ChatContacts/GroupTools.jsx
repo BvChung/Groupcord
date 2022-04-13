@@ -17,7 +17,14 @@ import MenuItemUnstyled, {
 import PopperUnstyled from "@mui/base/PopperUnstyled";
 import { styled } from "@mui/system";
 import Divider from "@mui/material/Divider";
-import { PlusIcon, XIcon, CheckIcon } from "@heroicons/react/outline";
+import {
+	PlusIcon,
+	XIcon,
+	CheckIcon,
+	DotsVerticalIcon,
+	TrashIcon,
+	PencilIcon,
+} from "@heroicons/react/outline";
 import { UserIcon } from "@heroicons/react/solid";
 
 export default function AddMembers() {
@@ -74,24 +81,8 @@ export default function AddMembers() {
 		sendData(sendDataToSocket);
 	}, [sendData, sendDataToSocket]);
 
-	useEffect(() => {
-		socket.on("receive_group_data", (data) => {
-			// console.log(data);
-			dispatch(updateMembersWithSocket(data.groupData.members));
-
-			if (user._id === data.memberChanged && data.action === "addMember") {
-				dispatch(updateGroupsWithSocket(data));
-			} else if (
-				user._id === data.memberChanged &&
-				data.action === "removeMember"
-			) {
-				dispatch(updateGroupsWithSocket(data));
-				navigate("/chat");
-			}
-		});
-	}, [socket, dispatch, navigate, user._id]);
 	return (
-		<div className={groupId === "Global" ? "hidden" : ""}>
+		<div>
 			<TriggerButton
 				type="button"
 				onClick={handleButtonClick}
@@ -101,7 +92,7 @@ export default function AddMembers() {
 				aria-expanded={isOpen || undefined}
 				aria-haspopup="menu"
 			>
-				<PlusIcon className="h-8 w-8" />
+				<DotsVerticalIcon className="w-6 h-6 p-[2px] hover:bg-white rounded-full" />
 			</TriggerButton>
 			<MenuUnstyled
 				actions={menuActions}
@@ -111,66 +102,40 @@ export default function AddMembers() {
 				components={{ Root: Popper, Listbox: StyledListbox }}
 				componentsProps={{ listbox: { id: "simple-menu" } }}
 			>
-				<MenuSection label="Members">
-					{members?.map((user) => {
-						return (
-							<StyledMenuItem className="mb-1" key={user._id}>
-								<div className="flex items-center justify-between pr-2">
-									<div className="flex items-center gap-2">
-										<UserIcon
-											className={`h-6 w-6  ${
-												groupOwner === user._id
-													? "text-sky-600"
-													: "text-slate-800"
-											}`}
-										/>
-										<span className="font-sans">{user.username}</span>
-									</div>
-									{currentAccountId === groupOwner && groupOwner !== user._id && (
-										<button
-											onClick={() => {
-												dispatch(removeGroupMembers(user._id));
-												// close();
-											}}
-											className="p-[4px] text-red-800 hover:bg-red-600 hover:text-white rounded-full"
-										>
-											<XIcon className="h-4 w-4" />
-										</button>
-									)}
-								</div>
-							</StyledMenuItem>
-						);
-					})}
+				{/* <Divider /> */}
+
+				<MenuSection label="Tools">
+					<StyledMenuItem className="mb-1">
+						<div className="flex items-center justify-between pr-2">
+							<div className="flex items-center gap-2">
+								<span className="font-semibold">Edit Group Name</span>
+							</div>
+							<button
+								onClick={() => {
+									console.log("clicked");
+								}}
+								className="p-[6px] text-green-800 hover:bg-green-600 hover:text-white rounded-full"
+							>
+								<PencilIcon className="h-6 w-6" />
+							</button>
+						</div>
+					</StyledMenuItem>
+					<StyledMenuItem className="mb-1">
+						<div className="flex items-center justify-between pr-2">
+							<div className="flex items-center gap-2">
+								<span className="font-semibold">Delete Group</span>
+							</div>
+							<button
+								onClick={() => {
+									console.log("clicked");
+								}}
+								className="p-[6px] text-green-800 hover:bg-green-600 hover:text-white rounded-full"
+							>
+								<TrashIcon className="h-6 w-6" />
+							</button>
+						</div>
+					</StyledMenuItem>
 				</MenuSection>
-				{currentAccountId === groupOwner &&
-					Object.keys(filteredMembers).length !== 0 && <Divider />}
-				{currentAccountId === groupOwner &&
-					Object.keys(filteredMembers).length !== 0 && (
-						<MenuSection label="Add Users">
-							{filteredMembers?.map((user) => {
-								return (
-									<StyledMenuItem className="mb-1" key={user._id}>
-										<div className="flex items-center justify-between pr-2">
-											<div className="flex items-center gap-2">
-												<UserIcon className="h-6 w-6 text-slate-800" />
-												<span className="font-sans">{user.username}</span>
-											</div>
-											{
-												<button
-													onClick={() => {
-														dispatch(addGroupMembers(user._id));
-													}}
-													className="p-[4px] text-green-800 hover:bg-green-600 hover:text-white rounded-full"
-												>
-													<CheckIcon className="h-4 w-4" />
-												</button>
-											}
-										</div>
-									</StyledMenuItem>
-								);
-							})}
-						</MenuSection>
-					)}
 			</MenuUnstyled>
 		</div>
 	);
@@ -247,9 +212,9 @@ const TriggerButton = styled("button")(
   min-height: auto;
   min-width: auto;
   background: transparent;
-  border-radius: 0.75em;
+  border-radius: 1em;
   margin: 0;
-  padding: 1px;
+  padding: 2px;
   text-align: left;
   line-height: 1.5;
   color: ${theme.palette.mode === "dark" ? grey[300] : grey[500]};

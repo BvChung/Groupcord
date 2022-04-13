@@ -17,14 +17,6 @@ export default function ChatGroups() {
 	const { groupInfo } = useSelector((state) => state.conversations);
 	// console.log(groupInfo);
 
-	// const loadConversations = useCallback(() => {
-	// 	dispatch(getChatGroups());
-	// }, [dispatch]);
-
-	// useEffect(() => {
-	// 	loadConversations();
-	// }, [loadConversations]);
-
 	const [active, setActive] = useState(false);
 	function toggleActive() {
 		setActive((prevActive) => !prevActive);

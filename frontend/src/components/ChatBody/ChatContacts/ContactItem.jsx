@@ -5,7 +5,8 @@ import {
 	updateActiveChatGroup,
 	getChatGroups,
 } from "../../../features/conversations/conversationSlice";
-import { DotsHorizontalIcon } from "@heroicons/react/outline";
+import { DotsHorizontalIcon, TrashIcon } from "@heroicons/react/outline";
+import GroupTools from "./GroupTools";
 
 function ContactItem({
 	indexNumber,
@@ -49,11 +50,7 @@ function ContactItem({
 					{/* <span>32 mins ago</span> */}
 				</div>
 			</div>
-			{activeIndex === indexNumber && (
-				<button className="justify-end">
-					<DotsHorizontalIcon className="w-5 h-5" />
-				</button>
-			)}
+			{activeIndex === indexNumber && <GroupTools />}
 		</div>
 	);
 }
