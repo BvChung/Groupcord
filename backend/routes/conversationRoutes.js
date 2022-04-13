@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const {
-	getConversation,
-	createConversation,
+	getChatGroups,
+	createChatGroup,
+	deleteChatGroup,
 	getMembers,
 	addGroupMembers,
 	removeGroupMembers,
@@ -12,13 +13,12 @@ const { authWithToken } = require("../middleware/authMiddleware");
 
 router
 	.route("/")
-	.get(authWithToken, getConversation)
-	.post(authWithToken, createConversation);
+	.get(authWithToken, getChatGroups)
+	.post(authWithToken, createChatGroup);
 
+router.route("/:id").delete(authWithToken, deleteChatGroup);
 router.route("/members").get(authWithToken, getMembers);
-
 router.route("/add/:groupId").put(authWithToken, addGroupMembers);
-
 router.route("/remove/:groupId").put(authWithToken, removeGroupMembers);
 
 module.exports = router;

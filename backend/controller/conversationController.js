@@ -6,7 +6,7 @@ const User = require("../models/userModel");
 // @route Get /api/conversation
 // @access Private
 
-const getConversation = asyncHandler(async (req, res) => {
+const getChatGroups = asyncHandler(async (req, res) => {
 	// const userConversations = await Conversation.find({ user: req.user.id });
 	const userConversations = await Conversation.find({ membersId: req.user.id });
 
@@ -18,7 +18,7 @@ const getConversation = asyncHandler(async (req, res) => {
 // @desc Create conversation
 // @route POST /api/conversation
 // @access Private
-const createConversation = asyncHandler(async (req, res) => {
+const createChatGroup = asyncHandler(async (req, res) => {
 	const { groupName } = req.body;
 
 	const conversation = await Conversation.create({
@@ -29,6 +29,17 @@ const createConversation = asyncHandler(async (req, res) => {
 	});
 
 	return res.status(200).json(conversation);
+});
+
+// @desc Delete group
+// @route POST /api/conversation/:id
+// @access Private
+const deleteChatGroup = asyncHandler(async (req, res) => {
+	const { id } = req.params;
+
+	const deleteGroup = await Conversation.findByIdAndDelete({ _id: id });
+
+	return res.status(200).json(deleteGroup);
 });
 
 const getMembers = asyncHandler(async (req, res) => {
@@ -62,7 +73,6 @@ const addGroupMembers = asyncHandler(async (req, res) => {
 			new: true,
 		}
 	);
-	// console.log(updatedMembers.members);
 
 	return res.status(200).json({
 		updatedMembers: updatedMembers,
@@ -92,13 +102,6 @@ const removeGroupMembers = asyncHandler(async (req, res) => {
 		}
 	);
 
-	const data = {
-		updatedMembers: updatedMembers,
-		memberChanged: memberId,
-	};
-
-	console.log(data);
-
 	return res.status(200).json({
 		updatedMembers: updatedMembers,
 		memberChanged: memberId,
@@ -106,8 +109,9 @@ const removeGroupMembers = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-	getConversation,
-	createConversation,
+	getChatGroups,
+	createChatGroup,
+	deleteChatGroup,
 	getMembers,
 	addGroupMembers,
 	removeGroupMembers,
