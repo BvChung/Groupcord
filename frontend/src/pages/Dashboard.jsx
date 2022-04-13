@@ -13,14 +13,12 @@ function Dashboard() {
 	const dispatch = useDispatch();
 
 	const { user } = useSelector((state) => state.auth);
-	console.log(user);
+	// console.log(user);
 
 	useEffect(() => {
-		// console.log("load from dashboard");
-		// dispatch(getChatMessage());
 		dispatch(getRegisteredMembers());
 		dispatch(getChatGroups());
-	}, [dispatch]);
+	}, [dispatch, socket]);
 
 	const createUser = useCallback(
 		(data) => {
@@ -32,6 +30,8 @@ function Dashboard() {
 	useEffect(() => {
 		createUser(user);
 	}, [user, createUser]);
+
+	//
 
 	const { registeredMembers } = useSelector((state) => state.conversations);
 	const { groupId } = useSelector((state) => state?.conversations.groupInfo);

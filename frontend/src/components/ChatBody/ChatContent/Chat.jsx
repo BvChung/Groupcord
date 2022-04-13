@@ -174,20 +174,24 @@ const ex = [
 		message: "2",
 		dateCreated: "4/9",
 		timeCreated: "5:30 AM",
-		members: [{ _id: "6233a3e6f4cef1bba5c015c4", username: "GuestAccount" }],
-		_id: "6252aa62c39b1b8c9981ee7b",
+		members: [
+			{ _id: "6233a3e6f4cef1bba5c015c4", username: "GuestAccount" },
+			{ _id: "6233a3e6f4cef1bba5c015c4", username: "GuestAccount" },
+		],
+		_id: "6252aa62c39b1b8c9981ee",
 		createdAt: "2022-04-09T10:30:08.836Z",
 		updatedAt: "2022-04-09T10:30:08.836Z",
 		__v: 0,
 	},
 	{
-		user: "6233a3e6f4cef1bba5c015c4",
+		user: "6233a3e6f4cef1bba5c015c",
 		username: "GuestAccount",
 		groupId: "Global",
 		message: "2",
 		dateCreated: "4/9",
 		timeCreated: "5:30 AM",
-		members: [{ _id: "6233a3e6f4cef1bba5c015c4", username: "GuestAccount" }],
+		members: [{ _id: "6233a3e6f4cef1bba5c015c1", username: "GuestAccount" }],
+		membersId: [{ _id: "1", username: "1" }],
 		_id: "6252aa62c39b1b8c9981ee7",
 		createdAt: "2022-04-09T10:30:08.836Z",
 		updatedAt: "2022-04-09T10:30:08.836Z",
@@ -195,23 +199,75 @@ const ex = [
 	},
 ];
 
-const id = "6252aa62c39b1b8c9981ee7b";
-const newMembers = [
-	{ _id: "6233a3e6f4cef1bba5c015c4", username: "GuestAccount" },
-	{ _id: "6233a3e6f4cef1bba5c015c4", username: "GuestAccount" },
-];
+const one = {
+	user: "6233a3e6f4cef1bba5c015c4",
+	username: "GuestAccount",
+	groupId: "Global",
+	message: "2",
+	dateCreated: "4/9",
+	timeCreated: "5:30 AM",
+	members: [{ _id: "6233a3e6f4cef1bba5c015c4", username: "Account" }],
+	membersId: [{ _id: "2", username: "2" }],
+	_id: "6252aa62c39b1b8c9981ee7b",
+	createdAt: "2022-04-09T10:30:08.836Z",
+	updatedAt: "2022-04-09T10:30:08.836Z",
+	__v: 0,
+};
 
-const update = ex.map((group) => {
-	if (group._id === id) {
-		return {
-			...group,
-			members: newMembers,
-		};
+const update = (obj1, obj2) => {
+	const found = obj1.some((data) => data._id === obj2._id);
+	console.log(found);
+
+	if (found) {
+		return obj1.map((data) => {
+			if (data._id === obj2._id) {
+				return {
+					...data,
+					members: obj2.members,
+					membersId: obj2.membersId,
+					createdAt: obj2.createdAt,
+					updatedAt: obj2.updatedAt,
+				};
+			} else {
+				return {
+					...data,
+				};
+			}
+		});
 	} else {
-		return {
-			...group,
-		};
+		return [...obj1, obj2];
 	}
-});
+};
+// console.log(update(ex, one));
+
+// const id = "6252aa62c39b1b8c9981ee7b";
+// const newMembers = [
+// 	{ _id: "6233a3e6f4cef1bba5c015c4", username: "GuestAccount" },
+// 	{ _id: "6233a3e6f4cef1bba5c015c4", username: "GuestAccount" },
+// ];
+
+// const update = ex.map((group) => {
+// 	if (group._id === id) {
+// 		return {
+// 			...group,
+// 			members: newMembers,
+// 		};
+// 	} else {
+// 		return {
+// 			...group,
+// 		};
+// 	}
+// });
 // console.log(update);
 // console.log("_id" in ex);
+
+// const ex = [
+// 	{ id: "JOCsGn7oeqrGlc_hAAAD", username: "GuestAccount" },
+// 	{ id: "od5Mjy_4o7shGsYBAAAF", username: "1" },
+// ];
+// const u = { id: "cTNS60Aq5PU3XG3TAAAH", username: "1" };
+
+// const out = ex.some((user) => {
+// 	return user.username === u.username;
+
+// console.log(out);

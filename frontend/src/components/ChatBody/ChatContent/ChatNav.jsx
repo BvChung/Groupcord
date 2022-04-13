@@ -10,7 +10,6 @@ import AddMembers from "./AddMembers";
 function ChatNav({ toggleMenu }) {
 	const dispatch = useDispatch();
 	const { darkMode } = useSelector((state) => state.theme);
-	const { groupId } = useSelector((state) => state.conversations.groupInfo);
 
 	const [open, setOpen] = useState(false);
 	const handleClickOpen = () => {
@@ -33,7 +32,7 @@ function ChatNav({ toggleMenu }) {
 					<button onClick={toggleMenu}>
 						<MenuIcon className="h-8 w-8" />
 					</button>
-					{groupId !== "Global" && <AddMembers />}
+					<AddMembers />
 					<Menu handleClickOpen={handleClickOpen} />
 					<AccountMenu open={open} handleClose={handleClose} />
 

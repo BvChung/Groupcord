@@ -5,6 +5,7 @@ import {
 	addGroupMembers,
 	removeGroupMembers,
 	updateMembersWithSocket,
+	updateGroupsWithSocket,
 } from "../../../features/conversations/conversationSlice";
 import PropTypes from "prop-types";
 import MenuUnstyled from "@mui/base/MenuUnstyled";
@@ -53,17 +54,20 @@ export default function AddMembers() {
 	const { userConversations } = useSelector(
 		(state) => state?.conversations?.groups
 	);
-	const { groupInfo } = useSelector((state) => state?.conversations);
-	// console.log(groupInfo);
+	const { groupId } = useSelector((state) => state.conversations.groupInfo);
+	const { groups } = useSelector((state) => state?.conversations);
+
 	const { groupOwner } = useSelector((state) => state?.conversations.groupInfo);
 
 	const { filteredMembers } = useSelector((state) => state?.conversations);
 	// console.log(filteredMembers);
 	const { members } = useSelector((state) => state?.conversations.groupInfo);
 	// console.log(members);
-	const { sendMembersToSocket } = useSelector((state) => state?.conversations);
-	const { sendGroupToSocket } = useSelector((state) => state?.conversations);
-	// console.log(sendGroupToSocket);
+
+	const { sendDataToSocket } = useSelector((state) => state?.conversations);
+	// console.log(sendDataToSocket);
+	// const { sendMembersToSocket } = useSelector((state) => state?.conversations);
+	// const { sendGroupToSocket } = useSelector((state) => state?.conversations);
 
 	const currentAccountId = useSelector((state) => state.auth.user._id);
 	// console.log(currentAccountId);
@@ -90,26 +94,40 @@ export default function AddMembers() {
 		[socket]
 	);
 
-	useEffect(() => {
-		sendGroupData(sendGroupToSocket);
-	}, [sendGroupData, sendGroupToSocket]);
+	// useEffect(() => {
+	// 	sendGroupData(sendGroupToSocket);
+	// }, [sendGroupData, sendGroupToSocket]);
 
 	useEffect(() => {
-		sendMemberData(sendMembersToSocket);
-	}, [sendMemberData, sendMembersToSocket]);
+		sendMemberData(sendDataToSocket);
+	}, [sendMemberData, sendDataToSocket]);
+	// useEffect(() => {
+	// 	sendMemberData({
+	// 		groupData: sendGroupToSocket,
+	// 		membersData: sendMembersToSocket,
+	// 	});
+	// }, [sendMemberData, sendMembersToSocket]);
 
 	useEffect(() => {
 		socket.on("receive_members", (data) => {
-			dispatch(updateMembersWithSocket(data));
+			console.log(data);
+			dispatch(updateMembersWithSocket(data.groupData.members));
+			dispatch(updateGroupsWithSocket(data));
 		});
 	}, [socket, dispatch]);
+
+	// useEffect(() => {
+	// 	socket.on("receive_group", (data) => {
+	// 		console.log(data);
+	// 	});
+	// }, [socket, dispatch]);
 
 	// useEffect(() => {
 	// 	socket.emit("send_members", sendMembersToSocket);
 	// }, [sendMembersToSocket]);
 
 	return (
-		<>
+		<div className={groupId === "Global" ? "hidden" : ""}>
 			<TriggerButton
 				type="button"
 				onClick={handleButtonClick}
@@ -193,7 +211,7 @@ export default function AddMembers() {
 						</MenuSection>
 					)}
 			</MenuUnstyled>
-		</>
+		</div>
 	);
 }
 

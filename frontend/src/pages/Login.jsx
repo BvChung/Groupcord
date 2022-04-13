@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import { Link } from "react-router-dom";
 import { LoginIcon, UserIcon } from "@heroicons/react/outline";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -6,16 +6,18 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { loginUser, resetState } from "../features/authentication/authSlice";
+import { SocketContext } from "../appContext/socketContext";
 
 function Login() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const socket = useContext(SocketContext);
 
 	const { user, loginError, isSuccess, isLoading, message } = useSelector(
 		(state) => state.auth
 	);
 	// const auth = useSelector((state) => state.auth);
-	// console.log(auth);
+	console.log(user);
 
 	const [form, setForm] = useState({
 		guestAccount: false,
@@ -68,6 +70,7 @@ function Login() {
 
 		if (isSuccess || user) {
 			// If user logins or registers navigate('/') to dashboard
+			// socket.connect();
 			navigate("/chat");
 		}
 
@@ -75,7 +78,15 @@ function Login() {
 		return () => {
 			resetAfterLogin();
 		};
-	}, [user, isSuccess, navigate, resetAfterLogin, dispatch, displayError]);
+	}, [
+		user,
+		isSuccess,
+		socket,
+		navigate,
+		resetAfterLogin,
+		dispatch,
+		displayError,
+	]);
 	// [user, loginError, isSuccess, message, navigate, dispatch]
 
 	return (
