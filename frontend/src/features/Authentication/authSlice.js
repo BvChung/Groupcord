@@ -7,6 +7,7 @@ const user = JSON.parse(localStorage.getItem("user"));
 
 const initialState = {
 	user: user ? user : null,
+	socketIoSessionId: {},
 	loginError: false,
 	registerError: false,
 	updateError: false,

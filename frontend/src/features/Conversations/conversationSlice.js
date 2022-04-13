@@ -4,6 +4,7 @@ import {
 	filterMembers,
 	errorMessage,
 	updateGroup,
+	updateMembersGroups,
 } from "../helperFunc/helperFunctions";
 
 const initialState = {
@@ -14,6 +15,7 @@ const initialState = {
 		groupOwner: "",
 		members: [],
 	},
+	sendDataToSocket: {},
 	sendGroupToSocket: {},
 	sendMembersToSocket: {},
 	filteredMembers: {},
@@ -96,10 +98,27 @@ export const updateActiveChatGroup = createAsyncThunk(
 );
 
 export const updateMembersWithSocket = createAsyncThunk(
-	"group/updateWithSocket",
+	"group/updateMembers",
 	async (membersData, thunkAPI) => {
 		try {
 			return membersData;
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+
+export const updateGroupsWithSocket = createAsyncThunk(
+	"group/updateGroups",
+	async (data, thunkAPI) => {
+		try {
+			const groupDataOutput = {
+				groupData: data.groupData,
+				action: data.action,
+			};
+			console.log(groupDataOutput);
+
+			return groupDataOutput;
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -140,36 +159,54 @@ export const conversationSlice = createSlice({
 		});
 		builder.addCase(addGroupMembers.fulfilled, (state, action) => {
 			state.isSuccess = true;
-			state.groupInfo.members = action.payload.members;
+			state.groupInfo.members = action.payload.updatedMembers.members;
 			state.filteredMembers = filterMembers(
 				state.registeredMembers,
 				state.groupInfo.members
 			);
 
-			state.sendGroupToSocket = action.payload;
-			state.sendMembersToSocket = action.payload.members;
+			state.sendDataToSocket = {
+				groupData: action.payload.updatedMembers,
+				memberChanged: action.payload.memberChanged,
+				action: "addMember",
+			};
+			// state.sendGroupToSocket = action.payload.updatedMembers;
+			// state.sendMembersToSocket = action.payload.updatedMembers.members;
 
 			// Update users groups when group owner adds member
-			const currentGroup = current(state.groupInfo);
-			state.groups = updateGroup(state.groups, currentGroup, action.payload);
+			const currentGroupInfoState = current(state.groupInfo);
+			state.groups = updateGroup(
+				state.groups,
+				currentGroupInfoState,
+				action.payload.updatedMembers
+			);
 		});
 		builder.addCase(addGroupMembers.rejected, (state) => {
 			state.isError = true;
 		});
 		builder.addCase(removeGroupMembers.fulfilled, (state, action) => {
 			state.isSuccess = true;
-			state.groupInfo.members = action.payload.members;
+			state.groupInfo.members = action.payload.updatedMembers.members;
 			state.filteredMembers = filterMembers(
 				state.registeredMembers,
 				state.groupInfo.members
 			);
 
-			state.sendGroupToSocket = action.payload;
-			state.sendMembersToSocket = action.payload.members;
+			state.sendDataToSocket = {
+				groupData: action.payload.updatedMembers,
+				memberChanged: action.payload.memberChanged,
+				action: "removeMember",
+			};
+			// state.sendGroupToSocket = action.payload.updatedMembers;
+			// state.sendMembersToSocket = action.payload.updatedMembers.members;
 
-			// Updates users groups when group owner removes member
-			const currentGroup = current(state.groupInfo);
-			state.groups = updateGroup(state.groups, currentGroup, action.payload);
+			// Update users groups when group owner adds member
+			const currentGroupInfoState = current(state.groupInfo);
+			state.groups = updateGroup(
+				state.groups,
+				currentGroupInfoState,
+				action.payload.updatedMembers
+			);
 		});
 		builder.addCase(removeGroupMembers.rejected, (state) => {
 			state.isLoading = false;
@@ -187,6 +224,13 @@ export const conversationSlice = createSlice({
 		});
 		builder.addCase(updateMembersWithSocket.fulfilled, (state, action) => {
 			state.groupInfo.members = action.payload;
+		});
+		builder.addCase(updateGroupsWithSocket.fulfilled, (state, action) => {
+			// const currentGroupsState = current(state.groupInfo);
+			state.groups = updateMembersGroups(state.groups, action.payload);
+
+			// const ex = updateMembersGroups(state.groups, action.payload);
+			// console.log(ex);
 		});
 	},
 });

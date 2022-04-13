@@ -13,18 +13,30 @@ export const updateGroup = (state, currentGroup, payload) => {
 		}
 	});
 };
-// const update = current(state.groups).map((data) => {
-// 	if (data._id === currentGroup.groupId) {
-// 		return {
-// 			...data,
-// 			members: action.payload,
-// 		};
-// 	} else {
-// 		return {
-// 			...data,
-// 		};
-// 	}
-// });
+
+export const updateMembersGroups = (obj1, obj2) => {
+	const foundChatGroup = current(obj1).some((data) => data._id === obj2._id);
+
+	if (foundChatGroup) {
+		return current(obj1).map((data) => {
+			if (data._id === obj2._id) {
+				return {
+					...data,
+					members: obj2.members,
+					membersId: obj2.membersId,
+					createdAt: obj2.createdAt,
+					updatedAt: obj2.updatedAt,
+				};
+			} else {
+				return {
+					...data,
+				};
+			}
+		});
+	} else {
+		return [...current(obj1), obj2];
+	}
+};
 
 export const configuration = (token) => {
 	return {
