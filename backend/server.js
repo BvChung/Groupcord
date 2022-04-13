@@ -35,27 +35,42 @@ app.use("/api/conversation", require("./routes/conversationRoutes"));
 // Error handler that converts standard Express error html to a JSON error message using custom middleware
 app.use(errorHandler);
 
-const users = [];
-const createUser = (id, username) => {
-	users.push({
-		id: id,
+// Socket.io data emission
+let users = [];
+const createUser = (socketId, username, userId) => {
+	const newUser = {
+		socketId: socketId,
 		username: username,
+		userId: userId,
+	};
+
+	users = users.filter((user) => {
+		return user.username !== newUser.username;
 	});
+
+	users.push(newUser);
 };
 
-// Socket.io data emission
+const removeUser = (socketId) => {
+	return (users = users.filter((user) => {
+		user.socketId !== socketId;
+	}));
+};
+
 io.on("connection", (socket) => {
 	console.log(`A user connected ${socket.id}`.brightMagenta.underline);
-
 	// createUser(socket.id, "guest");
-	// console.log(users);
 	socket.on("user_connected", (data) => {
-		console.log(data);
-		createUser(socket.id, data.username);
+		// console.log(data);
+		createUser(socket.id, data.username, data._id);
+		// users[data._id] = socket.id;
 		console.log(users);
 	});
 
+	console.log(socket.rooms);
+
 	let currentRoom;
+	let currentId;
 
 	socket.on("join_room", (room, roomConfirmation) => {
 		const previousRoom = getPreviousRoom(socket.rooms);
@@ -66,11 +81,13 @@ io.on("connection", (socket) => {
 		console.log(`User ${socket.id} Joined room: ${room}`.brightGreen.underline);
 		socket.join(room);
 		currentRoom = room;
+		console.log(socket.rooms);
 		roomConfirmation(`Joined ${room}`);
 	});
 
 	socket.on("send_message", (data) => {
 		// console.log(data);
+		// socket.to(currentRoom).emit("receive_message", data);
 		socket.to(data.groupId).emit("receive_message", data);
 	});
 
@@ -83,12 +100,28 @@ io.on("connection", (socket) => {
 
 	socket.on("send_members", (data) => {
 		if (Object.keys(data).length > 1) {
-			socket.to(currentRoom).emit("receive_members", data);
+			const member = users.find((user) => {
+				return user.userId === data.memberChanged && user.userId;
+			});
+			console.log(member);
+
+			if (member) {
+				console.log(member.socketId);
+				socket
+					.to(member.socketId)
+					.to(currentRoom)
+					.emit("receive_members", data);
+			} else {
+				socket.to(currentRoom).emit("receive_members", data);
+			}
 		}
 	});
 
+	// && Object.keys(data.membersData).length > 1
+
 	socket.on("send_id", (data) => {
-		console.log(data);
+		// console.log(data);
+		// currentId = data;
 	});
 
 	socket.on("disconnect", () => {
