@@ -3,6 +3,7 @@ const router = express.Router();
 const {
 	getChatGroups,
 	createChatGroup,
+	updateChatGroupName,
 	deleteChatGroup,
 	getMembers,
 	addGroupMembers,
@@ -16,9 +17,10 @@ router
 	.get(authWithToken, getChatGroups)
 	.post(authWithToken, createChatGroup);
 
-router.route("/:id").delete(authWithToken, deleteChatGroup);
 router.route("/members").get(authWithToken, getMembers);
+router.route("/update/:groupId").put(authWithToken, updateChatGroupName);
 router.route("/add/:groupId").put(authWithToken, addGroupMembers);
 router.route("/remove/:groupId").put(authWithToken, removeGroupMembers);
+router.route("/delete/:groupId").delete(authWithToken, deleteChatGroup);
 
 module.exports = router;

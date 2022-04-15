@@ -69,21 +69,36 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on("send_group_data", (groupData) => {
-		if (Object.keys(groupData).length > 1) {
-			const member = users.find((user) => {
-				return user.userId === groupData.memberChanged && user.userId;
-			});
+		if (Object.keys(groupData).length === 0) return;
 
-			if (member) {
-				console.log(member.socketId);
-				socket
-					.to(member.socketId)
-					.to(currentRoom)
-					.emit("receive_group_data", groupData);
-			} else {
-				socket.to(currentRoom).emit("receive_group_data", groupData);
-			}
+		const member = connectedUsers.find((user) => {
+			return user.userId === groupData.memberChanged && user.userId;
+		});
+
+		if (member) {
+			console.log(member.socketId);
+			socket
+				.to(member.socketId)
+				.to(currentRoom)
+				.emit("receive_group_data", groupData);
+		} else {
+			socket.to(currentRoom).emit("receive_group_data", groupData);
 		}
+		// if (Object.keys(groupData).length > 1)
+	});
+
+	socket.on("send_group_name_updated", (groupNameData) => {
+		if (Object.keys(groupNameData).length === 0) return;
+
+		console.log(groupNameData);
+		socket.broadcast.emit("receive_group_name_updated", groupNameData);
+	});
+
+	socket.on("send_group_deleted", (groupDeletedData) => {
+		if (Object.keys(groupDeletedData).length === 0) return;
+
+		console.log(groupDeletedData);
+		socket.emit("receive_group_deleted", groupDeletedData);
 	});
 
 	// && Object.keys(data.membersData).length > 1

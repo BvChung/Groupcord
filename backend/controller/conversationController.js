@@ -1,11 +1,11 @@
 const asyncHandler = require("express-async-handler");
 const Conversation = require("../models/conversationModel");
 const User = require("../models/userModel");
+const Messages = require("../models/messageModel");
 
 // @desc Get chat groups based on user
 // @route Get /api/conversation
 // @access Private
-
 const getChatGroups = asyncHandler(async (req, res) => {
 	// const userConversations = await Conversation.find({ user: req.user.id });
 	const userConversations = await Conversation.find({ membersId: req.user.id });
@@ -31,17 +31,46 @@ const createChatGroup = asyncHandler(async (req, res) => {
 	return res.status(200).json(conversation);
 });
 
-// @desc Delete group
-// @route POST /api/conversation/:id
+// @desc Update Group
+// @route PUT /api/conversation/:id
 // @access Private
-const deleteChatGroup = asyncHandler(async (req, res) => {
-	const { id } = req.params;
+const updateChatGroupName = asyncHandler(async (req, res) => {
+	const { groupId } = req.params;
 
-	const deleteGroup = await Conversation.findByIdAndDelete({ _id: id });
+	const updatedGroupName = await Conversation.findByIdAndUpdate(
+		groupId,
+		req.body,
+		{
+			new: true,
+		}
+	);
+	const allGroups = await Conversation.find({ membersId: req.user.id });
 
-	return res.status(200).json(deleteGroup);
+	return res.status(200).json({
+		allGroups,
+		updatedGroupName,
+	});
 });
 
+// @desc Delete group
+// @route DELETE /api/conversation/:id
+// @access Private
+const deleteChatGroup = asyncHandler(async (req, res) => {
+	const { groupId } = req.params;
+
+	const deletedGroup = await Conversation.findByIdAndDelete(groupId);
+	const allGroups = await Conversation.find({ membersId: req.user.id });
+	// console.log(userConversations);
+
+	return res.status(200).json({
+		allGroups,
+		deletedGroup,
+	});
+});
+
+// @desc Get members
+// @route GET /api/conversation/members
+// @access Private
 const getMembers = asyncHandler(async (req, res) => {
 	const users = await User.find({}).select("username");
 
@@ -111,6 +140,7 @@ const removeGroupMembers = asyncHandler(async (req, res) => {
 module.exports = {
 	getChatGroups,
 	createChatGroup,
+	updateChatGroupName,
 	deleteChatGroup,
 	getMembers,
 	addGroupMembers,
