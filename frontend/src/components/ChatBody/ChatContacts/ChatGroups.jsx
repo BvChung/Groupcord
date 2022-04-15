@@ -63,6 +63,7 @@ export default function ChatGroups() {
 
 	const socket = useContext(SocketContext);
 	const { groupDeletedToSocket } = useSelector((state) => state.conversations);
+	// console.log(groupDeletedToSocket);
 	const { groupNameUpdatedToSocket } = useSelector(
 		(state) => state.conversations
 	);
@@ -79,7 +80,6 @@ export default function ChatGroups() {
 
 	useEffect(() => {
 		socket.on("receive_group_name_updated", (data) => {
-			console.log(data);
 			dispatch(updateGroupNameWithSocket(data));
 		});
 	}, [socket]);
@@ -87,6 +87,7 @@ export default function ChatGroups() {
 	useEffect(() => {
 		socket.on("receive_group_deleted", (data) => {
 			console.log(data);
+			dispatch(deleteGroupWithSocket(data));
 		});
 	}, [socket]);
 

@@ -1,5 +1,7 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteChatMessage } from "../../../features/messages/messageSlice";
+import { TrashIcon } from "@heroicons/react/outline";
 
 function ChatItem({
 	messageId,
@@ -9,6 +11,12 @@ function ChatItem({
 	timeCreated,
 	dateCreated,
 }) {
+	const [showIcon, setShowIcon] = useState(false);
+	function toggleShowIcon() {
+		setShowIcon((prev) => !prev);
+	}
+	const showStyle = showIcon ? "" : "hidden";
+	const dispatch = useDispatch();
 	const { user } = useSelector((state) => state.auth);
 
 	const messagePosition = userId === user._id ? "justify-end" : "";
@@ -23,19 +31,17 @@ function ChatItem({
 		day: "numeric",
 		month: "numeric",
 	});
-	// console.log(typeof messageId);
 
 	return (
 		<div
-			onClick={() => {
-				console.log(messageId);
-			}}
-			className={`flex items-center my-6 first:mt-0 last:mb-0 fade ${messagePosition}`}
+			onMouseEnter={toggleShowIcon}
+			onMouseLeave={toggleShowIcon}
+			className={`flex items-center my-6 first:mt-0 last:mb-0 fade transition-all ${messagePosition}`}
 		>
 			<div
 				className={`max-w-[60%] md:max-w-[50%] h-fit p-4 break-words ${messageStyle}`}
 			>
-				<div className="flex gap-4 ">
+				<div className="flex gap-4 mb-1">
 					{userId !== user._id && (
 						<span className="font-medium text-gray-700">{username}</span>
 					)}
@@ -44,7 +50,19 @@ function ChatItem({
 					)}
 					<span className="text-gray-600">{timeCreated}</span>
 				</div>
-				<p className="text-gray-900 font-medium">{message}</p>
+				<div className="flex items-center justify-between">
+					<p className="text-gray-900 font-medium">{message}</p>
+					{userId === user._id && (
+						<button
+							onClick={() => {
+								dispatch(deleteChatMessage(messageId));
+							}}
+							className="transition-all"
+						>
+							<TrashIcon className={`h-5 w-5 ${showStyle}`} />
+						</button>
+					)}
+				</div>
 			</div>
 		</div>
 	);

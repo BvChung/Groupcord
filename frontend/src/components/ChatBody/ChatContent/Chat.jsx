@@ -18,11 +18,13 @@ function Chat({ toggleMenu }) {
 	const [userMessage, setUserMessage] = useState({
 		message: "",
 	});
-	const { user } = useSelector((state) => state?.auth);
-	const { groupMessages } = useSelector((state) => state?.messages?.messageArr);
-	const { messageToSocket } = useSelector((state) => state?.messages);
-	const { groupId } = useSelector((state) => state?.conversations.groupInfo);
-	const { members } = useSelector((state) => state?.conversations.groupInfo);
+	const { user } = useSelector((state) => state.auth);
+	const { groupMessages } = useSelector((state) => state.messages.messageArr);
+	const { newMessageToSocket } = useSelector((state) => state.messages);
+	const { deletedMessageToSocket } = useSelector((state) => state.messages);
+	const { groupId } = useSelector((state) => state.conversations.groupInfo);
+	const { members } = useSelector((state) => state.conversations.groupInfo);
+	console.log(deletedMessageToSocket);
 	const refMessage = useRef(null);
 	const scrollToMessage = () => refMessage.current.scrollIntoView();
 
@@ -87,10 +89,8 @@ function Chat({ toggleMenu }) {
 	);
 
 	useEffect(() => {
-		if (Object.keys(messageToSocket).length !== 0) {
-			sendMessage(messageToSocket);
-		}
-	}, [messageToSocket, sendMessage]);
+		sendMessage(newMessageToSocket);
+	}, [newMessageToSocket, sendMessage]);
 
 	useEffect(() => {
 		socket.on("receive_message", (data) => {
@@ -99,6 +99,15 @@ function Chat({ toggleMenu }) {
 			}
 		});
 	}, [updateWithSocketMessage, socket]);
+
+	useEffect(() => {
+		socket.emit("send_deleted_message", deletedMessageToSocket);
+	}, [deletedMessageToSocket]);
+	useEffect(() => {
+		socket.on("receive_deleted_message", (data) => {
+			console.log(data);
+		});
+	}, [deletedMessageToSocket]);
 
 	// ---------------
 	useEffect(() => {

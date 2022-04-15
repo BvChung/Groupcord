@@ -47,17 +47,17 @@ export default function FormDialog({ open, handleClose }) {
 		e.preventDefault();
 
 		if (formData.currentPassword !== "" && formData.newPassword === "") {
-			return toast.error("Please enter new password");
+			return toast.warn("Please enter new password");
 		}
 		if (formData.currentPassword === "" && formData.newPassword !== "") {
-			return toast.error("Please enter current password");
+			return toast.warn("Please enter current password");
 		}
 		if (
 			formData.currentPassword === formData.newPassword &&
 			formData.currentPassword !== "" &&
 			formData.newPassword !== ""
 		) {
-			return toast.error("Passwords are matching");
+			return toast.warn("Passwords are matching");
 		}
 
 		const sentData = {
