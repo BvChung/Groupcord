@@ -28,7 +28,11 @@ export default function App() {
 					</Routes>
 				</div>
 			</BrowserRouter>
-			<ToastContainer autoClose={2000} theme={darkMode ? "dark" : "light"} />
+			<ToastContainer
+				limit={1}
+				autoClose={1750}
+				theme={darkMode ? "dark" : "light"}
+			/>
 		</SocketContext.Provider>
 	);
 }

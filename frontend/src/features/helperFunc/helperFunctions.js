@@ -14,8 +14,28 @@ export const updateGroup = (state, currentGroup, payload) => {
 	});
 };
 
+export const updateGroupName = (state, payload) => {
+	return current(state).map((data) => {
+		if (data._id === payload._id) {
+			return {
+				...payload,
+			};
+		} else {
+			return {
+				...data,
+			};
+		}
+	});
+};
+
+export const deleteData = (state, payload) => {
+	return current(state).filter((data) => {
+		return data._id !== payload._id;
+	});
+};
+
 export const updateMembersGroups = (state, payload) => {
-	const { groupData, memberChanged, action } = payload;
+	const { groupData, action } = payload;
 
 	const foundChatGroup = current(state).some(
 		(data) => data._id === groupData._id
