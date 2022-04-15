@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
+const Messages = require("../models/messageModel");
 
 // @desc Register new user
 // @route POST /api/users
@@ -128,6 +129,12 @@ const updateUser = asyncHandler(async (req, res) => {
 			new: true,
 		}
 	);
+
+	// Update Messages Schema with affiliated username
+	if (username !== currentUser.username) {
+		const updateMsg = await Messages.updateMany({ username: username });
+		console.log(updateMsg);
+	}
 
 	return res.status(200).json({
 		_id: currentUser.id,

@@ -12,10 +12,12 @@ const messageSchema = mongoose.Schema(
 		username: {
 			type: String,
 			required: [true, "Please add a username"],
+			ref: "User",
 		},
 		groupId: {
 			type: String,
 			required: [true, "Please add a groupId value"],
+			ref: "Conversation",
 		},
 		message: {
 			type: String,

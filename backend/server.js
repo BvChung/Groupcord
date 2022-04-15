@@ -63,9 +63,15 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on("send_message", (messageData) => {
+		if (Object.keys(messageData).length === 0) return;
 		// console.log(messageData);
 		// socket.to(currentRoom).emit("receive_message", messageData);
 		socket.to(messageData.groupId).emit("receive_message", messageData);
+	});
+
+	socket.on("send_deleted_message", (messageData) => {
+		if (Object.keys(messageData).length === 0) return;
+		socket.to(currentRoom).emit("receive_deleted_message", messageData);
 	});
 
 	socket.on("send_group_data", (groupData) => {
@@ -96,9 +102,10 @@ io.on("connection", (socket) => {
 
 	socket.on("send_group_deleted", (groupDeletedData) => {
 		if (Object.keys(groupDeletedData).length === 0) return;
+		// console.log(groupDeletedData);
 
-		console.log(groupDeletedData);
-		socket.emit("receive_group_deleted", groupDeletedData);
+		// console.log(groupDeletedData);
+		socket.broadcast.emit("receive_group_deleted", groupDeletedData);
 	});
 
 	// && Object.keys(data.membersData).length > 1

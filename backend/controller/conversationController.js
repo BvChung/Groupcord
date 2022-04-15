@@ -58,10 +58,13 @@ const updateChatGroupName = asyncHandler(async (req, res) => {
 const deleteChatGroup = asyncHandler(async (req, res) => {
 	const { groupId } = req.params;
 
-	const deletedGroup = await Conversation.findByIdAndDelete(groupId);
-	const allGroups = await Conversation.find({ membersId: req.user.id });
-	// console.log(userConversations);
+	// Delete group
+	const deletedGroup = await Conversation.findByIdAndDelete(req.params.groupId);
 
+	// Delete all messages associated with group in database
+	await Messages.deleteMany({ groupId: req.params.groupId });
+
+	const allGroups = await Conversation.find({ membersId: req.user.id });
 	return res.status(200).json({
 		allGroups,
 		deletedGroup,
@@ -81,7 +84,7 @@ const getMembers = asyncHandler(async (req, res) => {
 	return res.status(200).json(returnedUsers);
 });
 
-// @desc Update each groups members
+// @desc Update with new groups members
 // @route PUT /api/conversation
 // @access Private
 const addGroupMembers = asyncHandler(async (req, res) => {

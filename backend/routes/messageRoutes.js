@@ -15,7 +15,7 @@ router
 	.get(authWithToken, getMessages)
 	.post(authWithToken, setMessages);
 router
-	.route("/:id")
+	.route("/:messageId")
 	.put(authWithToken, updateMessages)
 	.delete(authWithToken, deleteMessages);
 
