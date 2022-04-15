@@ -1,12 +1,16 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { PlusIcon, PencilAltIcon } from "@heroicons/react/outline";
 import { GlobeIcon } from "@heroicons/react/solid";
 import { SearchIcon } from "@heroicons/react/solid";
 import ContactItem from "./ContactItem";
 import ContactMenu from "./ContactMenu";
-import { useSelector, useDispatch } from "react-redux";
 import { getChatGroups } from "../../../features/conversations/conversationSlice";
-import { updateActiveChatGroup } from "../../../features/conversations/conversationSlice";
+import {
+	updateActiveChatGroup,
+	updateGroupNameWithSocket,
+	deleteGroupWithSocket,
+} from "../../../features/conversations/conversationSlice";
 import { SocketContext } from "../../../appContext/socketContext";
 
 export default function ChatGroups() {
@@ -57,6 +61,35 @@ export default function ChatGroups() {
 			? "bg-gray6 dark:bg-slate-800 border-l-sky-600 border-l-[3px] dark:border-l-sky-500"
 			: "border-l-[3px] border-l-gray4 dark:border-l-gray-500";
 
+	const socket = useContext(SocketContext);
+	const { groupDeletedToSocket } = useSelector((state) => state.conversations);
+	const { groupNameUpdatedToSocket } = useSelector(
+		(state) => state.conversations
+	);
+	// console.log(groupDeletedToSocket);
+	// console.log(groupNameUpdatedToSocket);
+
+	useEffect(() => {
+		socket.emit("send_group_deleted", groupDeletedToSocket);
+	}, [groupDeletedToSocket, socket]);
+
+	useEffect(() => {
+		socket.emit("send_group_name_updated", groupNameUpdatedToSocket);
+	}, [groupNameUpdatedToSocket, socket]);
+
+	useEffect(() => {
+		socket.on("receive_group_name_updated", (data) => {
+			console.log(data);
+			dispatch(updateGroupNameWithSocket(data));
+		});
+	}, [socket]);
+
+	useEffect(() => {
+		socket.on("receive_group_deleted", (data) => {
+			console.log(data);
+		});
+	}, [socket]);
+
 	return (
 		<div className="hidden md:flex flex-col w-[40%] max-w-[350px] bg-offwhite dark:bg-dark2">
 			<div className="flex items-center justify-between mb-4 px-6 py-4 pb-4 h-16 border-b-2 dark:border-b-dark4 shadow-sm">
@@ -98,7 +131,7 @@ export default function ChatGroups() {
 								})
 							);
 						}}
-						className={`flex items-center w-full h-12 pl-4 gap-2 
+						className={`flex items-center w-full h-12 pl-4 gap-[10px] 
 							hover:bg-slate-200 dark:hover:bg-slate-800 ${globalActive}`}
 					>
 						<GlobeIcon className="h-7 w-7 text-sky-500 dark:text-sky-600" />

@@ -19,6 +19,25 @@ const createGroup = async (conversationData, token) => {
 	return response.data;
 };
 
+const updateGroup = async (groupId, groupName, token) => {
+	const response = await axios.put(
+		`${API_URL}/update/${groupId}`,
+		{ groupName },
+		configuration(token)
+	);
+
+	return response.data;
+};
+
+const deleteGroup = async (groupId, token) => {
+	const response = await axios.delete(
+		`${API_URL}/delete/${groupId}`,
+		configuration(token)
+	);
+
+	return response.data;
+};
+
 const getMembers = async (token) => {
 	const response = await axios.get(`${API_URL}/members`, configuration(token));
 
@@ -48,6 +67,8 @@ const removeMembers = async (memberId, groupId, token) => {
 const conversationService = {
 	getGroup,
 	createGroup,
+	updateGroup,
+	deleteGroup,
 	getMembers,
 	addMembers,
 	removeMembers,

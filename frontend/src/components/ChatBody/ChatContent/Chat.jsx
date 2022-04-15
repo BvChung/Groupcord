@@ -9,28 +9,25 @@ import ChatItem from "./ChatItem";
 import ChatNav from "./ChatNav";
 import { PaperAirplaneIcon, PlusIcon } from "@heroicons/react/solid";
 import { SocketContext } from "../../../appContext/socketContext";
+import { toast } from "react-toastify";
 
 function Chat({ toggleMenu }) {
 	const socket = useContext(SocketContext);
-
 	const dispatch = useDispatch();
-
-	const { groupMessages } = useSelector((state) => state?.messages?.messageArr);
-
-	const { messageToSocket } = useSelector((state) => state?.messages);
-
-	const { groupId } = useSelector((state) => state?.conversations.groupInfo);
 
 	const [userMessage, setUserMessage] = useState({
 		message: "",
 	});
-
+	const { user } = useSelector((state) => state?.auth);
+	const { groupMessages } = useSelector((state) => state?.messages?.messageArr);
+	const { messageToSocket } = useSelector((state) => state?.messages);
+	const { groupId } = useSelector((state) => state?.conversations.groupInfo);
+	const { members } = useSelector((state) => state?.conversations.groupInfo);
 	const refMessage = useRef(null);
 	const scrollToMessage = () => refMessage.current.scrollIntoView();
 
 	function handleChange(e) {
 		const { value, name } = e.target;
-
 		setUserMessage((prevMessage) => {
 			return {
 				...prevMessage,
@@ -40,6 +37,17 @@ function Chat({ toggleMenu }) {
 	}
 	function handleSubmit(e) {
 		e.preventDefault();
+
+		if (groupId !== "Global") {
+			const findMember = members.find((member) => {
+				return member._id === user._id;
+			});
+			if (!findMember) {
+				return toast.error(
+					"User is not authorized to send messages in this group"
+				);
+			}
+		}
 
 		dispatch(
 			createChatMessage({

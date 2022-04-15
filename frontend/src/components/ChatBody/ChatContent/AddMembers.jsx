@@ -7,6 +7,7 @@ import {
 	updateMembersWithSocket,
 	updateGroupsWithSocket,
 } from "../../../features/conversations/conversationSlice";
+import { resetMessagesWithGroupRemoval } from "../../../features/messages/messageSlice";
 import { SocketContext } from "../../../appContext/socketContext";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
@@ -43,7 +44,6 @@ export default function AddMembers() {
 			}
 		}
 	};
-
 	const close = () => {
 		setAnchorEl(null);
 		buttonRef.current.focus();
@@ -51,14 +51,15 @@ export default function AddMembers() {
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-
 	const { user } = useSelector((state) => state.auth);
 	const currentAccountId = useSelector((state) => state.auth.user._id);
 	const { groupId } = useSelector((state) => state.conversations.groupInfo);
 	const { groupOwner } = useSelector((state) => state?.conversations.groupInfo);
 	const { members } = useSelector((state) => state?.conversations.groupInfo);
 	const { filteredMembers } = useSelector((state) => state?.conversations);
-	const { sendDataToSocket } = useSelector((state) => state?.conversations);
+	const { memberUpdatedToSocket } = useSelector(
+		(state) => state?.conversations
+	);
 
 	// Web sockets
 	const socket = useContext(SocketContext);
@@ -71,8 +72,8 @@ export default function AddMembers() {
 	);
 
 	useEffect(() => {
-		sendData(sendDataToSocket);
-	}, [sendData, sendDataToSocket]);
+		sendData(memberUpdatedToSocket);
+	}, [sendData, memberUpdatedToSocket]);
 
 	useEffect(() => {
 		socket.on("receive_group_data", (data) => {
@@ -86,7 +87,7 @@ export default function AddMembers() {
 				data.action === "removeMember"
 			) {
 				dispatch(updateGroupsWithSocket(data));
-				navigate("/chat");
+				dispatch(resetMessagesWithGroupRemoval());
 			}
 		});
 	}, [socket, dispatch, navigate, user._id]);

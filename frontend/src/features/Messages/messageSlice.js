@@ -22,7 +22,6 @@ export const getChatMessage = createAsyncThunk(
 			// thunkAPI has a method to get any state value from the redux store
 			const token = thunkAPI.getState().auth.user.token;
 			const { groupId } = thunkAPI.getState().conversations.groupInfo;
-			// console.log(groupId);
 			return await chatService.getMessage(groupId, token);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
@@ -59,6 +58,9 @@ export const messageSlice = createSlice({
 	initialState,
 	reducers: {
 		resetMessageState: (state) => initialState,
+		resetMessagesWithGroupRemoval: (state) => {
+			state.messageArr.groupMessages = [];
+		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(createChatMessage.pending, (state) => {
@@ -98,5 +100,6 @@ export const messageSlice = createSlice({
 	},
 });
 
-export const { resetMessageState } = messageSlice.actions;
+export const { resetMessageState, resetMessagesWithGroupRemoval } =
+	messageSlice.actions;
 export default messageSlice.reducer;

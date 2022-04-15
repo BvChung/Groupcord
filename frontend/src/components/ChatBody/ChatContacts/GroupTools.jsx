@@ -1,14 +1,8 @@
 import * as React from "react";
 import { useEffect, useContext, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-	addGroupMembers,
-	removeGroupMembers,
-	updateMembersWithSocket,
-	updateGroupsWithSocket,
-} from "../../../features/conversations/conversationSlice";
-import { SocketContext } from "../../../appContext/socketContext";
-import { useNavigate } from "react-router-dom";
+import { deleteChatGroup } from "../../../features/conversations/conversationSlice";
+import { resetMessagesWithGroupRemoval } from "../../../features/messages/messageSlice";
 import PropTypes from "prop-types";
 import MenuUnstyled from "@mui/base/MenuUnstyled";
 import MenuItemUnstyled, {
@@ -27,7 +21,7 @@ import {
 } from "@heroicons/react/outline";
 import { UserIcon } from "@heroicons/react/solid";
 
-export default function AddMembers() {
+export default function GroupTools({ groupId, toggleEditingName }) {
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const isOpen = Boolean(anchorEl);
 	const buttonRef = React.useRef(null);
@@ -56,30 +50,7 @@ export default function AddMembers() {
 		buttonRef.current.focus();
 	};
 
-	const navigate = useNavigate();
 	const dispatch = useDispatch();
-
-	const { user } = useSelector((state) => state.auth);
-	const currentAccountId = useSelector((state) => state.auth.user._id);
-	const { groupId } = useSelector((state) => state.conversations.groupInfo);
-	const { groupOwner } = useSelector((state) => state?.conversations.groupInfo);
-	const { members } = useSelector((state) => state?.conversations.groupInfo);
-	const { filteredMembers } = useSelector((state) => state?.conversations);
-	const { sendDataToSocket } = useSelector((state) => state?.conversations);
-
-	// Web sockets
-	const socket = useContext(SocketContext);
-
-	const sendData = useCallback(
-		(data) => {
-			socket.emit("send_group_data", data);
-		},
-		[socket]
-	);
-
-	useEffect(() => {
-		sendData(sendDataToSocket);
-	}, [sendData, sendDataToSocket]);
 
 	return (
 		<div>
@@ -112,7 +83,7 @@ export default function AddMembers() {
 							</div>
 							<button
 								onClick={() => {
-									console.log("clicked");
+									toggleEditingName();
 								}}
 								className="p-[6px] text-green-800 hover:bg-green-600 hover:text-white rounded-full"
 							>
@@ -127,7 +98,8 @@ export default function AddMembers() {
 							</div>
 							<button
 								onClick={() => {
-									console.log("clicked");
+									dispatch(deleteChatGroup(groupId));
+									dispatch(resetMessagesWithGroupRemoval());
 								}}
 								className="p-[6px] text-green-800 hover:bg-green-600 hover:text-white rounded-full"
 							>

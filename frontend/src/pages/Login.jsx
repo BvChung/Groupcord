@@ -17,7 +17,6 @@ function Login() {
 		(state) => state.auth
 	);
 	// const auth = useSelector((state) => state.auth);
-	console.log(user);
 
 	const [form, setForm] = useState({
 		guestAccount: false,
