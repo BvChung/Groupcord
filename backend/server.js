@@ -95,16 +95,11 @@ io.on("connection", (socket) => {
 
 	socket.on("send_group_name_updated", (groupNameData) => {
 		if (Object.keys(groupNameData).length === 0) return;
-
-		console.log(groupNameData);
 		socket.broadcast.emit("receive_group_name_updated", groupNameData);
 	});
 
 	socket.on("send_group_deleted", (groupDeletedData) => {
 		if (Object.keys(groupDeletedData).length === 0) return;
-		// console.log(groupDeletedData);
-
-		// console.log(groupDeletedData);
 		socket.broadcast.emit("receive_group_deleted", groupDeletedData);
 	});
 

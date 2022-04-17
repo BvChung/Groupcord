@@ -17,7 +17,7 @@ const registerUser = asyncHandler(async (req, res) => {
 	if (emailExists) {
 		res.status(400);
 		throw new Error(
-			"There already exists an account registered with this email address."
+			"An account registered with this email address already exists."
 		);
 	}
 
@@ -133,7 +133,6 @@ const updateUser = asyncHandler(async (req, res) => {
 	// Update Messages Schema with affiliated username
 	if (username !== currentUser.username) {
 		const updateMsg = await Messages.updateMany({ username: username });
-		console.log(updateMsg);
 	}
 
 	return res.status(200).json({
