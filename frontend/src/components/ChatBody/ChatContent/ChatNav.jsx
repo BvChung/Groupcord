@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { SunIcon, MoonIcon, MenuIcon } from "@heroicons/react/outline";
+import { SunIcon, MoonIcon } from "@heroicons/react/outline";
 import { BsGithub } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
 import { changeTheme } from "../../../features/theme/themeSlice";
-import AccountMenu from "./AccountMenu";
+import AccountMenu from "./AccountInfo";
 import Menu from "./Menu";
 import AddMembers from "./AddMembers";
 
-function ChatNav({ toggleMenu }) {
+function ChatNav() {
 	const dispatch = useDispatch();
 	const { darkMode } = useSelector((state) => state.theme);
 
@@ -25,13 +25,10 @@ function ChatNav({ toggleMenu }) {
 	return (
 		<nav
 			className="flex items-center justify-end w-full px-6 py-4 h-16 
-		border-b-2 dark:border-dark2 dark:bg-dark3"
+		border-b-2 border-transparent shadow-md dark:border-dark2 dark:bg-gray-900"
 		>
 			<div>
 				<ul className="flex flex-row justify-center items-center gap-6">
-					<button onClick={toggleMenu}>
-						<MenuIcon className="h-8 w-8" />
-					</button>
 					<AddMembers />
 					<Menu handleClickOpen={handleClickOpen} />
 					<AccountMenu open={open} handleClose={handleClose} />

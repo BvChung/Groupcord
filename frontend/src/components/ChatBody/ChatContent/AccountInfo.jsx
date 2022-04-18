@@ -30,6 +30,7 @@ export default function FormDialog({ open, handleClose }) {
 		email: user.email,
 		currentPassword: "",
 		newPassword: "",
+		confirmNewPassword: "",
 	});
 
 	function handleFormData(e) {
@@ -47,10 +48,10 @@ export default function FormDialog({ open, handleClose }) {
 		e.preventDefault();
 
 		if (formData.currentPassword !== "" && formData.newPassword === "") {
-			return toast.warn("Please enter new password");
+			return toast.info("Please enter new password");
 		}
 		if (formData.currentPassword === "" && formData.newPassword !== "") {
-			return toast.warn("Please enter current password");
+			return toast.info("Please enter current password");
 		}
 		if (
 			formData.currentPassword === formData.newPassword &&
@@ -58,6 +59,13 @@ export default function FormDialog({ open, handleClose }) {
 			formData.newPassword !== ""
 		) {
 			return toast.warn("Passwords are matching");
+		}
+		if (
+			formData.confirmNewPassword !== formData.newPassword &&
+			formData.currentPassword !== "" &&
+			formData.newPassword !== ""
+		) {
+			return toast.warn("Passwords do not match");
 		}
 
 		const sentData = {
@@ -167,6 +175,18 @@ export default function FormDialog({ open, handleClose }) {
 						margin="dense"
 						id="newPassword"
 						label="New Password"
+						type="text"
+						fullWidth
+						variant="standard"
+					/>
+					<TextField
+						name="confirmNewPassword"
+						value={formData.confirmNewPassword}
+						onChange={handleFormData}
+						// autoFocus
+						margin="dense"
+						id="confirmNewPassword"
+						label="Confirm New Password"
 						type="text"
 						fullWidth
 						variant="standard"

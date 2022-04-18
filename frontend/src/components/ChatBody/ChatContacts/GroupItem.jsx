@@ -9,7 +9,7 @@ import {
 import GroupTools from "./GroupTools";
 import { SaveIcon, XIcon } from "@heroicons/react/outline";
 
-function ContactItem({
+export default function GroupItem({
 	indexNumber,
 	groupId,
 	groupName,
@@ -58,8 +58,8 @@ function ContactItem({
 
 	const activeStyle =
 		activeIndex === indexNumber
-			? "bg-slate-200 dark:bg-slate-800 border-l-sky-800 border-l-[3px] dark:border-l-sky-500 "
-			: "border-l-[3px] border-l-gray-200 dark:border-l-gray-500";
+			? "bg-sky-100 dark:bg-slate-800 border-l-sky-400 border-l-[3px] dark:border-l-sky-500 "
+			: "border-l-[3px] border-l-gray-200 dark:border-l-gray-600 hover:border-l-gray-400 dark:hover:border-l-gray-400";
 
 	// border-l-2 border-l-sky-200 dark:border-l-sky-900 hover:bg-slate-200 dark:hover:bg-slate-800
 
@@ -83,11 +83,11 @@ function ContactItem({
 				dispatch(updateActiveChatGroup(groupInfo));
 				dispatch(getChatGroups());
 			}}
-			className={`flex items-center justify-between w-full h-12 px-3 gap-2 
-				hover:bg-slate-200 dark:hover:bg-slate-800 ${activeStyle}`}
+			className={`flex items-center justify-between w-full h-12 px-3 gap-2 cursor-pointer
+				${activeStyle}`}
 		>
 			{isEditingName ? (
-				<div className="flex items-center gap-[10px]">
+				<div className="flex items-center gap-4">
 					<UserGroupIcon className="h-7 w-7 text-sky-500 dark:text-sky-600" />
 					<input
 						className="text-gray1 dark:text-white bg-transparent w-[55%]
@@ -126,7 +126,7 @@ function ContactItem({
 					</div>
 				</div>
 			) : (
-				<div className="flex gap-[10px]">
+				<div className="flex gap-4">
 					<UserGroupIcon className="h-7 w-7 text-sky-500 dark:text-sky-600" />
 					<div className="flex items-center gap-2 dark:text-white">
 						<span>{groupName}</span>
@@ -140,5 +140,3 @@ function ContactItem({
 		</div>
 	);
 }
-
-export default ContactItem;

@@ -7,18 +7,16 @@ import {
 } from "../../features/messages/messageSlice";
 import ChatGroups from "./ChatContacts/ChatGroups";
 import Chat from "./ChatContent/Chat";
+import Sidebar from "../Sidebar/Sidebar";
 
-function ChatBody() {
-	const [openMenu, setOpenMenu] = useState(true);
-
-	function toggleMenu() {
-		setOpenMenu((prev) => !prev);
-	}
-
+function ChatBody({ activeGroupMenu, toggleGroupMenu }) {
 	return (
-		<div className="flex flex-grow">
-			{openMenu && <ChatGroups />}
-			<Chat toggleMenu={toggleMenu} />
+		<div className="flex flex-grow transition-transform">
+			<ChatGroups
+				activeGroupMenu={activeGroupMenu}
+				toggleGroupMenu={toggleGroupMenu}
+			/>
+			<Chat />
 		</div>
 	);
 }

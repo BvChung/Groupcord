@@ -1,28 +1,27 @@
 import React from "react";
-import { ChatAltIcon } from "@heroicons/react/outline";
-import { UserCircleIcon } from "@heroicons/react/outline";
+import { ChatIcon } from "@heroicons/react/solid";
+import { MenuIcon } from "@heroicons/react/outline";
 
-export default function Sidebar() {
+export default function Sidebar({ toggleMenu }) {
 	return (
-		<div className="flex gap-5">
-			<div
-				className="fixed top-0 left-0 h-screen flex 
-			flex-col w-16 dark:bg-gray-900 shadow-lg 
+		<div
+			className="fixed flex flex-col lg:hidden gap-5 items-center top-0 left-0 h-screen
+				 w-12 dark:bg-gray-900 shadow-xl 
 			"
+		>
+			<button
+				onClick={toggleMenu}
+				className="dark:text-gray-500 p-1 rounded-md mt-4
+				border-[1px] border-transparent active:border-white transition-all "
 			>
-				<div className="mt-14">
-					<SidebarIcon icon={<UserCircleIcon className="h-8 w-8" />} />
-					<SidebarIcon icon={<ChatAltIcon className="h-8 w-8" />} />
-				</div>
-			</div>
-			<div
-				className="fixed top-0 left-16 h-screen flex 
-			flex-col dark:bg-gray1 shadow-lg w-64"
+				<MenuIcon className="h-7 w-7" />
+			</button>
+			<button
+				className="flex items-center justify-center dark:text-blue1 p-1 w-full h-14
+				border-[1px] border-transparent hover:bg-g1 hover:bg-opacity-80 active:border-white transition-all "
 			>
-				<div className="mt-14 flex flex-col ">
-					<h1 className="text-white">Chat</h1>
-				</div>
-			</div>
+				<ChatIcon className="h-8 w-8" />
+			</button>
 		</div>
 	);
 }
