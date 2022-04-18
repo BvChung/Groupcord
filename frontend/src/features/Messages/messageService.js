@@ -19,9 +19,19 @@ const createMessage = async (messageData, token) => {
 	return response.data;
 };
 
+const deleteMessage = async (messageId, token) => {
+	const response = await axios.delete(
+		`${API_URL}/${messageId}`,
+		configuration(token)
+	);
+
+	return response.data;
+};
+
 const chatService = {
 	createMessage,
 	getMessage,
+	deleteMessage,
 };
 
 export default chatService;

@@ -3,12 +3,14 @@ import chatService from "./messageService";
 import {
 	errorMessage,
 	filterDuplicateMessages,
+	deleteData,
 } from "../helperFunc/helperFunctions";
 
 // Is useState() but for all in redux
 const initialState = {
 	messageArr: {},
-	messageToSocket: {},
+	newMessageToSocket: {},
+	deletedMessageToSocket: {},
 	isLoading: false,
 	isSuccess: false,
 	isError: false,
@@ -42,6 +44,29 @@ export const createChatMessage = createAsyncThunk(
 	}
 );
 
+export const deleteChatMessage = createAsyncThunk(
+	"message/delete",
+	async (messageId, thunkAPI) => {
+		try {
+			const token = thunkAPI.getState().auth.user.token;
+			return await chatService.deleteMessage(messageId, token);
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+
+export const updateDeletedMessageWithSocket = createAsyncThunk(
+	"message/deletedWithSocket",
+	async (socketData, thunkAPI) => {
+		try {
+			return socketData;
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+
 export const updateChatMessage = createAsyncThunk(
 	"message/update",
 	async (message) => {
@@ -65,13 +90,13 @@ export const messageSlice = createSlice({
 	extraReducers: (builder) => {
 		builder.addCase(createChatMessage.pending, (state) => {
 			state.isLoading = true;
-			state.messageToSocket = {};
+			state.newMessageToSocket = {};
 		});
 		builder.addCase(createChatMessage.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
 			state.messageArr.groupMessages.push(action.payload);
-			state.messageToSocket = action.payload;
+			state.newMessageToSocket = action.payload;
 		});
 		builder.addCase(createChatMessage.rejected, (state, action) => {
 			state.isLoading = false;
@@ -97,6 +122,23 @@ export const messageSlice = createSlice({
 				state.messageArr.groupMessages
 			);
 		});
+		builder.addCase(deleteChatMessage.fulfilled, (state, action) => {
+			console.log(action.payload);
+			state.messageArr.groupMessages = deleteData(
+				state.messageArr.groupMessages,
+				action.payload
+			);
+			state.deletedMessageToSocket = action.payload;
+		});
+		builder.addCase(
+			updateDeletedMessageWithSocket.fulfilled,
+			(state, action) => {
+				state.messageArr.groupMessages = deleteData(
+					state.messageArr.groupMessages,
+					action.payload
+				);
+			}
+		);
 	},
 });
 

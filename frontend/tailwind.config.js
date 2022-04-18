@@ -42,6 +42,12 @@ module.exports = {
 				secondary2: "#DEDAE9",
 				secondary3: "#E4E2EE",
 				secondary4: "#8679B0",
+				blue1: "#325C97",
+				blue2: "#ABC7E3",
+				blue3: "#88B0D7",
+				blue4: "#6699CC",
+				blue5: "#76A3D1",
+				g1: "#81A4D5",
 			},
 			spacing: {
 				maxLogin: "30rem",

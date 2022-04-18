@@ -5,6 +5,8 @@ import {
 	errorMessage,
 	updateGroup,
 	updateMembersGroups,
+	updateGroupName,
+	deleteData,
 } from "../helperFunc/helperFunctions";
 
 const initialState = {
@@ -25,7 +27,7 @@ const initialState = {
 };
 
 export const createChatGroups = createAsyncThunk(
-	"conversation/create",
+	"group/create",
 	async (conversationData, thunkAPI) => {
 		try {
 			const token = thunkAPI.getState().auth.user.token;
@@ -37,7 +39,7 @@ export const createChatGroups = createAsyncThunk(
 );
 
 export const getChatGroups = createAsyncThunk(
-	"conversation/get",
+	"group/get",
 	async (_, thunkAPI) => {
 		try {
 			const token = thunkAPI.getState().auth.user.token;
@@ -48,8 +50,19 @@ export const getChatGroups = createAsyncThunk(
 	}
 );
 
+export const searchChatGroup = createAsyncThunk(
+	"group/search",
+	async (searchText, thunkAPI) => {
+		try {
+			return searchText;
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+
 export const updateChatGroupName = createAsyncThunk(
-	"conversation/updateGroupName",
+	"group/updateGroupName",
 	async (groupData, thunkAPI) => {
 		try {
 			const token = thunkAPI.getState().auth.user.token;
@@ -62,7 +75,7 @@ export const updateChatGroupName = createAsyncThunk(
 );
 
 export const deleteChatGroup = createAsyncThunk(
-	"conversation/delete",
+	"group/delete",
 	async (groupId, thunkAPI) => {
 		try {
 			const token = thunkAPI.getState().auth.user.token;
@@ -204,6 +217,7 @@ export const conversationSlice = createSlice({
 			state.isError = true;
 		});
 		builder.addCase(deleteChatGroup.fulfilled, (state, action) => {
+			console.log(action.payload);
 			state.groups = action.payload.allGroups;
 			state.groupDeletedToSocket = action.payload.deletedGroup;
 		});
@@ -273,15 +287,17 @@ export const conversationSlice = createSlice({
 			state.groupNameUpdatedToSocket = action.payload.updatedGroupName;
 		});
 		builder.addCase(updateGroupNameWithSocket.fulfilled, (state, action) => {
-			// const currentGroupInfoState = current(state.groupInfo);
-			// state.groups = updateGroup(
-			// 	state.groups,
-			// 	currentGroupInfoState,
-			// 	action.payload
-			// );
+			state.groups = updateGroupName(state.groups, action.payload);
 		});
 		builder.addCase(deleteGroupWithSocket.fulfilled, (state, action) => {
-			console.log(action.payload);
+			state.groups = deleteData(state.groups, action.payload);
+		});
+		builder.addCase(searchChatGroup.fulfilled, (state, action) => {
+			state.groups = current(state.groups).filter((group) => {
+				return group.groupName
+					.toLowerCase()
+					.includes(action.payload.toLowerCase());
+			});
 		});
 	},
 });

@@ -3,7 +3,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import "./index.css";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
 import Utilities from "./components/Utilities/Utilities";
@@ -29,8 +29,10 @@ export default function App() {
 				</div>
 			</BrowserRouter>
 			<ToastContainer
+				position="top-center"
 				limit={1}
-				autoClose={1750}
+				autoClose={1500}
+				transition={Slide}
 				theme={darkMode ? "dark" : "light"}
 			/>
 		</SocketContext.Provider>
