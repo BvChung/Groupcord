@@ -33,6 +33,7 @@ module.exports = {
 				gray7: "#f5f5f5",
 				offwhite: "#f9fafb",
 				offwhite2: "#f3f3f4",
+				menu: "#18181b",
 				dark1: "#111111",
 				dark2: "#121212",
 				dark3: "#1a1a1a",

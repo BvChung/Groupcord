@@ -24,11 +24,21 @@
 }
 
 ::-webkit-scrollbar {
+	display: block;
 	width: 8px;
 }
 
 ::-webkit-scrollbar-track {
 	background: transparent;
+}
+
+::-webkit-scrollbar-track-piece:end {
+	background: transparent;
+	margin-bottom: 10px;
+}
+::-webkit-scrollbar-track-piece:start {
+	background: transparent;
+	margin-top: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -43,6 +53,13 @@
 .fade {
 	animation-name: fadeIn;
 	animation-duration: 500ms;
+}
+
+.height {
+	height: calc(100vh - 3.5rem);
+}
+.max-height {
+	max-height: calc(100vh - 22rem);
 }
 
 @keyframes fadeIn {
