@@ -18,8 +18,14 @@ import MenuItemUnstyled, {
 import PopperUnstyled from "@mui/base/PopperUnstyled";
 import { styled } from "@mui/system";
 import Divider from "@mui/material/Divider";
-import { PlusIcon, XIcon, CheckIcon } from "@heroicons/react/outline";
-import { UserIcon } from "@heroicons/react/solid";
+import {
+	PlusIcon,
+	XIcon,
+	CheckIcon,
+	LogoutIcon,
+} from "@heroicons/react/outline";
+import { UserIcon, KeyIcon } from "@heroicons/react/solid";
+import { toast } from "react-toastify";
 
 export default function AddMembers() {
 	const [anchorEl, setAnchorEl] = React.useState(null);
@@ -60,6 +66,7 @@ export default function AddMembers() {
 	const { memberUpdatedToSocket } = useSelector(
 		(state) => state?.conversations
 	);
+	const { darkMode } = useSelector((state) => state.theme);
 
 	// Web sockets
 	const socket = useContext(SocketContext);
@@ -77,7 +84,6 @@ export default function AddMembers() {
 
 	useEffect(() => {
 		socket.on("receive_group_data", (data) => {
-			// console.log(data);
 			dispatch(updateMembersWithSocket(data.groupData.members));
 
 			if (user._id === data.memberChanged && data.action === "addMember") {
@@ -113,29 +119,43 @@ export default function AddMembers() {
 				componentsProps={{ listbox: { id: "simple-menu" } }}
 			>
 				<MenuSection label="Members">
-					{members?.map((user) => {
+					{members?.map((member) => {
 						return (
-							<StyledMenuItem className="mb-1" key={user._id}>
+							<StyledMenuItem className="mb-1" key={member._id}>
 								<div className="flex items-center justify-between pr-2">
 									<div className="flex items-center gap-2">
-										<UserIcon
-											className={`h-6 w-6  ${
-												groupOwner === user._id
-													? "text-sky-600"
-													: "text-slate-800"
-											}`}
-										/>
-										<span className="font-sans">{user.username}</span>
+										{groupOwner === member._id ? (
+											<KeyIcon className="h-5 w-5 text-sky-500" />
+										) : (
+											<UserIcon
+												className={`h-5 w-5  ${
+													darkMode ? "text-slate-500" : "text-slate-800"
+												}`}
+											/>
+										)}
+										<span className="font-sans mr-2">{member.username}</span>
 									</div>
-									{currentAccountId === groupOwner && groupOwner !== user._id && (
+									{currentAccountId === groupOwner &&
+										groupOwner !== member._id && (
+											<button
+												onClick={() => {
+													dispatch(removeGroupMembers(member._id));
+													// close();
+												}}
+												className="p-[4px] text-red-800 hover:bg-red-600 hover:text-white rounded-full"
+											>
+												<XIcon className="h-4 w-4" />
+											</button>
+										)}
+									{currentAccountId !== groupOwner && user._id === member._id && (
 										<button
 											onClick={() => {
-												dispatch(removeGroupMembers(user._id));
+												dispatch(removeGroupMembers(member._id));
 												// close();
 											}}
 											className="p-[4px] text-red-800 hover:bg-red-600 hover:text-white rounded-full"
 										>
-											<XIcon className="h-4 w-4" />
+											<LogoutIcon className="h-4 w-4" />
 										</button>
 									)}
 								</div>
@@ -153,7 +173,11 @@ export default function AddMembers() {
 									<StyledMenuItem className="mb-1" key={user._id}>
 										<div className="flex items-center justify-between pr-2">
 											<div className="flex items-center gap-2">
-												<UserIcon className="h-6 w-6 text-slate-800" />
+												<UserIcon
+													className={`h-5 w-5  ${
+														darkMode ? "text-slate-500" : "text-slate-800"
+													}`}
+												/>
 												<span className="font-sans">{user.username}</span>
 											</div>
 											{
@@ -186,8 +210,8 @@ const grey = {
 	500: "#A0AAB4",
 	600: "#6F7E8C",
 	700: "#3E5060",
-	800: "#2D3843",
-	900: "#1A2027",
+	800: "#1a1a1a",
+	900: "#232323",
 };
 
 const StyledListbox = styled("ul")(
@@ -197,12 +221,13 @@ const StyledListbox = styled("ul")(
   box-sizing: border-box;
   padding: 4px;
   margin: 10px 0;
-  min-width: 225px;
+  min-width: 200px;
+  width: fit-content;
   max-height: 400px;
-  background: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
-  border: 1px solid ${theme.palette.mode === "dark" ? grey[800] : grey[300]};
+  background: ${theme.palette.mode === "dark" ? "#18181b" : "#fff"};
+  border: 1px solid ${theme.palette.mode === "dark" ? "#343434" : grey[300]};
   border-radius: 0.4em;
-  color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
+  color: ${theme.palette.mode === "dark" ? "#fff" : grey[900]};
   overflow: auto;
   outline: 0px;
 
@@ -217,7 +242,7 @@ const StyledMenuItem = styled(MenuItemUnstyled)(
   list-style: none;
   padding: 8px;
   border-radius: 0.45em;
-  cursor: default;
+  cursor: pointer;
 
   &:last-of-type {
     border-bottom: none;
@@ -234,8 +259,8 @@ const StyledMenuItem = styled(MenuItemUnstyled)(
   }
 
   &:hover:not(.${menuItemUnstyledClasses.disabled}) {
-    background-color: ${theme.palette.mode === "dark" ? grey[800] : grey[100]};
-    color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
+    background-color: ${theme.palette.mode === "dark" ? "#1f2937" : "#e5e7eb"};
+    color: ${theme.palette.mode === "dark" ? "#fff" : grey[900]};
   }
   `
 );
@@ -248,15 +273,15 @@ const TriggerButton = styled("button")(
   min-height: auto;
   min-width: auto;
   background: transparent;
-  border-radius: 0.75em;
+  border-radius: 1em;
   margin: 0;
-  padding: 1px;
+  padding: 2px;
   text-align: left;
   line-height: 1.5;
   color: ${theme.palette.mode === "dark" ? grey[300] : grey[500]};
 
   &:hover {
-    background: ${theme.palette.mode === "dark" ? "" : grey[100]};
+    background: ${theme.palette.mode === "dark" ? "#e5e7eb" : "#1f2937"};
     border-color: ${theme.palette.mode === "dark" ? grey[700] : grey[400]};
   }
 
@@ -271,19 +296,22 @@ const MenuSectionRoot = styled("li")`
 	list-style: none;
 
 	& > ul {
-		padding-left: 1em;
+		padding-left: 0.5em;
+		padding-right: 0.5em;
 	}
 `;
 
-const MenuSectionLabel = styled("span")`
+const MenuSectionLabel = styled("span")(
+	({ theme }) => `
 	display: block;
 	padding: 10px 0 5px 10px;
 	font-size: 0.75em;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.05rem;
-	color: ${grey[600]};
-`;
+	color: ${theme.palette.mode === "dark" ? "#e5e7eb" : grey[800]};
+`
+);
 
 function MenuSection({ children, label }) {
 	return (

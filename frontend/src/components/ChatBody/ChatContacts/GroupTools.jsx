@@ -1,6 +1,5 @@
 import * as React from "react";
-import { useEffect, useContext, useCallback } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { deleteChatGroup } from "../../../features/conversations/conversationSlice";
 import { resetMessagesWithGroupRemoval } from "../../../features/messages/messageSlice";
 import PropTypes from "prop-types";
@@ -10,18 +9,15 @@ import MenuItemUnstyled, {
 } from "@mui/base/MenuItemUnstyled";
 import PopperUnstyled from "@mui/base/PopperUnstyled";
 import { styled } from "@mui/system";
-import Divider from "@mui/material/Divider";
 import {
-	PlusIcon,
-	XIcon,
-	CheckIcon,
 	DotsVerticalIcon,
 	TrashIcon,
 	PencilIcon,
 } from "@heroicons/react/outline";
-import { UserIcon } from "@heroicons/react/solid";
+import { toast } from "react-toastify";
 
-export default function GroupTools({ groupId, toggleEditingName }) {
+export default function GroupTools({ groupId, groupName, toggleEditingName }) {
+	const dispatch = useDispatch();
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const isOpen = Boolean(anchorEl);
 	const buttonRef = React.useRef(null);
@@ -34,7 +30,6 @@ export default function GroupTools({ groupId, toggleEditingName }) {
 			setAnchorEl(event.currentTarget);
 		}
 	};
-
 	const handleButtonKeyDown = (event) => {
 		if (event.key === "ArrowDown" || event.key === "ArrowUp") {
 			event.preventDefault();
@@ -44,14 +39,10 @@ export default function GroupTools({ groupId, toggleEditingName }) {
 			}
 		}
 	};
-
 	const close = () => {
 		setAnchorEl(null);
 		buttonRef.current.focus();
 	};
-
-	const dispatch = useDispatch();
-
 	return (
 		<div>
 			<TriggerButton
@@ -73,38 +64,37 @@ export default function GroupTools({ groupId, toggleEditingName }) {
 				components={{ Root: Popper, Listbox: StyledListbox }}
 				componentsProps={{ listbox: { id: "simple-menu" } }}
 			>
-				{/* <Divider /> */}
-
 				<MenuSection label="Tools">
-					<StyledMenuItem className="mb-1">
-						<div className="flex items-center justify-between pr-2">
-							<div className="flex items-center gap-2">
+					<StyledMenuItem
+						onClick={() => {
+							toggleEditingName();
+						}}
+						className="mb-1"
+					>
+						<div className="flex items-center gap-2">
+							<div className="p-[6px] text-yellow-500 hover:bg-yellow-500 hover:text-white rounded-full">
+								<PencilIcon className="h-6 w-6" />
+							</div>
+							<div className="flex items-center">
 								<span className="font-semibold">Edit Group Name</span>
 							</div>
-							<button
-								onClick={() => {
-									toggleEditingName();
-								}}
-								className="p-[6px] text-green-800 hover:bg-green-600 hover:text-white rounded-full"
-							>
-								<PencilIcon className="h-6 w-6" />
-							</button>
 						</div>
 					</StyledMenuItem>
-					<StyledMenuItem className="mb-1">
-						<div className="flex items-center justify-between pr-2">
+					<StyledMenuItem
+						onClick={() => {
+							dispatch(deleteChatGroup(groupId));
+							dispatch(resetMessagesWithGroupRemoval());
+							toast.success(`Group ${groupName} has been deleted`);
+						}}
+						className="mb-1"
+					>
+						<div className="flex items-center gap-2">
+							<div className="p-[6px] text-gray-600 hover:bg-gray-600 hover:text-white rounded-full">
+								<TrashIcon className="h-6 w-6" />
+							</div>
 							<div className="flex items-center gap-2">
 								<span className="font-semibold">Delete Group</span>
 							</div>
-							<button
-								onClick={() => {
-									dispatch(deleteChatGroup(groupId));
-									dispatch(resetMessagesWithGroupRemoval());
-								}}
-								className="p-[6px] text-green-800 hover:bg-green-600 hover:text-white rounded-full"
-							>
-								<TrashIcon className="h-6 w-6" />
-							</button>
 						</div>
 					</StyledMenuItem>
 				</MenuSection>
@@ -122,8 +112,8 @@ const grey = {
 	500: "#A0AAB4",
 	600: "#6F7E8C",
 	700: "#3E5060",
-	800: "#2D3843",
-	900: "#1A2027",
+	800: "#1a1a1a",
+	900: "#121212",
 };
 
 const StyledListbox = styled("ul")(
@@ -133,12 +123,12 @@ const StyledListbox = styled("ul")(
   box-sizing: border-box;
   padding: 4px;
   margin: 10px 0;
-  min-width: 225px;
+  min-width: 200px;
   max-height: 400px;
   background: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
   border: 1px solid ${theme.palette.mode === "dark" ? grey[800] : grey[300]};
   border-radius: 0.4em;
-  color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
+  color: ${theme.palette.mode === "dark" ? "#fff" : grey[900]};
   overflow: auto;
   outline: 0px;
 
@@ -153,7 +143,7 @@ const StyledMenuItem = styled(MenuItemUnstyled)(
   list-style: none;
   padding: 8px;
   border-radius: 0.45em;
-  cursor: default;
+  cursor: pointer;
 
   &:last-of-type {
     border-bottom: none;
@@ -207,19 +197,22 @@ const MenuSectionRoot = styled("li")`
 	list-style: none;
 
 	& > ul {
-		padding-left: 1em;
+		padding-left: 0.5em;
+		padding-right: 0.5em;
 	}
 `;
 
-const MenuSectionLabel = styled("span")`
+const MenuSectionLabel = styled("span")(
+	({ theme }) => `
 	display: block;
 	padding: 10px 0 5px 10px;
 	font-size: 0.75em;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.05rem;
-	color: ${grey[600]};
-`;
+	color: ${theme.palette.mode === "dark" ? grey[200] : grey[800]};
+`
+);
 
 function MenuSection({ children, label }) {
 	return (
