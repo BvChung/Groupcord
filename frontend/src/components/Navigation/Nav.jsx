@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { SunIcon, MoonIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { BsGithub } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
@@ -6,9 +6,11 @@ import { changeTheme } from "../../features/theme/themeSlice";
 import Account from "./Menu/Account";
 import NavMenu from "./Menu/NavMenu";
 import GroupMembers from "./Menu/GroupMembers";
+import { MenuContext } from "../../appContext/menuContext";
 
-function Nav({ activeGroupMenu, toggleGroupMenu }) {
+function Nav() {
 	const dispatch = useDispatch();
+	const { activeGroupMenu, toggleGroupMenu } = useContext(MenuContext);
 	const { darkMode } = useSelector((state) => state.theme);
 
 	const [open, setOpen] = useState(false);
@@ -31,16 +33,20 @@ function Nav({ activeGroupMenu, toggleGroupMenu }) {
 				{activeGroupMenu ? (
 					<button
 						onClick={toggleGroupMenu}
-						className="text-gray2 dark:text-gray-400 p-1 rounded-md lg:hidden
-				border-[1px] border-transparent active:border-white transition-all "
+						className="text-gray2 dark:text-gray-400 p-2 rounded-full lg:hidden
+						border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
+						hover:bg-gray-200 dark:hover:bg-dark3
+						transition-all "
 					>
 						<XIcon className="h-7 w-7" />
 					</button>
 				) : (
 					<button
 						onClick={toggleGroupMenu}
-						className="text-gray2 dark:text-gray-400 p-1 rounded-md lg:hidden
-				border-[1px] border-transparent active:border-white transition-all "
+						className="text-gray2 dark:text-gray-400 p-2 rounded-full lg:hidden
+						border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
+						hover:bg-gray-200 dark:hover:bg-dark3
+						transition-all "
 					>
 						<MenuIcon className="h-7 w-7" />
 					</button>

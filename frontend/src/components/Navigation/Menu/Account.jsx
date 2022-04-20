@@ -1,11 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import Button from "@mui/material/Button";
+import { Divider } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import { useSelector, useDispatch } from "react-redux";
 import {
 	updateUser,
@@ -17,14 +13,10 @@ export default function FormDialog({ open, handleClose }) {
 	const dispatch = useDispatch();
 
 	const { user } = useSelector((state) => state.auth);
-	const auth = useSelector((state) => state.auth);
+	const { darkMode } = useSelector((state) => state.theme);
 	const { updateError, message, isSuccess } = useSelector(
 		(state) => state.auth
 	);
-
-	// console.log(user);
-	// console.log(auth);
-
 	const [formData, setFormData] = useState({
 		username: user.username,
 		email: user.email,
@@ -46,6 +38,10 @@ export default function FormDialog({ open, handleClose }) {
 
 	function handleSubmit(e) {
 		e.preventDefault();
+
+		if (user.username === "GuestAccount") {
+			return toast.error(`${user.username}'s info cannot be changed`);
+		}
 
 		if (formData.currentPassword !== "" && formData.newPassword === "") {
 			return toast.info("Please enter new password");
@@ -126,10 +122,125 @@ export default function FormDialog({ open, handleClose }) {
 					resetFormData();
 				}}
 			>
-				<DialogTitle className="text-center">
+				<div
+					className={`w-fit px-6 py-4 ${darkMode ? "bg-menu" : "bg-offwhite"} `}
+				>
+					<div
+						className={`${
+							darkMode ? "text-white" : "text-gray1"
+						} flex items-center justify-center mb-4 p-2 `}
+					>
+						<h1 className="text-center font-semibold text-lg">
+							{user.name}'s Personal Info
+						</h1>
+					</div>
+
+					<div className="grid gap-6">
+						<div className="px-4 pt-2 pb-4 border-[1px] border-gray-300 rounded-md">
+							<TextField
+								name="username"
+								value={formData.username}
+								onChange={handleFormData}
+								// autoFocus
+								margin="dense"
+								id="username"
+								label="Username"
+								type="text"
+								fullWidth
+								variant="standard"
+							/>
+							<TextField
+								name="email"
+								value={formData.email}
+								onChange={handleFormData}
+								// autoFocus
+								margin="dense"
+								id="email"
+								label="Email"
+								type="text"
+								fullWidth
+								variant="standard"
+							/>
+						</div>
+
+						<div className="p-4 border-[1px] border-gray-300 rounded-md">
+							<TextField
+								name="currentPassword"
+								value={formData.currentPassword}
+								onChange={handleFormData}
+								// autoFocus
+								margin="dense"
+								id="currentPassword"
+								label="Current Password"
+								type="text"
+								fullWidth
+								variant="standard"
+							/>
+							<TextField
+								name="newPassword"
+								value={formData.newPassword}
+								onChange={handleFormData}
+								// autoFocus
+								margin="dense"
+								id="newPassword"
+								label="New Password"
+								type="text"
+								fullWidth
+								variant="standard"
+							/>
+							<TextField
+								name="confirmNewPassword"
+								value={formData.confirmNewPassword}
+								onChange={handleFormData}
+								// autoFocus
+								margin="dense"
+								id="confirmNewPassword"
+								label="Confirm New Password"
+								type="text"
+								fullWidth
+								variant="standard"
+							/>
+						</div>
+					</div>
+					<div className="md:col-start-2 flex justify-end items-center mt-4 md:mt-5 gap-2">
+						<button
+							onClick={() => {
+								handleClose();
+								resetFormData();
+							}}
+							className={`transition-colors ${
+								darkMode
+									? "bg-menu text-white hover:bg-gray-800"
+									: "bg-white text-gray1 hover:bg-gray-200 "
+							}   
+								p-2 text-sm w-16 font-bold rounded-md`}
+						>
+							Cancel
+						</button>
+						<button
+							onClick={(e) => {
+								handleSubmit(e);
+							}}
+							className={`${
+								darkMode
+									? "bg-menu text-white hover:bg-gray-800 active:bg-sky-800"
+									: "bg-white text-gray1 hover:bg-gray-200 active:bg-sky-400"
+							}  w-16 p-2 text-sm font-bold rounded-md`}
+						>
+							Save
+						</button>
+					</div>
+				</div>
+			</Dialog>
+		</>
+	);
+}
+
+{
+	/* <DialogTitle className="text-center">
 					{user.name}'s information
-				</DialogTitle>
-				<DialogContent>
+				</DialogTitle> 
+	/* <DialogContent>
 					<DialogContentText>Change personal information</DialogContentText>
 					<TextField
 						name="username"
@@ -208,8 +319,5 @@ export default function FormDialog({ open, handleClose }) {
 					>
 						Save
 					</Button>
-				</DialogActions>
-			</Dialog>
-		</>
-	);
+				</DialogActions> */
 }
