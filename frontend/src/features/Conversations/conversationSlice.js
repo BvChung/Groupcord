@@ -50,17 +50,6 @@ export const getChatGroups = createAsyncThunk(
 	}
 );
 
-export const searchChatGroup = createAsyncThunk(
-	"group/search",
-	async (searchText, thunkAPI) => {
-		try {
-			return searchText;
-		} catch (error) {
-			return thunkAPI.rejectWithValue(errorMessage(error));
-		}
-	}
-);
-
 export const updateChatGroupName = createAsyncThunk(
 	"group/updateGroupName",
 	async (groupData, thunkAPI) => {
@@ -291,13 +280,6 @@ export const conversationSlice = createSlice({
 		});
 		builder.addCase(deleteGroupWithSocket.fulfilled, (state, action) => {
 			state.groups = deleteData(state.groups, action.payload);
-		});
-		builder.addCase(searchChatGroup.fulfilled, (state, action) => {
-			state.groups = current(state.groups).filter((group) => {
-				return group.groupName
-					.toLowerCase()
-					.includes(action.payload.toLowerCase());
-			});
 		});
 	},
 });

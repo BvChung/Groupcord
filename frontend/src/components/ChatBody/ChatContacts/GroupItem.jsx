@@ -9,18 +9,24 @@ import {
 import GroupTools from "./GroupTools";
 import { SaveIcon, XIcon } from "@heroicons/react/outline";
 
-export default function GroupItem({
-	indexNumber,
-	groupId,
-	groupName,
-	groupOwner,
-	members,
-	groupActive,
-	toggleGroupActive,
-}) {
+export default function GroupItem({ groupId, groupName, groupOwner, members }) {
+	const dispatch = useDispatch();
+
 	const [newGroupName, setNewGroupName] = useState({
 		groupName: "",
 	});
+	const [isEditingName, setIsEditingName] = useState(false);
+	const { groupInfo } = useSelector((state) => state.conversations);
+
+	const sendGroupInfo = {
+		groupId,
+		groupOwner,
+		members,
+	};
+	const activeStyle =
+		groupInfo.groupId === groupId
+			? "bg-sky-100 dark:bg-slate-800 border-l-sky-400 border-l-[3px] dark:border-l-sky-500 "
+			: "border-l-[3px] border-l-gray-200 dark:border-l-gray-600 hover:border-l-gray-400 dark:hover:border-l-gray-400";
 
 	function handleChange(e) {
 		const { name, value } = e.target;
@@ -47,40 +53,13 @@ export default function GroupItem({
 		});
 		toggleEditingName();
 	}
-
-	const [isEditingName, setIsEditingName] = useState(false);
-	const toggleEditingName = () => {
+	function toggleEditingName() {
 		setIsEditingName((prev) => !prev);
-	};
-
-	const dispatch = useDispatch();
-	const { activeIndex } = groupActive;
-
-	const activeStyle =
-		activeIndex === indexNumber
-			? "bg-sky-100 dark:bg-slate-800 border-l-sky-400 border-l-[3px] dark:border-l-sky-500 "
-			: "border-l-[3px] border-l-gray-200 dark:border-l-gray-600 hover:border-l-gray-400 dark:hover:border-l-gray-400";
-
-	// border-l-2 border-l-sky-200 dark:border-l-sky-900 hover:bg-slate-200 dark:hover:bg-slate-800
-
-	// const { groupDeletedToSocket } = useSelector((state) => state.conversations);
-	// const { groupNameUpdatedToSocket } = useSelector(
-	// 	(state) => state.conversations
-	// );
-	// console.log(groupDeletedToSocket);
-	// console.log(groupNameUpdatedToSocket);
-
-	const groupInfo = {
-		groupId,
-		groupOwner,
-		members,
-	};
-
+	}
 	return (
 		<div
 			onClick={() => {
-				toggleGroupActive(indexNumber);
-				dispatch(updateActiveChatGroup(groupInfo));
+				dispatch(updateActiveChatGroup(sendGroupInfo));
 				dispatch(getChatGroups());
 			}}
 			className={`flex items-center justify-between w-full h-12 px-3 gap-2 cursor-pointer
@@ -134,8 +113,12 @@ export default function GroupItem({
 					</div>
 				</div>
 			)}
-			{!isEditingName && activeIndex === indexNumber && (
-				<GroupTools groupId={groupId} toggleEditingName={toggleEditingName} />
+			{!isEditingName && groupInfo.groupId === groupId && (
+				<GroupTools
+					groupName={groupName}
+					groupId={groupId}
+					toggleEditingName={toggleEditingName}
+				/>
 			)}
 		</div>
 	);

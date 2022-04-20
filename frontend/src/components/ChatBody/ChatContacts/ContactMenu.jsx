@@ -15,21 +15,7 @@ import { SocketContext } from "../../../appContext/socketContext";
 import { toast } from "react-toastify";
 
 export default function ContactMenu({ open, handleClose }) {
-	const socket = useContext(SocketContext);
 	const dispatch = useDispatch();
-
-	const { user } = useSelector((state) => state.auth);
-	const auth = useSelector((state) => state.auth);
-	const { updateError, message, isSuccess } = useSelector(
-		(state) => state.auth
-	);
-	const { sendGroupToSocket } = useSelector((state) => state.conversations);
-	// console.log(sendGroupToSocket);
-	const { groups } = useSelector((state) => state.conversations);
-	// console.log(groups);
-
-	// console.log(user);
-	// console.log(auth);
 
 	const [formData, setFormData] = useState({
 		groupName: "",
@@ -54,27 +40,8 @@ export default function ContactMenu({ open, handleClose }) {
 		if (formData.groupName === "") return;
 
 		dispatch(createChatGroups(formData));
-
 		handleClose();
 	}
-
-	// const sendGroup = useCallback(
-	// 	(groupData) => {
-	// 		socket.emit("send_group", groupData);
-	// 	},
-	// 	[socket]
-	// );
-
-	// useEffect(() => {
-	// 	sendGroup();
-	// }, [sendGroupToSocket]);
-
-	// useEffect(() => {
-	// 	if (Object.keys(sendGroupToSocket).length !== 0) {
-	// 		// console.log("send to socket");
-	// 		sendGroup(sendGroupToSocket);
-	// 	}
-	// }, [sendGroupToSocket]);
 
 	function resetFormData() {
 		setFormData((prevData) => {
@@ -121,7 +88,7 @@ export default function ContactMenu({ open, handleClose }) {
 					resetFormData();
 				}}
 			>
-				<div className="w-96 p-6 bg-gray-100">
+				<div className="w-96 p-6 bg-gray-900 dark:bg-slate-800">
 					<div className="text-center text-xl font-semibold">
 						Create Conversation
 					</div>
