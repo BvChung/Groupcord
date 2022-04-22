@@ -14,17 +14,13 @@ import MenuUnstyled from "@mui/base/MenuUnstyled";
 import MenuItemUnstyled, {
 	menuItemUnstyledClasses,
 } from "@mui/base/MenuItemUnstyled";
-import { buttonUnstyledClasses } from "@mui/base/ButtonUnstyled";
 import PopperUnstyled from "@mui/base/PopperUnstyled";
 import { styled } from "@mui/system";
 import Divider from "@mui/material/Divider";
-import {
-	LogoutIcon,
-	IdentificationIcon,
-	UserCircleIcon,
-} from "@heroicons/react/outline";
+import { LogoutIcon, IdentificationIcon } from "@heroicons/react/outline";
+import { UserCircleIcon } from "@heroicons/react/solid";
 
-export default function WrappedMenuItems({ handleClickOpen }) {
+export default function NavMenu({ handleClickOpen }) {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const logout = () => {
@@ -53,7 +49,6 @@ export default function WrappedMenuItems({ handleClickOpen }) {
 			setAnchorEl(event.currentTarget);
 		}
 	};
-
 	const handleButtonKeyDown = (event) => {
 		if (event.key === "ArrowDown" || event.key === "ArrowUp") {
 			event.preventDefault();
@@ -63,7 +58,6 @@ export default function WrappedMenuItems({ handleClickOpen }) {
 			}
 		}
 	};
-
 	const close = () => {
 		setAnchorEl(null);
 		buttonRef.current.focus();
@@ -80,7 +74,7 @@ export default function WrappedMenuItems({ handleClickOpen }) {
 				aria-expanded={isOpen || undefined}
 				aria-haspopup="menu"
 			>
-				<UserCircleIcon className="h-9 w-9" />
+				<UserCircleIcon className="h-9 w-9 text-gray2 dark:text-gray-400" />
 			</TriggerButton>
 			<MenuUnstyled
 				actions={menuActions}
@@ -184,21 +178,20 @@ const StyledMenuItem = styled(MenuItemUnstyled)(
 const TriggerButton = styled("button")(
 	({ theme }) => `
   font-family: Inter, sans-serif;
-  font-size: 0.875rem;
   box-sizing: border-box;
   min-height: auto;
   min-width: auto;
   background: transparent;
-  border-radius: 1em;
+  border: 1px solid transparent;
+  border-radius: 50em;
   margin: 0;
-  padding: 2px;
-  text-align: left;
-  line-height: 1.5;
-  color: ${theme.palette.mode === "dark" ? grey[300] : grey[500]};
+  padding: 6px;
 
   &:hover {
-    background: ${theme.palette.mode === "dark" ? "#e5e7eb" : "#1f2937"};
-    border-color: ${theme.palette.mode === "dark" ? grey[700] : grey[400]};
+    background: ${theme.palette.mode === "dark" ? "#1a1a1a" : "#e5e7eb"};
+  }
+  &:active {
+    border: 1px solid ${theme.palette.mode === "dark" ? "#ffffff" : "#6b7280"};
   }
 
   `

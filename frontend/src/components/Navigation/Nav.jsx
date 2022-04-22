@@ -26,14 +26,14 @@ function Nav() {
 	}
 	return (
 		<nav
-			className="flex items-center justify-between w-full px-6 py-4 h-14 bg-offwhite
+			className="flex items-center justify-between w-full px-4 py-2 h-14 bg-offwhite
 		border-b-[1px] border-b-gray-300 border-transparent shadow-md dark:border-dark5 dark:bg-dark1"
 		>
 			<div>
 				{activeGroupMenu ? (
 					<button
 						onClick={toggleGroupMenu}
-						className="text-gray2 dark:text-gray-400 p-2 rounded-full lg:hidden
+						className="text-gray2 dark:text-gray-400 p-[6px] rounded-full lg:hidden
 						border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
 						hover:bg-gray-200 dark:hover:bg-dark3
 						transition-all "
@@ -43,7 +43,7 @@ function Nav() {
 				) : (
 					<button
 						onClick={toggleGroupMenu}
-						className="text-gray2 dark:text-gray-400 p-2 rounded-full lg:hidden
+						className="text-gray2 dark:text-gray-400 p-[6px] rounded-full lg:hidden
 						border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
 						hover:bg-gray-200 dark:hover:bg-dark3
 						transition-all "
@@ -53,7 +53,7 @@ function Nav() {
 				)}
 			</div>
 			<div>
-				<ul className="flex flex-row justify-center items-center gap-6">
+				<ul className="flex flex-row justify-center items-center gap-2">
 					<GroupMembers />
 					<NavMenu handleClickOpen={handleClickOpen} />
 					<Account open={open} handleClose={handleClose} />
@@ -62,12 +62,18 @@ function Nav() {
 						{darkMode ? (
 							<MoonIcon
 								onClick={toggleTheme}
-								className="text-sky-500 cursor-pointer w-7 h-7"
+								className="h-11 w-11 text-sky-600 dark:text-sky-700 p-[6px] rounded-full 
+								border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
+								hover:bg-gray-200 dark:hover:bg-dark3
+								transition-all "
 							/>
 						) : (
 							<SunIcon
 								onClick={toggleTheme}
-								className="text-sky-500 cursor-pointer w-7 h-7"
+								className="h-11 w-11 text-sky-600 dark:text-sky-700 p-[6px] rounded-full
+								border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
+								hover:bg-gray-200 dark:hover:bg-dark3
+								transition-all "
 							/>
 						)}
 					</li>
@@ -78,8 +84,10 @@ function Nav() {
 							rel="noopener noreferrer"
 						>
 							<BsGithub
-								className="w-7 h-7 cursor-pointer text-gray-900 hover:text-gray-700
-							dark:text-white dark:hover:text-gray-300"
+								className="w-10 h-10 text-gray2 dark:text-gray-400 p-[6px] rounded-full
+								border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
+								hover:bg-gray-200 dark:hover:bg-dark3
+								transition-all "
 							/>
 						</a>
 					</li>

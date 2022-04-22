@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { Divider } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import { useSelector, useDispatch } from "react-redux";
@@ -40,9 +39,8 @@ export default function FormDialog({ open, handleClose }) {
 		e.preventDefault();
 
 		if (user.username === "GuestAccount") {
-			return toast.error(`${user.username}'s info cannot be changed`);
+			return toast.error(`Guest account information cannot be changed`);
 		}
-
 		if (formData.currentPassword !== "" && formData.newPassword === "") {
 			return toast.info("Please enter new password");
 		}
@@ -117,88 +115,89 @@ export default function FormDialog({ open, handleClose }) {
 		<>
 			<Dialog
 				open={open}
+				fullWidth={true}
+				maxWidth="md"
 				onClose={() => {
 					handleClose();
 					resetFormData();
 				}}
 			>
 				<div
-					className={`w-fit px-6 py-4 ${darkMode ? "bg-menu" : "bg-offwhite"} `}
+					className={`w-fit py-6 px-8 ${darkMode ? "bg-menu" : "bg-offwhite"} `}
 				>
 					<div
-						className={`${
-							darkMode ? "text-white" : "text-gray1"
-						} flex items-center justify-center mb-4 p-2 `}
+						className={`${darkMode ? "text-white" : "text-gray1"}  mb-4 p-2 `}
 					>
-						<h1 className="text-center font-semibold text-lg">
-							{user.name}'s Personal Info
+						<h1
+							className={` ${
+								darkMode
+									? "text-white border-b-[1px]  border-gray-500 "
+									: "text-gray1 border-b-[1px]  border-gray-300"
+							} text-2xl font-semibold pb-2 font-sans `}
+						>
+							{user.name}'s Account Information
 						</h1>
 					</div>
 
-					<div className="grid gap-6">
-						<div className="px-4 pt-2 pb-4 border-[1px] border-gray-300 rounded-md">
+					<div className=" grid sm:grid-cols-2 sm:gap-6">
+						<div>
 							<TextField
 								name="username"
 								value={formData.username}
 								onChange={handleFormData}
-								// autoFocus
-								margin="dense"
+								margin="normal"
 								id="username"
 								label="Username"
 								type="text"
 								fullWidth
-								variant="standard"
+								variant="outlined"
 							/>
 							<TextField
 								name="email"
 								value={formData.email}
 								onChange={handleFormData}
-								// autoFocus
-								margin="dense"
+								margin="normal"
 								id="email"
 								label="Email"
 								type="text"
 								fullWidth
-								variant="standard"
+								variant="outlined"
 							/>
 						</div>
 
-						<div className="p-4 border-[1px] border-gray-300 rounded-md">
+						<div>
 							<TextField
 								name="currentPassword"
 								value={formData.currentPassword}
 								onChange={handleFormData}
-								// autoFocus
-								margin="dense"
+								margin="normal"
 								id="currentPassword"
 								label="Current Password"
 								type="text"
 								fullWidth
-								variant="standard"
+								variant="outlined"
 							/>
 							<TextField
 								name="newPassword"
 								value={formData.newPassword}
 								onChange={handleFormData}
-								// autoFocus
-								margin="dense"
+								margin="normal"
 								id="newPassword"
 								label="New Password"
 								type="text"
 								fullWidth
-								variant="standard"
+								variant="outlined"
 							/>
 							<TextField
 								name="confirmNewPassword"
 								value={formData.confirmNewPassword}
 								onChange={handleFormData}
-								// autoFocus
 								margin="dense"
 								id="confirmNewPassword"
 								label="Confirm New Password"
 								type="text"
 								fullWidth
-								variant="standard"
+								variant="outlined"
 							/>
 						</div>
 					</div>
@@ -213,7 +212,7 @@ export default function FormDialog({ open, handleClose }) {
 									? "bg-menu text-white hover:bg-gray-800"
 									: "bg-white text-gray1 hover:bg-gray-200 "
 							}   
-								p-2 text-sm w-16 font-bold rounded-md`}
+								p-2 text-sm w-20 font-bold rounded-md`}
 						>
 							Cancel
 						</button>
@@ -225,7 +224,7 @@ export default function FormDialog({ open, handleClose }) {
 								darkMode
 									? "bg-menu text-white hover:bg-gray-800 active:bg-sky-800"
 									: "bg-white text-gray1 hover:bg-gray-200 active:bg-sky-400"
-							}  w-16 p-2 text-sm font-bold rounded-md`}
+							}  w-20 p-2 text-sm font-bold rounded-md`}
 						>
 							Save
 						</button>
@@ -246,61 +245,61 @@ export default function FormDialog({ open, handleClose }) {
 						name="username"
 						value={formData.username}
 						onChange={handleFormData}
-						// autoFocus
+						
 						margin="dense"
 						id="username"
 						label="Username"
 						type="text"
 						fullWidth
-						variant="standard"
+						variant="outlined"
 					/>
 					<TextField
 						name="email"
 						value={formData.email}
 						onChange={handleFormData}
-						// autoFocus
+						
 						margin="dense"
 						id="email"
 						label="Email"
 						type="text"
 						fullWidth
-						variant="standard"
+						variant="outlined"
 					/>
 					<TextField
 						name="currentPassword"
 						value={formData.currentPassword}
 						onChange={handleFormData}
-						// autoFocus
+						
 						margin="dense"
 						id="currentPassword"
 						label="Current Password"
 						type="text"
 						fullWidth
-						variant="standard"
+						variant="outlined"
 					/>
 					<TextField
 						name="newPassword"
 						value={formData.newPassword}
 						onChange={handleFormData}
-						// autoFocus
+						
 						margin="dense"
 						id="newPassword"
 						label="New Password"
 						type="text"
 						fullWidth
-						variant="standard"
+						variant="outlined"
 					/>
 					<TextField
 						name="confirmNewPassword"
 						value={formData.confirmNewPassword}
 						onChange={handleFormData}
-						// autoFocus
+						
 						margin="dense"
 						id="confirmNewPassword"
 						label="Confirm New Password"
 						type="text"
 						fullWidth
-						variant="standard"
+						variant="outlined"
 					/>
 				</DialogContent>
 				<DialogActions>
