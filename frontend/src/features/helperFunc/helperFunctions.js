@@ -1,4 +1,39 @@
 import { current } from "@reduxjs/toolkit";
+import { nanoid } from "@reduxjs/toolkit";
+
+export const addMessageDateHistory = (payload) => {
+	const messageGroupedByDate = payload.reduce((dateCreated, message) => {
+		const date = message.createdAt.split("T")[0];
+		if (!dateCreated[date]) {
+			dateCreated[date] = [];
+		}
+		dateCreated[date].push(message);
+		return dateCreated;
+	}, {});
+
+	const messagesWithDateHistory = Object.values(messageGroupedByDate).reduce(
+		(acc, msgArr) => {
+			return acc.concat([
+				{
+					_id: nanoid(),
+					type: "renderNewDay",
+					user: msgArr[0].user,
+					username: msgArr[0].username,
+					groupId: msgArr[0].groupId,
+					message: msgArr[0].message,
+					fullDate: msgArr[0].fullDate,
+					timeCreated: msgArr[0].timeCreated,
+					dateCreated: msgArr[0].dateCreated,
+					createdAt: msgArr[0].createdAt,
+				},
+				...msgArr,
+			]);
+		},
+		[]
+	);
+
+	return messagesWithDateHistory;
+};
 
 export const updateGroup = (state, currentGroup, payload) => {
 	return current(state).map((data) => {

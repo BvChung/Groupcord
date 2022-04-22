@@ -46,11 +46,18 @@ const setMessages = asyncHandler(async (req, res) => {
 		month: "numeric",
 	});
 
+	const fullDate = timeNow.toLocaleString("en-US", {
+		month: "long",
+		day: "numeric",
+		year: "numeric",
+	});
+
 	const chatlog = await Messages.create({
 		user: req.user.id,
 		groupId: groupId,
 		username: req.user.username,
 		message: req.body.message,
+		fullDate: fullDate,
 		timeCreated: convertedTime,
 		dateCreated: convertedDate,
 	});

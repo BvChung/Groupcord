@@ -23,6 +23,10 @@ const messageSchema = mongoose.Schema(
 			type: String,
 			required: [true, "Please add a text value"],
 		},
+		fullDate: {
+			type: String,
+			required: [true, "Please add when message was created"],
+		},
 		dateCreated: {
 			type: String,
 			required: [true, "Please add when message was created"],

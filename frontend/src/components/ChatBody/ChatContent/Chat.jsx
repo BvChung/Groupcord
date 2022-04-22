@@ -11,8 +11,9 @@ import ChatNav from "./ChatNav";
 import { PaperAirplaneIcon, PlusIcon } from "@heroicons/react/solid";
 import { SocketContext } from "../../../appContext/socketContext";
 import { toast } from "react-toastify";
+import { nanoid } from "@reduxjs/toolkit";
 
-function Chat() {
+export default function Chat() {
 	const socket = useContext(SocketContext);
 	const dispatch = useDispatch();
 
@@ -134,10 +135,12 @@ function Chat() {
 						return (
 							<ChatItem
 								key={message._id}
+								type={message.type}
 								messageId={message._id}
 								userId={message.user}
 								username={message.username}
 								message={message.message}
+								fullDate={message.fullDate}
 								timeCreated={message.timeCreated}
 								dateCreated={message.dateCreated}
 							/>
@@ -184,7 +187,139 @@ function Chat() {
 	);
 }
 
-export default Chat;
+const data = [
+	{
+		notes: "Game was played",
+		time: "2017-10-04T20:24:30+00:00",
+		dateCreated: "4/15",
+		sport: "hockey",
+		owner: "steve",
+		players: "10",
+		game_id: 1,
+	},
+	{
+		notes: "Game was played",
+		time: "2017-10-04T12:35:30+00:00",
+		dateCreated: "4/15",
+		sport: "lacrosse",
+		owner: "steve",
+		players: "6",
+		game_id: 2,
+	},
+	{
+		notes: "Game was played",
+		time: "2017-10-14T20:32:30+00:00",
+		dateCreated: "4/16",
+		sport: "hockey",
+		owner: "steve",
+		players: "4",
+		game_id: 3,
+	},
+	{
+		notes: "Game was played",
+		time: "2017-10-04T10:12:30+00:00",
+		dateCreated: "4/17",
+		sport: "hockey",
+		owner: "henry",
+		players: "10",
+		game_id: 4,
+	},
+];
+
+const add = {
+	a: 1,
+	b: 2,
+	c: 3,
+};
+const total = Object.values(add).reduce((t, value) => t + value, 0);
+// console.log(total); // 6
+
+const a = {
+	a: [1, 2, { one: "1" }],
+	b: [2],
+	c: [3],
+};
+const t = Object.values(a).reduce(
+	(t, value) => t.concat([...value, { type: "date" }]),
+	[]
+);
+// console.log(t); // 6
+
+function showMessageDateHistory(data) {
+	if (Object.keys(data).length !== 0) {
+		let day;
+		data.forEach((el, i) => {
+			if (day !== el.dateCreated) {
+				data.splice(i, 0, {
+					_id: nanoid(),
+					newDay: el.dateCreated,
+					user: "",
+					username: "",
+					message: "",
+					timeCreated: "",
+					dateCreated: "",
+				});
+				day = el.dateCreated;
+			}
+		});
+	}
+}
+// function showMessageDateHistory(data) {
+// 	if (Object.keys(data).length !== 0) {
+// 		let day;
+// 		for (const [i, value] of data.entries()) {
+// 			if (day !== value.dateCreated) {
+// 				data.splice(i, 0, {
+// 					_id: nanoid(),
+// 					newDay: value.dateCreated,
+// 					user: "",
+// 					username: "",
+// 					message: "",
+// 					timeCreated: "",
+// 					dateCreated: "",
+// 				});
+// 				day = value.dateCreated;
+// 			}
+// 		}
+// 		return data;
+// 	}
+// }
+
+// let day;
+// for (const [i, value] of data.entries()) {
+// 	if (day !== value.dateCreated) {
+// 		data.splice(i, 0, {
+// 			_id: nanoid(),
+// 			newDay: value.dateCreated,
+// 			user: "",
+// 			username: "",
+// 			message: "",
+// 			timeCreated: "",
+// 			dateCreated: "",
+// 		});
+// 		day = value.dateCreated;
+// 	}
+// }
+// console.log(data);
+
+// if (el.dateCreated === day) {
+// 	day = el.dateCreated;
+// } else {
+// 	data.splice(i + 1, 0, "new");
+// 	day = el.dateCreated;
+// }
+
+// const groups = data.reduce((groups, game) => {
+// 	const date = game.time.split("T")[0];
+// 	if (!groups[date]) {
+// 		groups[date] = [];
+// 	}
+// 	groups[date].push(game);
+// 	return groups;
+// }, {});
+
+// this gives an object with dates as keys
+// console.log(groups);
 
 // ?.filter(
 // 	(message, i, arr) =>
