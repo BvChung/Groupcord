@@ -54,7 +54,7 @@ export default function GroupTools({ groupId, groupName, toggleEditingName }) {
 				aria-expanded={isOpen || undefined}
 				aria-haspopup="menu"
 			>
-				<DotsVerticalIcon className="w-6 h-6 p-[2px] hover:bg-white rounded-full" />
+				<DotsVerticalIcon className="w-5 h-5 text-gray-800 dark:text-gray-200" />
 			</TriggerButton>
 			<MenuUnstyled
 				actions={menuActions}
@@ -76,7 +76,7 @@ export default function GroupTools({ groupId, groupName, toggleEditingName }) {
 								<PencilIcon className="h-6 w-6" />
 							</div>
 							<div className="flex items-center">
-								<span className="font-semibold">Edit Group Name</span>
+								<span className="font-medium text-sm">Edit Group Name</span>
 							</div>
 						</div>
 					</StyledMenuItem>
@@ -93,7 +93,7 @@ export default function GroupTools({ groupId, groupName, toggleEditingName }) {
 								<TrashIcon className="h-6 w-6" />
 							</div>
 							<div className="flex items-center gap-2">
-								<span className="font-semibold">Delete Group</span>
+								<span className="font-medium text-sm">Delete Group</span>
 							</div>
 						</div>
 					</StyledMenuItem>
@@ -113,7 +113,7 @@ const grey = {
 	600: "#6F7E8C",
 	700: "#3E5060",
 	800: "#1a1a1a",
-	900: "#121212",
+	900: "#232323",
 };
 
 const StyledListbox = styled("ul")(
@@ -125,8 +125,8 @@ const StyledListbox = styled("ul")(
   margin: 10px 0;
   min-width: 200px;
   max-height: 400px;
-  background: ${theme.palette.mode === "dark" ? grey[900] : "#fff"};
-  border: 1px solid ${theme.palette.mode === "dark" ? grey[800] : grey[300]};
+  background: ${theme.palette.mode === "dark" ? "#18181b" : "#fff"};
+  border: 1px solid ${theme.palette.mode === "dark" ? "#343434" : grey[300]};
   border-radius: 0.4em;
   color: ${theme.palette.mode === "dark" ? "#fff" : grey[900]};
   overflow: auto;
@@ -160,8 +160,8 @@ const StyledMenuItem = styled(MenuItemUnstyled)(
   }
 
   &:hover:not(.${menuItemUnstyledClasses.disabled}) {
-    background-color: ${theme.palette.mode === "dark" ? grey[800] : grey[100]};
-    color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
+    background-color: ${theme.palette.mode === "dark" ? "#1f2937" : "#e5e7eb"};
+    color: ${theme.palette.mode === "dark" ? "#fff" : grey[900]};
   }
   `
 );
@@ -169,21 +169,20 @@ const StyledMenuItem = styled(MenuItemUnstyled)(
 const TriggerButton = styled("button")(
 	({ theme }) => `
   font-family: Inter, sans-serif;
-  font-size: 0.875rem;
   box-sizing: border-box;
   min-height: auto;
   min-width: auto;
   background: transparent;
-  border-radius: 1em;
+  border: 1px solid transparent;
+  border-radius: 50em;
   margin: 0;
-  padding: 2px;
-  text-align: left;
-  line-height: 1.5;
-  color: ${theme.palette.mode === "dark" ? grey[300] : grey[500]};
+  padding: 6px;
 
   &:hover {
-    background: ${theme.palette.mode === "dark" ? "" : grey[100]};
-    border-color: ${theme.palette.mode === "dark" ? grey[700] : grey[400]};
+    background: ${theme.palette.mode === "dark" ? "#1a1a1a" : "#e5e7eb"};
+  }
+  &:active {
+    border: 1px solid ${theme.palette.mode === "dark" ? "#ffffff" : "#6b7280"};
   }
 
   `

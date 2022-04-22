@@ -14,7 +14,6 @@ export default function ContactMenu() {
 	const { toggleGroupModal, openGroupModal } = useContext(MenuContext);
 
 	const { darkMode } = useSelector((state) => state.theme);
-
 	const [formData, setFormData] = useState({
 		groupName: "",
 	});
@@ -31,10 +30,10 @@ export default function ContactMenu() {
 	function handleSubmit(e) {
 		e.preventDefault();
 
-		if (formData.groupName === "") return;
+		if (formData.groupName === "" || !formData) return;
 
 		dispatch(createChatGroups(formData));
-		toast.info(`${formData.groupName} has been created`);
+		toast.success(`${formData.groupName} has been created`);
 		toggleGroupModal();
 	}
 	function resetFormData() {
@@ -45,51 +44,64 @@ export default function ContactMenu() {
 			};
 		});
 	}
+
+	const createButtonActive = darkMode
+		? "bg-sky-700 text-white hover:bg-sky-800 active:bg-sky-900"
+		: "bg-sky-600 text-white hover:bg-sky-500 active:bg-sky-400";
+	const createButtonInactive = darkMode
+		? "bg-menu text-gray-700"
+		: "bg-white text-gray-300";
+	const buttonStyle = darkMode
+		? "bg-menu text-white hover:bg-gray-700 active:bg-gray-800"
+		: "bg-white text-gray1 hover:bg-gray-200 active:bg-gray-400";
+
 	return (
 		<>
 			<Dialog
 				open={openGroupModal}
+				fullWidth={true}
+				maxWidth="sm"
 				onClose={() => {
 					toggleGroupModal();
 					resetFormData();
 				}}
 			>
 				<div
-					className={`w-[19rem] sm:w-96 lg:w-[30rem] p-6 ${
+					className={`md:w-full py-6 px-8 ${
 						darkMode ? "bg-menu" : "bg-offwhite"
 					} `}
 				>
-					<div
-						className={`text-center ${
-							darkMode ? "text-white" : "text-gray1"
-						} text-xl font-bold pb-2`}
+					<h1
+						className={` ${
+							darkMode
+								? "text-white border-b-[1px]  border-gray-500 "
+								: "text-gray1 border-b-[1px]  border-gray-300"
+						} text-2xl font-semibold pb-2 font-sans `}
 					>
 						Create Group
-					</div>
+					</h1>
 
-					<TextField
-						name="groupName"
-						value={formData.groupName}
-						onChange={handleFormData}
-						margin="dense"
-						id="groupName"
-						label="Group name"
-						type="text"
-						fullWidth
-						variant="standard"
-					/>
+					<div className="mt-4">
+						<TextField
+							name="groupName"
+							value={formData.groupName}
+							onChange={handleFormData}
+							margin="dense"
+							id="groupName"
+							label="Group name"
+							type="text"
+							fullWidth
+							variant="outlined"
+						/>
+					</div>
 					<div className="flex justify-end items-center mt-4 gap-2 ">
 						<button
 							onClick={() => {
 								toggleGroupModal();
 								resetFormData();
 							}}
-							className={`transition-colors ${
-								darkMode
-									? "bg-menu text-white hover:bg-gray-800"
-									: "bg-white text-gray1 hover:bg-gray-200 "
-							}   
-								p-2 text-sm w-16 font-bold rounded-md`}
+							className={`transition-colors ${buttonStyle}   
+							p-2 text-sm w-20 font-bold rounded-md`}
 						>
 							Cancel
 						</button>
@@ -98,12 +110,12 @@ export default function ContactMenu() {
 								handleSubmit(e);
 							}}
 							className={`${
-								darkMode
-									? "bg-menu text-white hover:bg-gray-800 active:bg-sky-800"
-									: "bg-white text-gray1 hover:bg-gray-200 active:bg-sky-400"
-							}  w-16 p-2 text-sm font-bold rounded-md`}
+								formData.groupName !== ""
+									? createButtonActive
+									: createButtonInactive
+							}  w-20 p-2 text-sm font-bold rounded-md`}
 						>
-							Save
+							Create
 						</button>
 					</div>
 				</div>

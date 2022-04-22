@@ -25,7 +25,7 @@ export default function ChatGroups() {
 	const [searchText, setSearchText] = useState("");
 
 	const showGroupsStyle = activeGroupMenu
-		? "md:flex md:flex-col left-0 "
+		? "lg:flex lg:flex-col left-0 "
 		: "-left-full lg:left-0";
 	const globalActive =
 		groupInfo.groupId === "Global"
@@ -87,9 +87,9 @@ export default function ChatGroups() {
 
 				<div className="flex flex-col items-center justify-center mx-6 mb-6">
 					<button
-						className="flex items-center w-full justify-center gap-2 h-12 mb-6 bg-sky-500 rounded-lg shadow-md
-					 active:shadow-lg hover:bg-sky-600 cursor-pointer transition-all
-				dark:bg-sky-700 dark:hover:bg-sky-600"
+						className="flex items-center w-full justify-center gap-2 h-12 mb-6 
+						bg-sky-500 hover:bg-sky-600 dark:bg-sky-800 dark:hover:bg-sky-700 rounded-lg shadow-md
+					 	active:shadow-lg cursor-pointer transition-all"
 						onClick={() => {
 							setOpenGroupModal(true);
 						}}
@@ -99,8 +99,8 @@ export default function ChatGroups() {
 					</button>
 
 					<div
-						className="flex items-center justify-center border-[1px] border-gray-300
-								bg-white focus-within:border-sky-400 w-full p-[6px] rounded-3xl shadow-sm"
+						className="flex items-center justify-center border-[1px] border-gray-300 dark:border-gray-600 dark:bg-gray-800 
+								bg-white focus-within:border-sky-500 dark:focus-within:border-sky-700 w-full p-[6px] rounded-3xl shadow-sm"
 					>
 						<input
 							name="searchText"
@@ -108,9 +108,9 @@ export default function ChatGroups() {
 							type="text"
 							placeholder="Search messages"
 							onChange={(e) => setSearchText(e.target.value)}
-							className="text-gray1 outline-none bg-transparent w-11/12 px-2 placeholder:text-gray-500"
+							className="text-gray1 dark:text-white outline-none bg-transparent w-11/12 px-2 placeholder:text-gray-500 dark:placeholder:text-gray-600"
 						></input>
-						<SearchIcon className="w-8 h-8 text-white bg-sky-400 dark:bg-sky-600 rounded-full p-1" />
+						<SearchIcon className="w-7 h-7 text-white bg-sky-500 dark:bg-sky-700 rounded-full p-1" />
 					</div>
 				</div>
 
