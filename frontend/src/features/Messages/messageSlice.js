@@ -8,7 +8,7 @@ import {
 
 // Is useState() but for all in redux
 const initialState = {
-	messageArr: {},
+	userMessages: {},
 	newMessageToSocket: {},
 	deletedMessageToSocket: {},
 	isLoading: false,
@@ -84,7 +84,7 @@ export const messageSlice = createSlice({
 	reducers: {
 		resetMessageState: (state) => initialState,
 		resetMessagesWithGroupRemoval: (state) => {
-			state.messageArr.groupMessages = [];
+			state.userMessages.groupMessages = [];
 		},
 	},
 	extraReducers: (builder) => {
@@ -95,7 +95,7 @@ export const messageSlice = createSlice({
 		builder.addCase(createChatMessage.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
-			state.messageArr.groupMessages.push(action.payload);
+			state.userMessages.groupMessages.push(action.payload);
 			state.newMessageToSocket = action.payload;
 		});
 		builder.addCase(createChatMessage.rejected, (state, action) => {
@@ -109,7 +109,7 @@ export const messageSlice = createSlice({
 		builder.addCase(getChatMessage.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
-			state.messageArr = action.payload;
+			state.userMessages = action.payload;
 		});
 		builder.addCase(getChatMessage.rejected, (state, action) => {
 			state.isLoading = false;
@@ -117,15 +117,15 @@ export const messageSlice = createSlice({
 			state.errorMessage = action.payload;
 		});
 		builder.addCase(updateChatMessage.fulfilled, (state, action) => {
-			state.messageArr.groupMessages.push(action.payload);
-			state.messageArr.groupMessages = filterDuplicateMessages(
-				state.messageArr.groupMessages
+			state.userMessages.groupMessages.push(action.payload);
+			state.userMessages.groupMessages = filterDuplicateMessages(
+				state.userMessages.groupMessages
 			);
 		});
 		builder.addCase(deleteChatMessage.fulfilled, (state, action) => {
 			console.log(action.payload);
-			state.messageArr.groupMessages = deleteData(
-				state.messageArr.groupMessages,
+			state.userMessages.groupMessages = deleteData(
+				state.userMessages.groupMessages,
 				action.payload
 			);
 			state.deletedMessageToSocket = action.payload;
@@ -133,8 +133,8 @@ export const messageSlice = createSlice({
 		builder.addCase(
 			updateDeletedMessageWithSocket.fulfilled,
 			(state, action) => {
-				state.messageArr.groupMessages = deleteData(
-					state.messageArr.groupMessages,
+				state.userMessages.groupMessages = deleteData(
+					state.userMessages.groupMessages,
 					action.payload
 				);
 			}

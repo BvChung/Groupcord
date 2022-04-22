@@ -7,6 +7,8 @@ const Messages = require("../models/messageModel");
 const getMessages = asyncHandler(async (req, res) => {
 	const { groupId } = req.query;
 
+	const allMessages = await Messages.find({});
+
 	// Return messages based on user JWT
 	const userMessages = await Messages.find({ user: req.user.id });
 
@@ -14,6 +16,7 @@ const getMessages = asyncHandler(async (req, res) => {
 	const groupMessages = await Messages.find({ groupId: groupId });
 
 	return res.status(200).json({
+		allMessages: allMessages,
 		currentUserMessage: userMessages,
 		groupMessages: groupMessages,
 	});
