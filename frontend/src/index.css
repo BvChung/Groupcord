@@ -58,6 +58,9 @@
 .height {
 	height: calc(100vh - 3.5rem);
 }
+.max-height-chat {
+	max-height: calc(100vh - 7rem);
+}
 .max-height {
 	max-height: calc(100vh - 22rem);
 }
