@@ -84,6 +84,7 @@ export default function AddMembers() {
 
 	useEffect(() => {
 		socket.on("receive_group_data", (data) => {
+			console.log(data);
 			dispatch(updateMembersWithSocket(data.groupData.members));
 
 			if (user._id === data.memberChanged && data.action === "addMember") {
@@ -107,6 +108,7 @@ export default function AddMembers() {
 				aria-controls={isOpen ? "wrapped-menu" : undefined}
 				aria-expanded={isOpen || undefined}
 				aria-haspopup="menu"
+				aria-label="Open group members menu"
 			>
 				<UserAddIcon className="h-8 w-8 text-gray2 dark:text-gray-400" />
 			</TriggerButton>
@@ -259,7 +261,7 @@ const StyledMenuItem = styled(MenuItemUnstyled)(
   }
 
   &:hover:not(.${menuItemUnstyledClasses.disabled}) {
-    background-color: ${theme.palette.mode === "dark" ? "#1f2937" : "#e5e7eb"};
+    background-color: ${theme.palette.mode === "dark" ? "#1f2937" : "#f3f4f6"};
     color: ${theme.palette.mode === "dark" ? "#fff" : grey[900]};
   }
   `

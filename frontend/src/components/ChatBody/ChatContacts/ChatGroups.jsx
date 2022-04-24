@@ -2,12 +2,13 @@ import { useState, useEffect, useContext, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ChatAlt2Icon } from "@heroicons/react/outline";
 import { SearchIcon, GlobeIcon } from "@heroicons/react/solid";
-import ContactItem from "./GroupItem";
+import GroupItem from "./GroupItem";
 import {
 	updateActiveChatGroup,
 	updateGroupNameWithSocket,
 	deleteGroupWithSocket,
 } from "../../../features/conversations/conversationSlice";
+import { resetMessagesWithGroupRemoval } from "../../../features/messages/messageSlice";
 import { SocketContext } from "../../../appContext/socketContext";
 import { MenuContext } from "../../../appContext/menuContext";
 import { toast } from "react-toastify";
@@ -16,12 +17,15 @@ export default function ChatGroups() {
 	const dispatch = useDispatch();
 	const socket = useContext(SocketContext);
 	const { setOpenGroupModal, activeGroupMenu } = useContext(MenuContext);
-	const { groups } = useSelector((state) => state.conversations);
-	const { groupInfo } = useSelector((state) => state.conversations);
-	const { groupDeletedToSocket } = useSelector((state) => state.conversations);
-	const { groupNameUpdatedToSocket } = useSelector(
-		(state) => state.conversations
-	);
+	const {
+		groups,
+		groupInfo,
+		groupDeletedToSocket,
+		groupNameUpdatedToSocket,
+		loadInitialGroups,
+		filteredMembers,
+	} = useSelector((state) => state.conversations);
+	// console.log(groupInfo, filteredMembers);
 	const [searchText, setSearchText] = useState("");
 
 	const showGroupsStyle = activeGroupMenu
@@ -32,46 +36,34 @@ export default function ChatGroups() {
 			? "bg-sky-100 dark:bg-slate-800 border-l-sky-400 border-l-[3px] dark:border-l-sky-500"
 			: "border-l-[3px] border-l-gray4 dark:border-l-gray-600 hover:border-l-gray-400 dark:hover:border-l-gray-400";
 
-	const receiveDeletedGroup = useCallback(() => {
+	const sendDeletedGroup = useCallback(() => {
+		socket.emit("send_group_deleted", groupDeletedToSocket);
+	}, [socket, groupDeletedToSocket]);
+
+	const sendUpdatedGroupName = useCallback(() => {
+		socket.emit("send_group_name_updated", groupNameUpdatedToSocket);
+	}, [socket, groupNameUpdatedToSocket]);
+
+	useEffect(() => {
+		sendDeletedGroup();
+	}, [sendDeletedGroup]);
+	useEffect(() => {
+		sendUpdatedGroupName();
+	}, [sendUpdatedGroupName]);
+
+	useEffect(() => {
 		socket.on("receive_group_deleted", (data) => {
 			dispatch(deleteGroupWithSocket(data));
+			dispatch(resetMessagesWithGroupRemoval());
 			toast.info(`${data.groupName} has been deleted`);
 		});
 	}, [socket, dispatch]);
-	const receiveUpdatedGroupName = useCallback(() => {
+
+	useEffect(() => {
 		socket.on("receive_group_name_updated", (data) => {
 			dispatch(updateGroupNameWithSocket(data));
 		});
 	}, [socket, dispatch]);
-
-	useEffect(() => {
-		socket.emit("send_group_deleted", groupDeletedToSocket);
-	}, [groupDeletedToSocket, socket]);
-	useEffect(() => {
-		socket.emit("send_group_name_updated", groupNameUpdatedToSocket);
-	}, [groupNameUpdatedToSocket, socket]);
-
-	useEffect(() => {
-		receiveDeletedGroup();
-	}, [receiveDeletedGroup]);
-
-	useEffect(() => {
-		receiveUpdatedGroupName();
-	}, [receiveUpdatedGroupName]);
-
-	// useEffect(() => {
-	// 	socket.on("receive_group_deleted", (data) => {
-	// 		dispatch(deleteGroupWithSocket(data));
-	// 		toast.info(`${data.groupName} has been deleted`);
-	// 	});
-	// }, [socket, dispatch]);
-
-	// useEffect(() => {
-	// 	socket.on("receive_group_name_updated", (data) => {
-	// 		console.log(data);
-	// 		dispatch(updateGroupNameWithSocket(data));
-	// 	});
-	// }, [socket, dispatch]);
 
 	return (
 		<>
@@ -135,7 +127,7 @@ export default function ChatGroups() {
 							<GlobeIcon className="h-7 w-7 text-sky-500 dark:text-sky-600" />
 							<span className="dark:text-white">Global</span>
 						</div>
-						{Object.keys(groups).length !== 0 &&
+						{loadInitialGroups &&
 							groups
 								.filter((group) => {
 									return group.groupName
@@ -144,7 +136,7 @@ export default function ChatGroups() {
 								})
 								.map((group) => {
 									return (
-										<ContactItem
+										<GroupItem
 											key={group._id}
 											groupId={group._id}
 											groupName={group.groupName}

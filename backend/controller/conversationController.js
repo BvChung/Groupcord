@@ -56,8 +56,6 @@ const updateChatGroupName = asyncHandler(async (req, res) => {
 // @route DELETE /api/conversation/:id
 // @access Private
 const deleteChatGroup = asyncHandler(async (req, res) => {
-	const { groupId } = req.params;
-
 	// Delete group
 	const deletedGroup = await Conversation.findByIdAndDelete(req.params.groupId);
 

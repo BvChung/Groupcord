@@ -13,7 +13,7 @@ import {
 	DotsVerticalIcon,
 	TrashIcon,
 	PencilIcon,
-} from "@heroicons/react/outline";
+} from "@heroicons/react/solid";
 import { toast } from "react-toastify";
 
 export default function GroupTools({ groupId, groupName, toggleEditingName }) {
@@ -71,12 +71,12 @@ export default function GroupTools({ groupId, groupName, toggleEditingName }) {
 						}}
 						className="mb-1"
 					>
-						<div className="flex items-center gap-2">
-							<div className="p-[6px] text-yellow-500 hover:bg-yellow-500 hover:text-white rounded-full">
-								<PencilIcon className="h-6 w-6" />
+						<div className="flex items-center gap-4 px-2 py-1">
+							<div className="text-yellow-500">
+								<PencilIcon className="h-5 w-5" />
 							</div>
 							<div className="flex items-center">
-								<span className="font-medium text-sm">Edit Group Name</span>
+								<span className="font-sans text-sm">Edit Name</span>
 							</div>
 						</div>
 					</StyledMenuItem>
@@ -88,12 +88,12 @@ export default function GroupTools({ groupId, groupName, toggleEditingName }) {
 						}}
 						className="mb-1"
 					>
-						<div className="flex items-center gap-2">
-							<div className="p-[6px] text-gray-600 hover:bg-gray-600 hover:text-white rounded-full">
-								<TrashIcon className="h-6 w-6" />
+						<div className="flex items-center gap-4 px-2 py-1">
+							<div className="text-gray-600 ">
+								<TrashIcon className="h-5 w-5" />
 							</div>
 							<div className="flex items-center gap-2">
-								<span className="font-medium text-sm">Delete Group</span>
+								<span className="font-sans text-sm">Delete Group</span>
 							</div>
 						</div>
 					</StyledMenuItem>
@@ -119,11 +119,11 @@ const grey = {
 const StyledListbox = styled("ul")(
 	({ theme }) => `
   font-family: Inter, sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   box-sizing: border-box;
   padding: 4px;
-  margin: 10px 0;
-  min-width: 200px;
+  margin: 5px 0;
+  width: 180px;
   max-height: 400px;
   background: ${theme.palette.mode === "dark" ? "#18181b" : "#fff"};
   border: 1px solid ${theme.palette.mode === "dark" ? "#343434" : grey[300]};
@@ -141,7 +141,7 @@ const StyledListbox = styled("ul")(
 const StyledMenuItem = styled(MenuItemUnstyled)(
 	({ theme }) => `
   list-style: none;
-  padding: 8px;
+  padding: 4px;
   border-radius: 0.45em;
   cursor: pointer;
 
@@ -160,7 +160,7 @@ const StyledMenuItem = styled(MenuItemUnstyled)(
   }
 
   &:hover:not(.${menuItemUnstyledClasses.disabled}) {
-    background-color: ${theme.palette.mode === "dark" ? "#1f2937" : "#e5e7eb"};
+    background-color: ${theme.palette.mode === "dark" ? "#1f2937" : "#f3f4f6"};
     color: ${theme.palette.mode === "dark" ? "#fff" : grey[900]};
   }
   `

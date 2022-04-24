@@ -2,10 +2,7 @@ import { useState, useContext } from "react";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import { useSelector, useDispatch } from "react-redux";
-import {
-	createChatGroups,
-	resetState,
-} from "../../features/conversations/conversationSlice";
+import { createChatGroups } from "../../features/conversations/conversationSlice";
 import { toast } from "react-toastify";
 import { MenuContext } from "../../appContext/menuContext";
 
@@ -96,6 +93,7 @@ export default function ContactMenu() {
 					</div>
 					<div className="flex justify-end items-center mt-4 gap-2 ">
 						<button
+							aria-label="Exit group creation"
 							onClick={() => {
 								toggleGroupModal();
 								resetFormData();
@@ -106,6 +104,7 @@ export default function ContactMenu() {
 							Cancel
 						</button>
 						<button
+							aria-label="Create group"
 							onClick={(e) => {
 								handleSubmit(e);
 							}}
@@ -122,49 +121,4 @@ export default function ContactMenu() {
 			</Dialog>
 		</>
 	);
-}
-
-{
-	/* <Dialog
-				openGroupModal={openGroupModal}
-				onClose={() => {
-					toggleGroupModal();
-					resetFormData();
-				}}
-			>
-				<div className="w-96 p-6 bg-gray-900 dark:bg-slate-800">
-					<div className="text-center text-xl font-semibold">
-						Create Conversation
-					</div>
-
-					<TextField
-						name="groupName"
-						value={formData.groupName}
-						onChange={handleFormData}
-						margin="dense"
-						id="groupName"
-						label="Group name"
-						type="text"
-						fullWidth
-						variant="standard"
-					/>
-					<DialogActions>
-						<Button
-							onClick={() => {
-								toggleGroupModal();
-								resetFormData();
-							}}
-						>
-							Cancel
-						</Button>
-						<Button
-							onClick={(e) => {
-								handleSubmit(e);
-							}}
-						>
-							Save
-						</Button>
-					</DialogActions>
-				</div>
-			</Dialog> */
 }
