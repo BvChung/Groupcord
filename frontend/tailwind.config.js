@@ -49,7 +49,6 @@ module.exports = {
 				blue4: "#6699CC",
 				blue5: "#76A3D1",
 				g1: "#81A4D5",
-				bg1: "#75E6DA",
 			},
 			spacing: {
 				maxLogin: "30rem",
