@@ -10,14 +10,13 @@ const getMessages = asyncHandler(async (req, res) => {
 	const allMessages = await Messages.find({});
 
 	// Return messages based on user JWT
-	const userMessages = await Messages.find({ user: req.user.id });
 
 	// find() has to match type in mongodb schema
 	const groupMessages = await Messages.find({ groupId: groupId });
 
 	return res.status(200).json({
 		allMessages: allMessages,
-		currentUserMessage: userMessages,
+
 		groupMessages: groupMessages,
 	});
 });

@@ -14,8 +14,11 @@ function ChatItem({
 	dateCreated,
 }) {
 	const [showIcon, setShowIcon] = useState(false);
-	function toggleShowIcon() {
-		setShowIcon((prev) => !prev);
+	function showDeleteIcon() {
+		setShowIcon(true);
+	}
+	function hideIcon() {
+		setShowIcon(false);
 	}
 	const showStyle = showIcon ? "" : "hidden";
 	const dispatch = useDispatch();
@@ -24,7 +27,7 @@ function ChatItem({
 	const messagePosition = userId === user._id ? "justify-end" : "";
 	const messageStyle =
 		userId === user._id
-			? "bg-sky-200 dark:bg-sky-800 "
+			? "bg-sky-200 dark:bg-sky-900 "
 			: "bg-gray-200 dark:bg-gray-700";
 
 	const timeNow = new Date();
@@ -42,50 +45,51 @@ function ChatItem({
 		<>
 			{type !== "renderNewDay" ? (
 				<div
-					onMouseEnter={toggleShowIcon}
-					onMouseLeave={toggleShowIcon}
 					className={`flex items-center my-6 first:mt-0 last:mb-0 fade transition-all ${messagePosition}`}
 				>
 					<div
+						onMouseEnter={showDeleteIcon}
+						onMouseLeave={hideIcon}
 						className={`rounded-xl w-fit max-w-4xl h-fit p-4 break-words ${messageStyle} `}
 					>
-						<div className="flex gap-4 mb-1">
-							<span className="flex items-center text-gray-900 dark:text-gray-200 font-semibold">
-								{username}
-							</span>
-							{date !== dateCreated && (
-								<span className="text-gray-500  dark:text-gray-400">
-									{dateCreated}
+						<div className="flex items-center justify-between gap-4 mb-[6px]">
+							<div className="flex items-center gap-4">
+								<span className="flex items-center text-gray-900 dark:text-gray-300 font-semibold">
+									{username}
 								</span>
-							)}
-							<span className="text-gray-500 dark:text-gray-400">
-								{timeCreated}
-							</span>
-						</div>
-						<div className="flex items-center justify-between">
-							<p className="text-gray1 dark:text-gray-200 text-base font-normal">
-								{message}
-							</p>
+								{date !== dateCreated && (
+									<span className="text-gray-500 text-sm leading-6  dark:text-gray-300">
+										{dateCreated}
+									</span>
+								)}
+								<span className="text-gray-500 text-sm leading-6 dark:text-gray-300">
+									{timeCreated}
+								</span>
+							</div>
 							{userId === user._id && (
 								<button
 									onClick={() => {
 										dispatch(deleteChatMessage(messageId));
 									}}
 									className="transition-all"
+									aria-label="Delete Message"
 								>
-									<TrashIcon className={`h-5 w-5 ${showStyle}`} />
+									<TrashIcon className="h-5 w-5 text-gray-900 rounded-full border-[1px]" />
 								</button>
 							)}
+						</div>
+						<div className="flex items-center justify-between">
+							<p className="text-gray1 dark:text-gray-100 ">{message}</p>
 						</div>
 					</div>
 				</div>
 			) : (
 				<div className="w-full flex items-center justify-between my-4">
-					<span className="w-1/3 sm:w-[40%] xl:w-[45%] border-b-[1px] border-gray-400 dark:border-gray-500 "></span>
+					<span className="w-1/3 sm:w-[40%] xl:w-[43%] border-b-[1px] border-gray-400 dark:border-gray-500 "></span>
 					<p className="font-sans text-sm font-semibold text-gray1 dark:text-gray-400">
 						{currentDateFull === fullDate ? "Today" : fullDate}
 					</p>
-					<span className="w-1/3 sm:w-[40%] xl:w-[45%] border-b-[1px] border-gray-400 dark:border-gray-500 "></span>
+					<span className="w-1/3 sm:w-[40%] xl:w-[43%] border-b-[1px] border-gray-400 dark:border-gray-500 "></span>
 				</div>
 			)}
 		</>

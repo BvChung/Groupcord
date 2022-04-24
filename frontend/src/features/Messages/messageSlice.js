@@ -4,6 +4,8 @@ import {
 	errorMessage,
 	filterDuplicateMessages,
 	deleteData,
+	addMessageHistoryToEmptyArr,
+	addMessageDateHistoryDisplay,
 } from "../helperFunc/helperFunctions";
 
 // Is useState() but for all in redux
@@ -12,6 +14,7 @@ const initialState = {
 	newMessageToSocket: {},
 	deletedMessageToSocket: {},
 	isLoading: false,
+	loadInitialMessages: false,
 	isSuccess: false,
 	isError: false,
 	errorMessage: "",
@@ -95,7 +98,11 @@ export const messageSlice = createSlice({
 		builder.addCase(createChatMessage.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
-			state.userMessages.groupMessages.push(action.payload);
+			state.userMessages.groupMessages = addMessageHistoryToEmptyArr(
+				state.userMessages.groupMessages,
+				action.payload
+			);
+			// state.userMessages.groupMessages.push(action.payload);
 			state.newMessageToSocket = action.payload;
 		});
 		builder.addCase(createChatMessage.rejected, (state, action) => {
@@ -108,8 +115,11 @@ export const messageSlice = createSlice({
 		});
 		builder.addCase(getChatMessage.fulfilled, (state, action) => {
 			state.isLoading = false;
-			state.isSuccess = true;
+			state.loadInitialMessages = true;
 			state.userMessages = action.payload;
+			state.userMessages.groupMessages = addMessageDateHistoryDisplay(
+				action.payload.groupMessages
+			);
 		});
 		builder.addCase(getChatMessage.rejected, (state, action) => {
 			state.isLoading = false;
