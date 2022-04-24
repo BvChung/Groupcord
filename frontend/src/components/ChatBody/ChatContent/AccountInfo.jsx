@@ -17,13 +17,9 @@ export default function FormDialog({ open, handleClose }) {
 	const dispatch = useDispatch();
 
 	const { user } = useSelector((state) => state.auth);
-	const auth = useSelector((state) => state.auth);
 	const { updateError, message, isSuccess } = useSelector(
 		(state) => state.auth
 	);
-
-	// console.log(user);
-	// console.log(auth);
 
 	const [formData, setFormData] = useState({
 		username: user.username,
@@ -194,6 +190,7 @@ export default function FormDialog({ open, handleClose }) {
 				</DialogContent>
 				<DialogActions>
 					<Button
+						aria-label="Exit account information menu"
 						onClick={() => {
 							handleClose();
 							resetFormData();
@@ -202,6 +199,7 @@ export default function FormDialog({ open, handleClose }) {
 						Cancel
 					</Button>
 					<Button
+						aria-label="Save account information"
 						onClick={(e) => {
 							handleSubmit(e);
 						}}

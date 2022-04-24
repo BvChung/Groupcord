@@ -23,6 +23,7 @@ const initialState = {
 	groupNameUpdatedToSocket: {},
 	isLoading: false,
 	isSuccess: false,
+	loadInitialGroups: false,
 	isError: false,
 };
 
@@ -198,7 +199,7 @@ export const conversationSlice = createSlice({
 		});
 		builder.addCase(getChatGroups.fulfilled, (state, action) => {
 			state.isLoading = false;
-			state.isSuccess = true;
+			state.loadInitialGroups = true;
 			state.groups = action.payload.userConversations;
 		});
 		builder.addCase(getChatGroups.rejected, (state) => {
@@ -234,7 +235,9 @@ export const conversationSlice = createSlice({
 		});
 		builder.addCase(removeGroupMembers.fulfilled, (state, action) => {
 			state.isSuccess = true;
+			console.log(action.payload);
 			state.groupInfo.members = action.payload.updatedMembers.members;
+
 			state.filteredMembers = filterMembers(
 				state.registeredMembers,
 				state.groupInfo.members

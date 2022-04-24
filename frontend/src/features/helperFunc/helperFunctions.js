@@ -1,9 +1,33 @@
 import { current } from "@reduxjs/toolkit";
 import { nanoid } from "@reduxjs/toolkit";
 
-export const addMessageDateHistory = (payload) => {
-	const messageGroupedByDate = payload.reduce((dateCreated, message) => {
-		const date = message.createdAt.split("T")[0];
+const timeNow = new Date();
+const currentDateFull = timeNow.toLocaleString("en-US", {
+	month: "long",
+	day: "numeric",
+	year: "numeric",
+});
+
+export const addMessageHistoryToEmptyArr = (state, payload) => {
+	if (current(state).length === 0) {
+		return [
+			{
+				_id: nanoid(),
+				id: payload._id,
+				type: "renderNewDay",
+				fullDate: currentDateFull,
+			},
+			payload,
+		];
+	} else {
+		return [...current(state), payload];
+	}
+};
+
+export const addMessageDateHistoryDisplay = (payload) => {
+	const groupMessagesByDate = payload.reduce((dateCreated, message) => {
+		const date = message.fullDate;
+		// const date = message.createdAt.split("T")[0];
 		if (!dateCreated[date]) {
 			dateCreated[date] = [];
 		}
@@ -11,22 +35,16 @@ export const addMessageDateHistory = (payload) => {
 		return dateCreated;
 	}, {});
 
-	const messagesWithDateHistory = Object.values(messageGroupedByDate).reduce(
-		(acc, msgArr) => {
-			return acc.concat([
+	const messagesWithDateHistory = Object.values(groupMessagesByDate).reduce(
+		(accumulator, msgArrData) => {
+			return accumulator.concat([
 				{
 					_id: nanoid(),
+					id: msgArrData[0]._id,
 					type: "renderNewDay",
-					user: msgArr[0].user,
-					username: msgArr[0].username,
-					groupId: msgArr[0].groupId,
-					message: msgArr[0].message,
-					fullDate: msgArr[0].fullDate,
-					timeCreated: msgArr[0].timeCreated,
-					dateCreated: msgArr[0].dateCreated,
-					createdAt: msgArr[0].createdAt,
+					fullDate: msgArrData[0].fullDate,
 				},
-				...msgArr,
+				...msgArrData,
 			]);
 		},
 		[]
@@ -96,7 +114,12 @@ export const filterDuplicateMessages = (messages) => {
 };
 
 export const deleteData = (state, payload) => {
+	console.log(payload);
 	return current(state).filter((data) => {
+		if (payload.type) {
+			return data.id !== payload._id;
+		}
+
 		return data._id !== payload._id;
 	});
 };

@@ -32,6 +32,7 @@ function Nav() {
 			<div>
 				{activeGroupMenu ? (
 					<button
+						aria-label="Close Menu"
 						onClick={toggleGroupMenu}
 						className="text-gray2 dark:text-gray-400 p-[6px] rounded-full lg:hidden
 						border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
@@ -42,6 +43,7 @@ function Nav() {
 					</button>
 				) : (
 					<button
+						aria-label="Open Menu"
 						onClick={toggleGroupMenu}
 						className="text-gray2 dark:text-gray-400 p-[6px] rounded-full lg:hidden
 						border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
@@ -61,6 +63,7 @@ function Nav() {
 					<li>
 						{darkMode ? (
 							<MoonIcon
+								aria-label="Turn on dark mode"
 								onClick={toggleTheme}
 								className="h-11 w-11 text-sky-600 dark:text-sky-700 p-[6px] rounded-full 
 								border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
@@ -69,6 +72,7 @@ function Nav() {
 							/>
 						) : (
 							<SunIcon
+								aria-label="Turn on light mode"
 								onClick={toggleTheme}
 								className="h-11 w-11 text-sky-600 dark:text-sky-700 p-[6px] rounded-full
 								border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
@@ -79,16 +83,12 @@ function Nav() {
 					</li>
 					<li>
 						<a
+							id="Link to Github"
 							href="https://github.com/BvChung/react-chat-app"
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							<BsGithub
-								className="w-10 h-10 text-gray2 dark:text-gray-400 p-[6px] rounded-full
-								border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-								hover:bg-gray-200 dark:hover:bg-dark3
-								transition-all "
-							/>
+							<BsGithub className="w-7 h-7 text-gray1 dark:text-gray-500" />
 						</a>
 					</li>
 				</ul>

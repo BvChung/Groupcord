@@ -16,7 +16,6 @@ function Login() {
 	const { user, loginError, isSuccess, isLoading, message } = useSelector(
 		(state) => state.auth
 	);
-	// const auth = useSelector((state) => state.auth);
 
 	const [form, setForm] = useState({
 		guestAccount: false,
@@ -134,6 +133,7 @@ function Login() {
 						className="w-full border-[1px] border-gray-300 mb-8 rounded-sm p-1 focus:outline-sky-600"
 					></input>
 					<button
+						aria-label="Sign In"
 						className="transition-all bg-sky-600 hover:bg-sky-500 text-offwhite2 
 							w-full self-center p-2 rounded-md mb-4"
 					>
@@ -158,6 +158,7 @@ function Login() {
 					</div>
 
 					<button
+						aria-label="Sign In with guest account"
 						onClick={loadGuestAccount}
 						className="transition-all bg-blue-600 hover:bg-blue-500 text-offwhite2 
 							w-full self-center p-2 rounded-md mb-6"

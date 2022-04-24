@@ -14,7 +14,6 @@ import MenuUnstyled from "@mui/base/MenuUnstyled";
 import MenuItemUnstyled, {
 	menuItemUnstyledClasses,
 } from "@mui/base/MenuItemUnstyled";
-import { buttonUnstyledClasses } from "@mui/base/ButtonUnstyled";
 import PopperUnstyled from "@mui/base/PopperUnstyled";
 import { styled } from "@mui/system";
 import Divider from "@mui/material/Divider";
@@ -200,6 +199,7 @@ export default function WrappedMenuItems({ handleClickOpen }) {
 				aria-controls={isOpen ? "wrapped-menu" : undefined}
 				aria-expanded={isOpen || undefined}
 				aria-haspopup="menu"
+				aria-label="Open Account Menu"
 			>
 				<UserCircleIcon className="h-9 w-9" />
 			</TriggerButton>

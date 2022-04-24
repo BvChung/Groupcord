@@ -73,6 +73,7 @@ export default function NavMenu({ handleClickOpen }) {
 				aria-controls={isOpen ? "wrapped-menu" : undefined}
 				aria-expanded={isOpen || undefined}
 				aria-haspopup="menu"
+				aria-label="Open account menu"
 			>
 				<UserCircleIcon className="h-9 w-9 text-gray2 dark:text-gray-400" />
 			</TriggerButton>
@@ -169,7 +170,7 @@ const StyledMenuItem = styled(MenuItemUnstyled)(
   }
 
   &:hover:not(.${menuItemUnstyledClasses.disabled}) {
-    background-color: ${theme.palette.mode === "dark" ? "#1f2937" : "#e5e7eb"};
+    background-color: ${theme.palette.mode === "dark" ? "#1f2937" : "#f3f4f6"};
     color: ${theme.palette.mode === "dark" ? "#fff" : grey[900]};
   }
   `

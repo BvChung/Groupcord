@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useContext } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { UserAddIcon } from "@heroicons/react/solid";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
@@ -149,6 +149,7 @@ function Register() {
 						className="w-full border-[1px] border-gray-300 mb-8 rounded-sm p-1 focus:outline-sky-600"
 					></input>
 					<button
+						aria-label="Create Account"
 						className="transition-all bg-sky-600 hover:bg-sky-500 text-offwhite2 
 							w-full self-center p-2 rounded-md mb-6"
 					>
