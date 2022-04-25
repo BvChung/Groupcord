@@ -16,15 +16,12 @@ import MenuItemUnstyled, {
 	menuItemUnstyledClasses,
 } from "@mui/base/MenuItemUnstyled";
 import PopperUnstyled from "@mui/base/PopperUnstyled";
+import { Tooltip } from "@mui/material";
 import { styled } from "@mui/system";
 import Divider from "@mui/material/Divider";
-import {
-	PlusIcon,
-	XIcon,
-	CheckIcon,
-	LogoutIcon,
-} from "@heroicons/react/outline";
+import { XIcon, CheckIcon, LogoutIcon } from "@heroicons/react/outline";
 import { UserIcon, KeyIcon, UserAddIcon } from "@heroicons/react/solid";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 import { toast } from "react-toastify";
 
 export default function AddMembers() {
@@ -40,7 +37,6 @@ export default function AddMembers() {
 			setAnchorEl(event.currentTarget);
 		}
 	};
-
 	const handleButtonKeyDown = (event) => {
 		if (event.key === "ArrowDown" || event.key === "ArrowUp") {
 			event.preventDefault();
@@ -52,7 +48,6 @@ export default function AddMembers() {
 	};
 	const close = () => {
 		setAnchorEl(null);
-		buttonRef.current.focus();
 	};
 
 	const navigate = useNavigate();
@@ -87,10 +82,10 @@ export default function AddMembers() {
 			console.log(data);
 			dispatch(updateMembersWithSocket(data.groupData.members));
 
-			if (user._id === data.memberChanged && data.action === "addMember") {
+			if (user._id === data.memberChanged._id && data.action === "addMember") {
 				dispatch(updateGroupsWithSocket(data));
 			} else if (
-				user._id === data.memberChanged &&
+				user._id === data.memberChanged._id &&
 				data.action === "removeMember"
 			) {
 				dispatch(updateGroupsWithSocket(data));
@@ -99,107 +94,118 @@ export default function AddMembers() {
 		});
 	}, [socket, dispatch, navigate, user._id]);
 	return (
-		<div className={groupId === "Global" ? "hidden" : ""}>
-			<TriggerButton
-				type="button"
-				onClick={handleButtonClick}
-				onKeyDown={handleButtonKeyDown}
-				ref={buttonRef}
-				aria-controls={isOpen ? "wrapped-menu" : undefined}
-				aria-expanded={isOpen || undefined}
-				aria-haspopup="menu"
-				aria-label="Open group members menu"
-			>
-				<UserAddIcon className="h-8 w-8 text-gray2 dark:text-gray-400" />
-			</TriggerButton>
-			<MenuUnstyled
-				actions={menuActions}
-				open={isOpen}
-				onClose={close}
-				anchorEl={anchorEl}
-				components={{ Root: Popper, Listbox: StyledListbox }}
-				componentsProps={{ listbox: { id: "simple-menu" } }}
-			>
-				<MenuSection label="Members">
-					{members?.map((member) => {
-						return (
-							<StyledMenuItem className="mb-1" key={member._id}>
-								<div className="flex items-center justify-between pr-2">
-									<div className="flex items-center gap-2">
-										{groupOwner === member._id ? (
-											<KeyIcon className="h-5 w-5 text-sky-500" />
-										) : (
-											<UserIcon
-												className={`h-5 w-5  ${
-													darkMode ? "text-slate-500" : "text-slate-800"
-												}`}
-											/>
-										)}
-										<span className="font-sans mr-2">{member.username}</span>
-									</div>
-									{currentAccountId === groupOwner &&
-										groupOwner !== member._id && (
-											<button
-												onClick={() => {
-													dispatch(removeGroupMembers(member._id));
-													// close();
-												}}
-												className="p-[4px] text-red-800 hover:bg-red-600 hover:text-white rounded-full"
-											>
-												<XIcon className="h-4 w-4" />
-											</button>
-										)}
-									{currentAccountId !== groupOwner && user._id === member._id && (
-										<button
-											onClick={() => {
-												dispatch(removeGroupMembers(member._id));
-												// close();
-											}}
-											className="p-[4px] text-red-800 hover:bg-red-600 hover:text-white rounded-full"
-										>
-											<LogoutIcon className="h-4 w-4" />
-										</button>
-									)}
-								</div>
-							</StyledMenuItem>
-						);
-					})}
-				</MenuSection>
-				{currentAccountId === groupOwner &&
-					Object.keys(filteredMembers).length !== 0 && <Divider />}
-				{currentAccountId === groupOwner &&
-					Object.keys(filteredMembers).length !== 0 && (
-						<MenuSection label="Add Users">
-							{filteredMembers?.map((user) => {
-								return (
-									<StyledMenuItem className="mb-1" key={user._id}>
-										<div className="flex items-center justify-between pr-2">
-											<div className="flex items-center gap-2">
+		<ClickAwayListener onClickAway={close}>
+			<div className={groupId === "Global" ? "hidden" : ""}>
+				<TriggerButton
+					type="button"
+					onClick={handleButtonClick}
+					onKeyDown={handleButtonKeyDown}
+					ref={buttonRef}
+					aria-controls={isOpen ? "wrapped-menu" : undefined}
+					aria-expanded={isOpen || undefined}
+					aria-haspopup="menu"
+					aria-label="Open group members menu"
+				>
+					<Tooltip arrow describeChild title="Members">
+						<UserAddIcon className="h-8 w-8 text-gray2 dark:text-gray-400" />
+					</Tooltip>
+				</TriggerButton>
+				<MenuUnstyled
+					actions={menuActions}
+					open={isOpen}
+					onClose={close}
+					anchorEl={anchorEl}
+					components={{ Root: Popper, Listbox: StyledListbox }}
+					componentsProps={{ listbox: { id: "simple-menu" } }}
+				>
+					<MenuSection label="Members">
+						{members?.map((member) => {
+							return (
+								<StyledMenuItem className="mb-1" key={member._id}>
+									<div className="flex items-center justify-between pr-2">
+										<div className="flex items-center gap-2">
+											{groupOwner === member._id ? (
+												<KeyIcon className="h-5 w-5 text-sky-500" />
+											) : (
 												<UserIcon
 													className={`h-5 w-5  ${
 														darkMode ? "text-slate-500" : "text-slate-800"
 													}`}
 												/>
-												<span className="font-sans">{user.username}</span>
-											</div>
-											{
-												<button
-													onClick={() => {
-														dispatch(addGroupMembers(user._id));
-													}}
-													className="p-[4px] text-green-800 hover:bg-green-600 hover:text-white rounded-full"
-												>
-													<CheckIcon className="h-4 w-4" />
-												</button>
-											}
+											)}
+											<span className="font-sans mr-2">{member.username}</span>
 										</div>
-									</StyledMenuItem>
-								);
-							})}
-						</MenuSection>
-					)}
-			</MenuUnstyled>
-		</div>
+										{currentAccountId === groupOwner &&
+											groupOwner !== member._id && (
+												<Tooltip arrow describeChild title="Remove user">
+													<button
+														onClick={() => {
+															dispatch(removeGroupMembers(member._id));
+														}}
+														className="p-[4px] text-red-800 hover:bg-red-600 hover:text-white rounded-full"
+													>
+														<XIcon className="h-4 w-4" />
+													</button>
+												</Tooltip>
+											)}
+										{currentAccountId !== groupOwner &&
+											user._id === member._id && (
+												<Tooltip arrow describeChild title="Leave group">
+													<button
+														onClick={() => {
+															dispatch(removeGroupMembers(member._id));
+															dispatch(resetMessagesWithGroupRemoval());
+															close();
+														}}
+														className="p-[4px] text-red-800 hover:bg-red-600 hover:text-white rounded-full"
+													>
+														<LogoutIcon className="h-4 w-4" />
+													</button>
+												</Tooltip>
+											)}
+									</div>
+								</StyledMenuItem>
+							);
+						})}
+					</MenuSection>
+					{currentAccountId === groupOwner &&
+						Object.keys(filteredMembers).length !== 0 && <Divider />}
+					{currentAccountId === groupOwner &&
+						Object.keys(filteredMembers).length !== 0 && (
+							<MenuSection label="Add Users">
+								{filteredMembers?.map((user) => {
+									return (
+										<StyledMenuItem className="mb-1" key={user._id}>
+											<div className="flex items-center justify-between pr-2">
+												<div className="flex items-center gap-2">
+													<UserIcon
+														className={`h-5 w-5  ${
+															darkMode ? "text-slate-500" : "text-slate-800"
+														}`}
+													/>
+													<span className="font-sans">{user.username}</span>
+												</div>
+												{
+													<Tooltip arrow describeChild title="Add user">
+														<button
+															onClick={() => {
+																dispatch(addGroupMembers(user._id));
+															}}
+															className="p-[4px] text-green-800 hover:bg-green-600 hover:text-white rounded-full"
+														>
+															<CheckIcon className="h-4 w-4" />
+														</button>
+													</Tooltip>
+												}
+											</div>
+										</StyledMenuItem>
+									);
+								})}
+							</MenuSection>
+						)}
+				</MenuUnstyled>
+			</div>
+		</ClickAwayListener>
 	);
 }
 
@@ -290,7 +296,7 @@ const TriggerButton = styled("button")(
 );
 
 const Popper = styled(PopperUnstyled)`
-	z-index: 99999999;
+	z-index: 100;
 `;
 
 const MenuSectionRoot = styled("li")`

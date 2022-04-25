@@ -24,8 +24,11 @@ export default function ChatGroups() {
 		groupNameUpdatedToSocket,
 		loadInitialGroups,
 		filteredMembers,
+		registeredMembers,
 	} = useSelector((state) => state.conversations);
-	// console.log(groupInfo, filteredMembers);
+	// console.log(filteredMembers);
+	// console.log("filtered", filteredMembers);
+	// console.log("regiseterd", registeredMembers);
 	const [searchText, setSearchText] = useState("");
 
 	const showGroupsStyle = activeGroupMenu

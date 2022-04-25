@@ -7,6 +7,7 @@ import Account from "./Menu/Account";
 import NavMenu from "./Menu/NavMenu";
 import GroupMembers from "./Menu/GroupMembers";
 import { MenuContext } from "../../appContext/menuContext";
+import { Tooltip } from "@mui/material";
 
 function Nav() {
 	const dispatch = useDispatch();
@@ -56,34 +57,42 @@ function Nav() {
 			</div>
 			<div>
 				<ul className="flex flex-row justify-center items-center gap-2">
-					<GroupMembers />
-					<NavMenu handleClickOpen={handleClickOpen} />
-					<Account open={open} handleClose={handleClose} />
-
 					<li>
-						{darkMode ? (
-							<MoonIcon
-								aria-label="Turn on dark mode"
-								onClick={toggleTheme}
-								className="h-11 w-11 text-sky-600 dark:text-sky-700 p-[6px] rounded-full 
-								border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-								hover:bg-gray-200 dark:hover:bg-dark3
-								transition-all "
-							/>
-						) : (
-							<SunIcon
-								aria-label="Turn on light mode"
-								onClick={toggleTheme}
-								className="h-11 w-11 text-sky-600 dark:text-sky-700 p-[6px] rounded-full
-								border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-								hover:bg-gray-200 dark:hover:bg-dark3
-								transition-all "
-							/>
-						)}
+						<GroupMembers />
 					</li>
 					<li>
+						<NavMenu handleClickOpen={handleClickOpen} />
+						<Account open={open} handleClose={handleClose} />
+					</li>
+					<li>
+						{darkMode ? (
+							<Tooltip arrow describeChild title="Light Mode">
+								<MoonIcon
+									aria-label="Turn on dark mode"
+									onClick={toggleTheme}
+									className="h-11 w-11 text-sky-600 dark:text-sky-700 p-[6px] rounded-full 
+									border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
+									hover:bg-gray-200 dark:hover:bg-dark3
+									transition-all "
+								/>
+							</Tooltip>
+						) : (
+							<Tooltip arrow describeChild title="Dark Mode">
+								<SunIcon
+									aria-label="Turn on light mode"
+									onClick={toggleTheme}
+									className="h-11 w-11 text-sky-600 dark:text-sky-700 p-[6px] rounded-full
+									border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
+									hover:bg-gray-200 dark:hover:bg-dark3
+									transition-all "
+								/>
+							</Tooltip>
+						)}
+					</li>
+					<li className="w-fit p-2">
 						<a
-							id="Link to Github"
+							id="Github"
+							aria-label="Link to Github Repository"
 							href="https://github.com/BvChung/react-chat-app"
 							target="_blank"
 							rel="noopener noreferrer"

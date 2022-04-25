@@ -19,6 +19,7 @@ import { styled } from "@mui/system";
 import Divider from "@mui/material/Divider";
 import { LogoutIcon, IdentificationIcon } from "@heroicons/react/outline";
 import { UserCircleIcon } from "@heroicons/react/solid";
+import { Tooltip } from "@mui/material";
 
 export default function NavMenu({ handleClickOpen }) {
 	const navigate = useNavigate();
@@ -75,7 +76,9 @@ export default function NavMenu({ handleClickOpen }) {
 				aria-haspopup="menu"
 				aria-label="Open account menu"
 			>
-				<UserCircleIcon className="h-9 w-9 text-gray2 dark:text-gray-400" />
+				<Tooltip arrow describeChild title="My Account">
+					<UserCircleIcon className="h-9 w-9 text-gray2 dark:text-gray-400" />
+				</Tooltip>
 			</TriggerButton>
 			<MenuUnstyled
 				actions={menuActions}
@@ -199,7 +202,7 @@ const TriggerButton = styled("button")(
 );
 
 const Popper = styled(PopperUnstyled)`
-	z-index: 99999999;
+	z-index: 100;
 `;
 
 const MenuSectionRoot = styled("li")`

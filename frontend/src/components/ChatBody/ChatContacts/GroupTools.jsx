@@ -4,6 +4,7 @@ import { deleteChatGroup } from "../../../features/conversations/conversationSli
 import { resetMessagesWithGroupRemoval } from "../../../features/messages/messageSlice";
 import PropTypes from "prop-types";
 import MenuUnstyled from "@mui/base/MenuUnstyled";
+import { Tooltip } from "@mui/material";
 import MenuItemUnstyled, {
 	menuItemUnstyledClasses,
 } from "@mui/base/MenuItemUnstyled";
@@ -44,7 +45,7 @@ export default function GroupTools({ groupId, groupName, toggleEditingName }) {
 		buttonRef.current.focus();
 	};
 	return (
-		<div>
+		<>
 			<TriggerButton
 				type="button"
 				onClick={handleButtonClick}
@@ -54,7 +55,9 @@ export default function GroupTools({ groupId, groupName, toggleEditingName }) {
 				aria-expanded={isOpen || undefined}
 				aria-haspopup="menu"
 			>
-				<DotsVerticalIcon className="w-5 h-5 text-gray-800 dark:text-gray-200" />
+				<Tooltip placement="right" arrow describeChild title="More">
+					<DotsVerticalIcon className="w-5 h-5 text-gray-800 dark:text-gray-200" />
+				</Tooltip>
 			</TriggerButton>
 			<MenuUnstyled
 				actions={menuActions}
@@ -99,7 +102,7 @@ export default function GroupTools({ groupId, groupName, toggleEditingName }) {
 					</StyledMenuItem>
 				</MenuSection>
 			</MenuUnstyled>
-		</div>
+		</>
 	);
 }
 

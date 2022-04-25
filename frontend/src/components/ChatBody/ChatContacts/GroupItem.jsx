@@ -17,6 +17,7 @@ export default function GroupItem({ groupId, groupName, groupOwner, members }) {
 	});
 	const [isEditingName, setIsEditingName] = useState(false);
 	const { groupInfo } = useSelector((state) => state.conversations);
+	const { user } = useSelector((state) => state.auth);
 
 	const sendGroupInfo = {
 		groupId,
@@ -59,8 +60,11 @@ export default function GroupItem({ groupId, groupName, groupOwner, members }) {
 	return (
 		<div
 			onClick={() => {
-				dispatch(updateActiveChatGroup(sendGroupInfo));
-				dispatch(getChatGroups());
+				// Prevent rerendering by clicking the group that is already active
+				if (groupId !== groupInfo.groupId) {
+					dispatch(updateActiveChatGroup(sendGroupInfo));
+					dispatch(getChatGroups());
+				}
 			}}
 			className={`flex items-center justify-between w-full h-12 px-3 gap-2 cursor-pointer
 				${activeStyle}`}
@@ -109,17 +113,18 @@ export default function GroupItem({ groupId, groupName, groupOwner, members }) {
 					<UserGroupIcon className="h-7 w-7 text-sky-500 dark:text-sky-600" />
 					<div className="flex items-center gap-2 dark:text-white">
 						<span>{groupName}</span>
-						{/* <span>32 mins ago</span> */}
 					</div>
 				</div>
 			)}
-			{!isEditingName && groupInfo.groupId === groupId && (
-				<GroupTools
-					groupName={groupName}
-					groupId={groupId}
-					toggleEditingName={toggleEditingName}
-				/>
-			)}
+			{!isEditingName &&
+				groupOwner === user._id &&
+				groupInfo.groupId === groupId && (
+					<GroupTools
+						groupName={groupName}
+						groupId={groupId}
+						toggleEditingName={toggleEditingName}
+					/>
+				)}
 		</div>
 	);
 }
