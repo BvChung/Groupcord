@@ -17,7 +17,7 @@ const initialState = {
 		groupOwner: "",
 		members: [],
 	},
-	filteredMembers: {},
+	filteredMembers: [],
 	memberUpdatedToSocket: {},
 	groupDeletedToSocket: {},
 	groupNameUpdatedToSocket: {},
@@ -246,6 +246,10 @@ export const conversationSlice = createSlice({
 			state.memberUpdatedToSocket = {
 				groupData: action.payload.updatedMembers,
 				memberChanged: action.payload.memberChanged,
+				filteredMembers: [
+					...state.filteredMembers,
+					action.payload.memberChanged,
+				],
 				action: "removeMember",
 			};
 
@@ -271,10 +275,12 @@ export const conversationSlice = createSlice({
 			state.groupInfo.members = action.payload;
 		});
 		builder.addCase(updateGroupsWithSocket.fulfilled, (state, action) => {
+			console.log(action.payload);
 			state.groups = updateMembersGroups(state.groups, action.payload);
+			state.filteredMembers.push(action.payload.memberChanged);
+			// console.log(current(state.groups));
 		});
 		builder.addCase(updateChatGroupName.fulfilled, (state, action) => {
-			console.log(action.payload);
 			state.groups = action.payload.allGroups;
 			state.groupNameUpdatedToSocket = action.payload.updatedGroupName;
 		});

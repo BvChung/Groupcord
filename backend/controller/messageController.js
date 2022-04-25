@@ -7,16 +7,14 @@ const Messages = require("../models/messageModel");
 const getMessages = asyncHandler(async (req, res) => {
 	const { groupId } = req.query;
 
-	const allMessages = await Messages.find({});
-
+	// const allMessages = await Messages.find({});
 	// Return messages based on user JWT
 
 	// find() has to match type in mongodb schema
 	const groupMessages = await Messages.find({ groupId: groupId });
 
 	return res.status(200).json({
-		allMessages: allMessages,
-
+		// allMessages: allMessages,
 		groupMessages: groupMessages,
 	});
 });
@@ -64,42 +62,6 @@ const setMessages = asyncHandler(async (req, res) => {
 	return res.status(200).json(chatlog);
 });
 
-// @desc Update messages
-// @route PUT /api/messages
-// @access Private
-const updateMessages = asyncHandler(async (req, res) => {
-	// Get the chatlog
-	const chatlog = await Messages.findById(req.params.id);
-
-	if (!chatlog) {
-		res.status(400);
-		throw new Error("Chatlog not found");
-	}
-
-	// Check for user
-	if (!req.user) {
-		res.status(401);
-		throw new Error("User not found");
-	}
-
-	// Check if logged in user matches the chatlog user
-	if (chatlog.user.toString() !== req.user.id) {
-		res.status(401);
-		throw new Error("User not authorized");
-	}
-
-	// Update the chatlog
-	const updatedChatlog = await Messages.findByIdAndUpdate(
-		req.params.id,
-		req.body,
-		{
-			new: true,
-		}
-	);
-
-	return res.status(200).json(updatedChatlog);
-});
-
 // @desc Delete messages
 // @route DELETE /api/messages/:messageId
 // @access Private
@@ -110,4 +72,4 @@ const deleteMessages = asyncHandler(async (req, res) => {
 	return res.status(200).json(deletedMessage);
 });
 
-module.exports = { getMessages, setMessages, updateMessages, deleteMessages };
+module.exports = { getMessages, setMessages, deleteMessages };

@@ -106,7 +106,7 @@ const addGroupMembers = asyncHandler(async (req, res) => {
 
 	return res.status(200).json({
 		updatedMembers: updatedMembers,
-		memberChanged: memberId,
+		memberChanged: { _id: memberId, username: user.username },
 	});
 });
 
@@ -134,7 +134,7 @@ const removeGroupMembers = asyncHandler(async (req, res) => {
 
 	return res.status(200).json({
 		updatedMembers: updatedMembers,
-		memberChanged: memberId,
+		memberChanged: { _id: memberId, username: user.username },
 	});
 });
 

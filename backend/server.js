@@ -76,9 +76,10 @@ io.on("connection", (socket) => {
 
 	socket.on("send_group_data", (groupData) => {
 		if (Object.keys(groupData).length === 0) return;
+		console.log(groupData);
 
 		const member = connectedUsers.find((user) => {
-			return user.userId === groupData.memberChanged && user.userId;
+			return user.userId === groupData.memberChanged._id && user.userId;
 		});
 
 		if (member) {

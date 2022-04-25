@@ -4,7 +4,6 @@ const router = express.Router();
 const {
 	getMessages,
 	setMessages,
-	updateMessages,
 	deleteMessages,
 } = require("../controller/messageController");
 
@@ -14,9 +13,6 @@ router
 	.route("/")
 	.get(authWithToken, getMessages)
 	.post(authWithToken, setMessages);
-router
-	.route("/:messageId")
-	.put(authWithToken, updateMessages)
-	.delete(authWithToken, deleteMessages);
+router.route("/:messageId").delete(authWithToken, deleteMessages);
 
 module.exports = router;
