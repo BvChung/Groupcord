@@ -91,7 +91,6 @@ io.on("connection", (socket) => {
 		} else {
 			socket.to(currentRoom).emit("receive_group_data", groupData);
 		}
-		// if (Object.keys(groupData).length > 1)
 	});
 
 	socket.on("send_group_name_updated", (groupNameData) => {
