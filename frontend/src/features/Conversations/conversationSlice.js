@@ -76,6 +76,17 @@ export const deleteChatGroup = createAsyncThunk(
 	}
 );
 
+export const leaveChatGroup = createAsyncThunk(
+	"group/leave",
+	async (groupId, thunkAPI) => {
+		try {
+			return groupId;
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+
 export const getRegisteredMembers = createAsyncThunk(
 	"group/getMembers",
 	async (_, thunkAPI) => {
@@ -272,12 +283,13 @@ export const conversationSlice = createSlice({
 			);
 		});
 		builder.addCase(updateMembersWithSocket.fulfilled, (state, action) => {
-			state.groupInfo.members = action.payload;
+			state.groupInfo.members = action.payload.groupData.members;
+			state.filteredMembers = action.payload.filteredMembers;
 		});
 		builder.addCase(updateGroupsWithSocket.fulfilled, (state, action) => {
 			console.log(action.payload);
 			state.groups = updateMembersGroups(state.groups, action.payload);
-			state.filteredMembers.push(action.payload.memberChanged);
+			// state.filteredMembers.push(action.payload.memberChanged);
 			// console.log(current(state.groups));
 		});
 		builder.addCase(updateChatGroupName.fulfilled, (state, action) => {
@@ -288,6 +300,9 @@ export const conversationSlice = createSlice({
 			state.groups = updateGroupName(state.groups, action.payload);
 		});
 		builder.addCase(deleteGroupWithSocket.fulfilled, (state, action) => {
+			state.groups = deleteData(state.groups, action.payload);
+		});
+		builder.addCase(leaveChatGroup.fulfilled, (state, action) => {
 			state.groups = deleteData(state.groups, action.payload);
 		});
 	},

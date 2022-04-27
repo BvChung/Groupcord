@@ -114,15 +114,12 @@ export const filterDuplicateMessages = (messages) => {
 };
 
 export const deleteData = (state, payload) => {
-	console.log(payload);
 	return current(state).filter((data) => {
-		if (payload.type) {
-			return data.id !== payload._id;
-		}
-
 		return data._id !== payload._id;
 	});
 };
+
+export const removeGroup = (state, payload) => {};
 
 export const configuration = (token) => {
 	return {
