@@ -90,12 +90,12 @@ function Login() {
 	return (
 		<div
 			className="flex justify-center h-screen w-screen first-letter:text-gray1 
-			sm:items-center dark:bg-slate-900"
+			sm:items-center bg-white dark:bg-dark2"
 		>
 			<section
 				className="h-max w-full pt-12 
 				sm:w-fit sm:p-8 sm:border-[1px] border-gray-300 rounded-md 
-				dark:border-offwhite"
+				dark:border-dark5"
 			>
 				<div className="flex items-center justify-center gap-2 mb-6">
 					<LoginIcon className="h-12 w-12 text-sky-600" />
@@ -118,7 +118,8 @@ function Login() {
 						type="email"
 						onChange={handleChange}
 						required
-						className="w-full border-[1px] border-gray-300 mb-6 rounded-sm p-1 focus:outline-sky-600"
+						className="w-full border-[1px] mb-6 rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
+						border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
 					></input>
 
 					<label className="font-semibold text-sm text-gray1 dark:text-slate-300">
@@ -130,12 +131,13 @@ function Login() {
 						type="password"
 						onChange={handleChange}
 						required
-						className="w-full border-[1px] border-gray-300 mb-8 rounded-sm p-1 focus:outline-sky-600"
+						className="w-full border-[1px] mb-8 rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
+						border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
 					></input>
 					<button
 						aria-label="Sign In"
 						className="transition-all bg-sky-600 hover:bg-sky-500 text-offwhite2 
-							w-full self-center p-2 rounded-md mb-4"
+							w-full self-center p-2 rounded-md mb-4 dark:bg-sky-700 dark:hover:bg-sky-600"
 					>
 						{isLoading && !form.guestAccount ? (
 							<div className="flex items-center justify-center gap-2">
@@ -161,7 +163,7 @@ function Login() {
 						aria-label="Sign In with guest account"
 						onClick={loadGuestAccount}
 						className="transition-all bg-blue-600 hover:bg-blue-500 text-offwhite2 
-							w-full self-center p-2 rounded-md mb-6"
+							w-full self-center p-2 rounded-md mb-6 dark:bg-blue-700 dark:hover:bg-blue-600"
 					>
 						{isLoading && form.guestAccount ? (
 							<div className="flex items-center justify-center gap-2">

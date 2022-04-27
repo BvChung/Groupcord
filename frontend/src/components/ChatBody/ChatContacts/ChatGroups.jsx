@@ -23,12 +23,7 @@ export default function ChatGroups() {
 		groupDeletedToSocket,
 		groupNameUpdatedToSocket,
 		loadInitialGroups,
-		filteredMembers,
-		registeredMembers,
 	} = useSelector((state) => state.conversations);
-	// console.log(filteredMembers);
-	// console.log("filtered", filteredMembers);
-	// console.log("regiseterd", registeredMembers);
 	const [searchText, setSearchText] = useState("");
 
 	const showGroupsStyle = activeGroupMenu
@@ -58,7 +53,6 @@ export default function ChatGroups() {
 		socket.on("receive_group_deleted", (data) => {
 			dispatch(deleteGroupWithSocket(data));
 			dispatch(resetMessagesWithGroupRemoval());
-			toast.info(`${data.groupName} has been deleted`);
 		});
 	}, [socket, dispatch]);
 

@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
-import { SunIcon, MoonIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
+import { MoonIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
+import { SunIcon } from "@heroicons/react/solid";
 import { BsGithub } from "react-icons/bs";
 import { useSelector, useDispatch } from "react-redux";
 import { changeTheme } from "../../features/theme/themeSlice";
@@ -64,31 +65,33 @@ function Nav() {
 						<NavMenu handleClickOpen={handleClickOpen} />
 						<Account open={open} handleClose={handleClose} />
 					</li>
-					<li>
-						{darkMode ? (
-							<Tooltip arrow describeChild title="Light Mode">
-								<MoonIcon
+					<Tooltip
+						arrow
+						describeChild
+						title={darkMode ? "Light Mode" : "Dark Mode"}
+					>
+						<li>
+							{darkMode ? (
+								<SunIcon
 									aria-label="Turn on dark mode"
 									onClick={toggleTheme}
-									className="h-11 w-11 text-sky-600 dark:text-sky-700 p-[6px] rounded-full 
+									className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 p-[6px] rounded-full 
 									border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
 									hover:bg-gray-200 dark:hover:bg-dark3
 									transition-all "
 								/>
-							</Tooltip>
-						) : (
-							<Tooltip arrow describeChild title="Dark Mode">
-								<SunIcon
+							) : (
+								<MoonIcon
 									aria-label="Turn on light mode"
 									onClick={toggleTheme}
-									className="h-11 w-11 text-sky-600 dark:text-sky-700 p-[6px] rounded-full
+									className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-200 hover:dark:text-gray-400 p-[6px] rounded-full
 									border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
 									hover:bg-gray-200 dark:hover:bg-dark3
 									transition-all "
 								/>
-							</Tooltip>
-						)}
-					</li>
+							)}
+						</li>
+					</Tooltip>
 					<li className="w-fit p-2">
 						<a
 							id="Github"
@@ -97,7 +100,10 @@ function Nav() {
 							target="_blank"
 							rel="noopener noreferrer"
 						>
-							<BsGithub className="w-7 h-7 text-gray1 dark:text-gray-500" />
+							<BsGithub
+								className="w-7 h-7 text-gray-700 hover:text-gray-500 dark:text-gray-200 hover:dark:text-gray-400
+								transition-all"
+							/>
 						</a>
 					</li>
 				</ul>

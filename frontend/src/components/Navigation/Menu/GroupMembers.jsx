@@ -6,6 +6,7 @@ import {
 	removeGroupMembers,
 	updateMembersWithSocket,
 	updateGroupsWithSocket,
+	leaveChatGroup,
 } from "../../../features/conversations/conversationSlice";
 import { resetMessagesWithGroupRemoval } from "../../../features/messages/messageSlice";
 import { SocketContext } from "../../../appContext/socketContext";
@@ -79,8 +80,7 @@ export default function AddMembers() {
 
 	useEffect(() => {
 		socket.on("receive_group_data", (data) => {
-			console.log(data);
-			dispatch(updateMembersWithSocket(data.groupData.members));
+			dispatch(updateMembersWithSocket(data));
 
 			if (user._id === data.memberChanged._id && data.action === "addMember") {
 				dispatch(updateGroupsWithSocket(data));
@@ -155,6 +155,7 @@ export default function AddMembers() {
 														onClick={() => {
 															dispatch(removeGroupMembers(member._id));
 															dispatch(resetMessagesWithGroupRemoval());
+															dispatch(leaveChatGroup({ _id: groupId }));
 															close();
 														}}
 														className="p-[4px] text-red-800 hover:bg-red-600 hover:text-white rounded-full"
