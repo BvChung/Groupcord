@@ -4,11 +4,11 @@ import { ChatAlt2Icon } from "@heroicons/react/outline";
 import { SearchIcon, GlobeIcon } from "@heroicons/react/solid";
 import GroupItem from "./GroupItem";
 import {
-	updateActiveChatGroup,
-	updateGroupNameWithSocket,
-	deleteGroupWithSocket,
+	updateActiveGroup,
+	socketDataUpdateGroupName,
+	socketDataDeleteGroup,
 } from "../../../features/conversations/conversationSlice";
-import { resetMessagesWithGroupRemoval } from "../../../features/messages/messageSlice";
+import { clearChatMessages } from "../../../features/messages/messageSlice";
 import { SocketContext } from "../../../appContext/socketContext";
 import { MenuContext } from "../../../appContext/menuContext";
 import { toast } from "react-toastify";
@@ -19,18 +19,18 @@ export default function ChatGroups() {
 	const { setOpenGroupModal, activeGroupMenu } = useContext(MenuContext);
 	const {
 		groups,
-		groupInfo,
 		groupDeletedToSocket,
 		groupNameUpdatedToSocket,
 		loadInitialGroups,
 	} = useSelector((state) => state.conversations);
+	const { groupId } = useSelector((state) => state.conversations.groupInfo);
 	const [searchText, setSearchText] = useState("");
 
 	const showGroupsStyle = activeGroupMenu
 		? "lg:flex lg:flex-col left-0 "
 		: "-left-full lg:left-0";
 	const globalActive =
-		groupInfo.groupId === "Global"
+		groupId === "Global"
 			? "bg-sky-100 dark:bg-slate-800 border-l-sky-400 border-l-[3px] dark:border-l-sky-500"
 			: "border-l-[3px] border-l-gray4 dark:border-l-gray-600 hover:border-l-gray-400 dark:hover:border-l-gray-400";
 
@@ -51,14 +51,20 @@ export default function ChatGroups() {
 
 	useEffect(() => {
 		socket.on("receive_group_deleted", (data) => {
-			dispatch(deleteGroupWithSocket(data));
-			dispatch(resetMessagesWithGroupRemoval());
+			dispatch(socketDataDeleteGroup(data));
+
+			// Only if accounts are currently in the group
+			if (data._id === groupId) {
+				console.log("stets");
+				dispatch(clearChatMessages());
+				toast.info(`${data.groupName} has been deleted`);
+			}
 		});
-	}, [socket, dispatch]);
+	}, [socket, dispatch, groupId]);
 
 	useEffect(() => {
 		socket.on("receive_group_name_updated", (data) => {
-			dispatch(updateGroupNameWithSocket(data));
+			dispatch(socketDataUpdateGroupName(data));
 		});
 	}, [socket, dispatch]);
 
@@ -111,7 +117,7 @@ export default function ChatGroups() {
 						<div
 							onClick={() => {
 								dispatch(
-									updateActiveChatGroup({
+									updateActiveGroup({
 										groupId: "Global",
 										groupOwner: "",
 										members: [],
@@ -122,7 +128,7 @@ export default function ChatGroups() {
 							 ${globalActive}`}
 						>
 							<GlobeIcon className="h-7 w-7 text-sky-500 dark:text-sky-600" />
-							<span className="dark:text-white">Global</span>
+							<span className="text-gray1 dark:text-white">Global</span>
 						</div>
 						{loadInitialGroups &&
 							groups

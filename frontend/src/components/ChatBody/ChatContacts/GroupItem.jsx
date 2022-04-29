@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { UserGroupIcon } from "@heroicons/react/solid";
 import {
-	updateActiveChatGroup,
 	updateChatGroupName,
 	getChatGroups,
+	updateActiveGroup,
 } from "../../../features/conversations/conversationSlice";
 import GroupTools from "./GroupTools";
 import { SaveIcon, XIcon } from "@heroicons/react/outline";
@@ -28,6 +28,11 @@ export default function GroupItem({ groupId, groupName, groupOwner, members }) {
 		groupInfo.groupId === groupId
 			? "bg-sky-100 dark:bg-slate-800 border-l-sky-400 border-l-[3px] dark:border-l-sky-500 "
 			: "border-l-[3px] border-l-gray-200 dark:border-l-gray-600 hover:border-l-gray-400 dark:hover:border-l-gray-400";
+
+	const groupOwnerStyle =
+		groupOwner === user._id
+			? "text-sky-500 dark:text-sky-600"
+			: "text-gray-500 dark:text-gray-600";
 
 	function handleChange(e) {
 		const { name, value } = e.target;
@@ -62,7 +67,7 @@ export default function GroupItem({ groupId, groupName, groupOwner, members }) {
 			onClick={() => {
 				// Prevent rerendering by clicking the group that is already active
 				if (groupId !== groupInfo.groupId) {
-					dispatch(updateActiveChatGroup(sendGroupInfo));
+					dispatch(updateActiveGroup(sendGroupInfo));
 					dispatch(getChatGroups());
 				}
 			}}
@@ -110,8 +115,8 @@ export default function GroupItem({ groupId, groupName, groupOwner, members }) {
 				</div>
 			) : (
 				<div className="flex gap-4">
-					<UserGroupIcon className="h-7 w-7 text-sky-500 dark:text-sky-600" />
-					<div className="flex items-center gap-2 dark:text-white">
+					<UserGroupIcon className={`h-7 w-7 ${groupOwnerStyle}`} />
+					<div className="flex items-center gap-2 text-gray1 dark:text-white">
 						<span>{groupName}</span>
 					</div>
 				</div>

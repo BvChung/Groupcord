@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useDispatch } from "react-redux";
 import { deleteChatGroup } from "../../../features/conversations/conversationSlice";
-import { resetMessagesWithGroupRemoval } from "../../../features/messages/messageSlice";
+import { clearChatMessages } from "../../../features/messages/messageSlice";
 import PropTypes from "prop-types";
 import MenuUnstyled from "@mui/base/MenuUnstyled";
 import { Tooltip } from "@mui/material";
@@ -86,7 +86,7 @@ export default function GroupTools({ groupId, groupName, toggleEditingName }) {
 					<StyledMenuItem
 						onClick={() => {
 							dispatch(deleteChatGroup(groupId));
-							dispatch(resetMessagesWithGroupRemoval());
+							dispatch(clearChatMessages());
 							toast.success(`Group ${groupName} has been deleted`);
 						}}
 						className="mb-1"

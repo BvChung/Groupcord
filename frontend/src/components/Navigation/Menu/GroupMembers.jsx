@@ -4,13 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import {
 	addGroupMembers,
 	removeGroupMembers,
-	updateMembersWithSocket,
-	updateGroupsWithSocket,
-	leaveChatGroup,
+	socketDataUpdateGroups,
+	socketDataUpdateMembers,
+	leaveGroup,
 } from "../../../features/conversations/conversationSlice";
-import { resetMessagesWithGroupRemoval } from "../../../features/messages/messageSlice";
+import { clearChatMessages } from "../../../features/messages/messageSlice";
 import { SocketContext } from "../../../appContext/socketContext";
-import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import MenuUnstyled from "@mui/base/MenuUnstyled";
 import MenuItemUnstyled, {
@@ -23,7 +22,6 @@ import Divider from "@mui/material/Divider";
 import { XIcon, CheckIcon, LogoutIcon } from "@heroicons/react/outline";
 import { UserIcon, KeyIcon, UserAddIcon } from "@heroicons/react/solid";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
-import { toast } from "react-toastify";
 
 export default function AddMembers() {
 	const [anchorEl, setAnchorEl] = React.useState(null);
@@ -51,7 +49,6 @@ export default function AddMembers() {
 		setAnchorEl(null);
 	};
 
-	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const { user } = useSelector((state) => state.auth);
 	const currentAccountId = useSelector((state) => state.auth.user._id);
@@ -67,32 +64,71 @@ export default function AddMembers() {
 	// Web sockets
 	const socket = useContext(SocketContext);
 
-	const sendData = useCallback(
-		(data) => {
-			socket.emit("send_group_data", data);
-		},
-		[socket]
-	);
+	const sendData = useCallback(() => {
+		socket.emit("send_group_data", memberUpdatedToSocket);
+	}, [socket, memberUpdatedToSocket]);
 
-	useEffect(() => {
-		sendData(memberUpdatedToSocket);
-	}, [sendData, memberUpdatedToSocket]);
-
-	useEffect(() => {
+	const receiveData = useCallback(() => {
 		socket.on("receive_group_data", (data) => {
-			dispatch(updateMembersWithSocket(data));
+			// Members and filtered members should only be updated if users are the group is active for other useers
+			// The dispatch should only affect the account that has been removed/added
 
-			if (user._id === data.memberChanged._id && data.action === "addMember") {
-				dispatch(updateGroupsWithSocket(data));
-			} else if (
-				user._id === data.memberChanged._id &&
-				data.action === "removeMember"
-			) {
-				dispatch(updateGroupsWithSocket(data));
-				dispatch(resetMessagesWithGroupRemoval());
+			if (data.groupData._id === groupId) {
+				// Updates the current active group with members/ users that can be added
+				dispatch(socketDataUpdateMembers(data));
+			}
+			if (user._id === data.memberChanged._id) {
+				// Update groups in sidebar
+				dispatch(socketDataUpdateGroups(data));
+
+				if (data.action === "removeMember" && data.groupData._id === groupId) {
+					// Clears the chat messages
+					dispatch(clearChatMessages());
+				}
 			}
 		});
-	}, [socket, dispatch, navigate, user._id]);
+	}, [socket, dispatch, user._id, groupId]);
+
+	useEffect(() => {
+		sendData();
+	}, [sendData]);
+
+	useEffect(() => {
+		receiveData();
+	}, [receiveData]);
+	// useEffect(() => {
+	// 	socket.on("receive_group_data", (data) => {
+	// 		console.log(data);
+	// 		// Members and filtered members should only be updated if users are the group is active for other useers
+	// 		// The dispatch should only affect the account that has been removed/added
+
+	// 		if (data.groupData._id === groupId) {
+	// 			// Updates the current active group with members/ users that can be added
+	// 			dispatch(updateMembersWithSocket(data));
+	// 		}
+	// 		if (user._id === data.memberChanged._id) {
+	// 			// Update groups in sidebar
+	// 			dispatch(updateGroupsWithSocket(data));
+
+	// 			if (data.action === "removeMember" && data.groupData._id === groupId) {
+	// 				// Clears the chat messages
+	// 				dispatch(clearChatMessages());
+	// 			}
+	// 		}
+	// 		// if (data.groupData._id === groupId) {
+	// 		// 	dispatch(updateMembersWithSocket(data));
+	// 		// }
+	// 		// if (user._id === data.memberChanged._id && data.action === "addMember") {
+	// 		// 	dispatch(updateGroupsWithSocket(data));
+	// 		// } else if (
+	// 		// 	user._id === data.memberChanged._id &&
+	// 		// 	data.action === "removeMember"
+	// 		// ) {
+	// 		// 	dispatch(updateGroupsWithSocket(data));
+	// 		// 	dispatch(clearChatMessages());
+	// 		// }
+	// 	});
+	// }, [socket, dispatch, user._id, groupId]);
 	return (
 		<ClickAwayListener onClickAway={close}>
 			<div className={groupId === "Global" ? "hidden" : ""}>
@@ -119,55 +155,57 @@ export default function AddMembers() {
 					componentsProps={{ listbox: { id: "simple-menu" } }}
 				>
 					<MenuSection label="Members">
-						{members?.map((member) => {
-							return (
-								<StyledMenuItem className="mb-1" key={member._id}>
-									<div className="flex items-center justify-between pr-2">
-										<div className="flex items-center gap-2">
-											{groupOwner === member._id ? (
-												<KeyIcon className="h-5 w-5 text-sky-500" />
-											) : (
-												<UserIcon
-													className={`h-5 w-5  ${
-														darkMode ? "text-slate-500" : "text-slate-800"
-													}`}
-												/>
-											)}
-											<span className="font-sans mr-2">{member.username}</span>
+						{members &&
+							members?.map((member) => {
+								return (
+									<StyledMenuItem className="mb-1" key={member._id}>
+										<div className="flex items-center justify-between pr-2">
+											<div className="flex items-center gap-2">
+												{groupOwner === member._id ? (
+													<KeyIcon className="h-5 w-5 text-sky-500" />
+												) : (
+													<UserIcon
+														className={`h-5 w-5  ${
+															darkMode ? "text-slate-500" : "text-slate-800"
+														}`}
+													/>
+												)}
+												<span className="font-sans mr-2">
+													{member.username}
+												</span>
+											</div>
+											{currentAccountId === groupOwner &&
+												groupOwner !== member._id && (
+													<Tooltip arrow describeChild title="Remove user">
+														<button
+															onClick={() => {
+																dispatch(removeGroupMembers(member._id));
+															}}
+															className="p-[4px] text-red-800 hover:bg-red-600 hover:text-white rounded-full"
+														>
+															<XIcon className="h-4 w-4" />
+														</button>
+													</Tooltip>
+												)}
+											{currentAccountId !== groupOwner &&
+												user._id === member._id && (
+													<Tooltip arrow describeChild title="Leave group">
+														<button
+															onClick={() => {
+																dispatch(removeGroupMembers(member._id));
+																dispatch(leaveGroup({ _id: groupId }));
+																close();
+															}}
+															className="p-[4px] text-red-800 hover:bg-red-600 hover:text-white rounded-full"
+														>
+															<LogoutIcon className="h-4 w-4" />
+														</button>
+													</Tooltip>
+												)}
 										</div>
-										{currentAccountId === groupOwner &&
-											groupOwner !== member._id && (
-												<Tooltip arrow describeChild title="Remove user">
-													<button
-														onClick={() => {
-															dispatch(removeGroupMembers(member._id));
-														}}
-														className="p-[4px] text-red-800 hover:bg-red-600 hover:text-white rounded-full"
-													>
-														<XIcon className="h-4 w-4" />
-													</button>
-												</Tooltip>
-											)}
-										{currentAccountId !== groupOwner &&
-											user._id === member._id && (
-												<Tooltip arrow describeChild title="Leave group">
-													<button
-														onClick={() => {
-															dispatch(removeGroupMembers(member._id));
-															dispatch(resetMessagesWithGroupRemoval());
-															dispatch(leaveChatGroup({ _id: groupId }));
-															close();
-														}}
-														className="p-[4px] text-red-800 hover:bg-red-600 hover:text-white rounded-full"
-													>
-														<LogoutIcon className="h-4 w-4" />
-													</button>
-												</Tooltip>
-											)}
-									</div>
-								</StyledMenuItem>
-							);
-						})}
+									</StyledMenuItem>
+								);
+							})}
 					</MenuSection>
 					{currentAccountId === groupOwner &&
 						Object.keys(filteredMembers).length !== 0 && <Divider />}
