@@ -8,9 +8,27 @@ const currentDateFull = timeNow.toLocaleString("en-US", {
 	year: "numeric",
 });
 
-export const addMessageHistoryToEmptyArr = (state, payload) => {
+export const addDateLabelToNewMessages = (state, payload) => {
+	const findDateLabel = current(state).some((msg) => {
+		return msg.fullDate === currentDateFull;
+	});
+
+	// Add date label if
+	// 1) new group
+	// 2) If date label for today is not present
 	if (current(state).length === 0) {
 		return [
+			{
+				_id: nanoid(),
+				id: payload._id,
+				type: "renderNewDay",
+				fullDate: currentDateFull,
+			},
+			payload,
+		];
+	} else if (!findDateLabel) {
+		return [
+			...current(state),
 			{
 				_id: nanoid(),
 				id: payload._id,
@@ -24,7 +42,7 @@ export const addMessageHistoryToEmptyArr = (state, payload) => {
 	}
 };
 
-export const addMessageDateHistoryDisplay = (payload) => {
+export const addDateLabelToDatabaseMessages = (payload) => {
 	const groupMessagesByDate = payload.reduce((dateCreated, message) => {
 		const date = message.fullDate;
 		// const date = message.createdAt.split("T")[0];
@@ -35,7 +53,7 @@ export const addMessageDateHistoryDisplay = (payload) => {
 		return dateCreated;
 	}, {});
 
-	const messagesWithDateHistory = Object.values(groupMessagesByDate).reduce(
+	const messagesWithDateLabel = Object.values(groupMessagesByDate).reduce(
 		(accumulator, msgArrData) => {
 			return accumulator.concat([
 				{
@@ -50,7 +68,20 @@ export const addMessageDateHistoryDisplay = (payload) => {
 		[]
 	);
 
-	return messagesWithDateHistory;
+	return messagesWithDateLabel;
+};
+
+export const removeDateLabel = (state) => {
+	// Have to check if label is followed by message else remove it
+	const findIndexLabel = state.findIndex((msg) => {
+		return msg.fullDate === currentDateFull;
+	});
+
+	if (findIndexLabel === state.length - 1) {
+		return state.slice(0, state.length - 1);
+	} else {
+		return state;
+	}
 };
 
 export const updateGroup = (state, currentGroup, payload) => {
@@ -106,7 +137,7 @@ export const filterMembers = (arr1, arr2) => {
 	return output;
 };
 
-export const filterDuplicateMessages = (messages) => {
+export const removeDuplicateData = (messages) => {
 	return messages.filter(
 		(message, i, arr) =>
 			i === arr.findIndex((position) => position._id === message._id)
@@ -118,8 +149,6 @@ export const deleteData = (state, payload) => {
 		return data._id !== payload._id;
 	});
 };
-
-export const removeGroup = (state, payload) => {};
 
 export const configuration = (token) => {
 	return {

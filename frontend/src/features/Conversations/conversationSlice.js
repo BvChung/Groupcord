@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 import conversationService from "./conversationService";
 import {
 	filterMembers,
+	removeDuplicateData,
 	errorMessage,
 	updateGroup,
 	updateMembersGroups,
@@ -29,10 +30,10 @@ const initialState = {
 
 export const createChatGroups = createAsyncThunk(
 	"group/create",
-	async (conversationData, thunkAPI) => {
+	async (groupData, thunkAPI) => {
 		try {
 			const token = thunkAPI.getState().auth.user.token;
-			return await conversationService.createGroup(conversationData, token);
+			return await conversationService.createGroup(groupData, token);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -70,17 +71,6 @@ export const deleteChatGroup = createAsyncThunk(
 		try {
 			const token = thunkAPI.getState().auth.user.token;
 			return await conversationService.deleteGroup(groupId, token);
-		} catch (error) {
-			return thunkAPI.rejectWithValue(errorMessage(error));
-		}
-	}
-);
-
-export const leaveChatGroup = createAsyncThunk(
-	"group/leave",
-	async (groupId, thunkAPI) => {
-		try {
-			return groupId;
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -125,71 +115,52 @@ export const removeGroupMembers = createAsyncThunk(
 	}
 );
 
-export const updateActiveChatGroup = createAsyncThunk(
-	"group/active",
-	async (groupInfo, thunkAPI) => {
-		try {
-			return groupInfo;
-		} catch (error) {
-			return thunkAPI.rejectWithValue(errorMessage(error));
-		}
-	}
-);
-
-export const updateMembersWithSocket = createAsyncThunk(
-	"group/socketMembers",
-	async (membersData, thunkAPI) => {
-		try {
-			return membersData;
-		} catch (error) {
-			return thunkAPI.rejectWithValue(errorMessage(error));
-		}
-	}
-);
-
-export const updateGroupsWithSocket = createAsyncThunk(
-	"group/socketGroups",
-	async (data, thunkAPI) => {
-		try {
-			const groupDataOutput = {
-				groupData: data.groupData,
-				memberChanged: data.memberChanged,
-				action: data.action,
-			};
-			return groupDataOutput;
-		} catch (error) {
-			return thunkAPI.rejectWithValue(errorMessage(error));
-		}
-	}
-);
-
-export const updateGroupNameWithSocket = createAsyncThunk(
-	"group/socketGroupName",
-	async (groupNameData, thunkAPI) => {
-		try {
-			return groupNameData;
-		} catch (error) {
-			return thunkAPI.rejectWithValue(errorMessage(error));
-		}
-	}
-);
-
-export const deleteGroupWithSocket = createAsyncThunk(
-	"group/socketDeleteGroup",
-	async (groupData, thunkAPI) => {
-		try {
-			return groupData;
-		} catch (error) {
-			return thunkAPI.rejectWithValue(errorMessage(error));
-		}
-	}
-);
-
-export const conversationSlice = createSlice({
-	name: "conversation",
+// return {
+// 	registeredMembers: {},
+// 	groups: {},
+// 	groupInfo: {
+// 		groupId: "Global",
+// 		groupOwner: "",
+// 		members: [],
+// 	},
+// 	filteredMembers: [],
+// 	memberUpdatedToSocket: {},
+// 	groupDeletedToSocket: {},
+// 	groupNameUpdatedToSocket: {},
+// 	isLoading: false,
+// 	isSuccess: false,
+// 	loadInitialGroups: false,
+// 	isError: false,
+// };
+export const groupSlice = createSlice({
+	name: "chatGroup",
 	initialState,
 	reducers: {
 		resetGroupState: (state) => initialState,
+		updateActiveGroup: (state, action) => {
+			state.groupInfo = action.payload;
+			state.filteredMembers = filterMembers(
+				state.registeredMembers,
+				state.groupInfo.members
+			);
+		},
+		leaveGroup: (state, action) => {
+			state.groups = deleteData(state.groups, action.payload);
+		},
+		socketDataUpdateMembers: (state, action) => {
+			state.groupInfo.members = action.payload.groupData.members;
+			state.filteredMembers = action.payload.filteredMembers;
+		},
+		socketDataUpdateGroups: (state, action) => {
+			state.groups = updateMembersGroups(state.groups, action.payload);
+			state.groups = removeDuplicateData(state.groups);
+		},
+		socketDataUpdateGroupName: (state, action) => {
+			state.groups = updateGroupName(state.groups, action.payload);
+		},
+		socketDataDeleteGroup: (state, action) => {
+			state.groups = deleteData(state.groups, action.payload);
+		},
 	},
 	extraReducers: (builder) => {
 		builder.addCase(createChatGroups.pending, (state) => {
@@ -246,7 +217,6 @@ export const conversationSlice = createSlice({
 		});
 		builder.addCase(removeGroupMembers.fulfilled, (state, action) => {
 			state.isSuccess = true;
-			console.log(action.payload);
 			state.groupInfo.members = action.payload.updatedMembers.members;
 
 			state.filteredMembers = filterMembers(
@@ -275,38 +245,20 @@ export const conversationSlice = createSlice({
 		builder.addCase(getRegisteredMembers.fulfilled, (state, action) => {
 			state.registeredMembers = action.payload;
 		});
-		builder.addCase(updateActiveChatGroup.fulfilled, (state, action) => {
-			state.groupInfo = action.payload;
-			state.filteredMembers = filterMembers(
-				state.registeredMembers,
-				state.groupInfo.members
-			);
-		});
-		builder.addCase(updateMembersWithSocket.fulfilled, (state, action) => {
-			state.groupInfo.members = action.payload.groupData.members;
-			state.filteredMembers = action.payload.filteredMembers;
-		});
-		builder.addCase(updateGroupsWithSocket.fulfilled, (state, action) => {
-			console.log(action.payload);
-			state.groups = updateMembersGroups(state.groups, action.payload);
-			// state.filteredMembers.push(action.payload.memberChanged);
-			// console.log(current(state.groups));
-		});
 		builder.addCase(updateChatGroupName.fulfilled, (state, action) => {
 			state.groups = action.payload.allGroups;
 			state.groupNameUpdatedToSocket = action.payload.updatedGroupName;
 		});
-		builder.addCase(updateGroupNameWithSocket.fulfilled, (state, action) => {
-			state.groups = updateGroupName(state.groups, action.payload);
-		});
-		builder.addCase(deleteGroupWithSocket.fulfilled, (state, action) => {
-			state.groups = deleteData(state.groups, action.payload);
-		});
-		builder.addCase(leaveChatGroup.fulfilled, (state, action) => {
-			state.groups = deleteData(state.groups, action.payload);
-		});
 	},
 });
 
-export const { resetGroupState } = conversationSlice.actions;
-export default conversationSlice.reducer;
+export const {
+	resetGroupState,
+	leaveGroup,
+	socketDataUpdateMembers,
+	updateActiveGroup,
+	socketDataUpdateGroups,
+	socketDataUpdateGroupName,
+	socketDataDeleteGroup,
+} = groupSlice.actions;
+export default groupSlice.reducer;

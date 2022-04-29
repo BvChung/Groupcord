@@ -7,7 +7,6 @@ const user = JSON.parse(localStorage.getItem("user"));
 
 const initialState = {
 	user: user ? user : null,
-	socketIoSessionId: {},
 	loginError: false,
 	registerError: false,
 	updateError: false,
@@ -58,18 +57,6 @@ export const updateUser = createAsyncThunk(
 	}
 );
 
-// logout user
-export const logoutUser = createAsyncThunk(
-	"auth/logout",
-	async (user, thunkAPI) => {
-		try {
-			return await authService.logout(user);
-		} catch (error) {
-			return thunkAPI.rejectWithValue(errorMessage(error));
-		}
-	}
-);
-
 export const authSlice = createSlice({
 	name: "auth",
 	initialState,
@@ -82,9 +69,10 @@ export const authSlice = createSlice({
 			state.updateError = false;
 			state.message = "";
 		},
-		resetUser: (state) => {
+		logoutUser: (state) => {
 			state.user = null;
 			state.loggedIn = false;
+			authService.logout();
 		},
 	},
 	// Create extra reducers for the pending, fulfilled and rejected states
@@ -133,12 +121,9 @@ export const authSlice = createSlice({
 				state.isLoading = false;
 				state.updateError = true;
 				state.message = action.payload;
-			})
-			.addCase(logoutUser.fulfilled, (state) => {
-				state.user = null;
 			});
 	},
 });
 
-export const { resetState, resetUser } = authSlice.actions;
+export const { resetState, logoutUser } = authSlice.actions;
 export default authSlice.reducer;

@@ -2,13 +2,13 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import chatService from "./messageService";
 import {
 	errorMessage,
-	filterDuplicateMessages,
+	removeDuplicateData,
+	removeDateLabel,
 	deleteData,
-	addMessageHistoryToEmptyArr,
-	addMessageDateHistoryDisplay,
+	addDateLabelToNewMessages,
+	addDateLabelToDatabaseMessages,
 } from "../helperFunc/helperFunctions";
 
-// Is useState() but for all in redux
 const initialState = {
 	userMessages: {},
 	newMessageToSocket: {},
@@ -59,35 +59,25 @@ export const deleteChatMessage = createAsyncThunk(
 	}
 );
 
-export const updateDeletedMessageWithSocket = createAsyncThunk(
-	"message/deletedWithSocket",
-	async (socketData, thunkAPI) => {
-		try {
-			return socketData;
-		} catch (error) {
-			return thunkAPI.rejectWithValue(errorMessage(error));
-		}
-	}
-);
-
-export const updateChatMessage = createAsyncThunk(
-	"message/update",
-	async (message) => {
-		try {
-			return message;
-		} catch (error) {
-			console.error(error);
-		}
-	}
-);
-
 export const messageSlice = createSlice({
 	name: "message",
 	initialState,
 	reducers: {
 		resetMessageState: (state) => initialState,
-		resetMessagesWithGroupRemoval: (state) => {
+		clearChatMessages: (state) => {
 			state.userMessages.groupMessages = [];
+		},
+		socketDataAddMessage: (state, action) => {
+			state.userMessages.groupMessages.push(action.payload);
+			state.userMessages.groupMessages = removeDuplicateData(
+				state.userMessages.groupMessages
+			);
+		},
+		socketDataRemoveDeletedMessage: (state, action) => {
+			state.userMessages.groupMessages = deleteData(
+				state.userMessages.groupMessages,
+				action.payload
+			);
 		},
 	},
 	extraReducers: (builder) => {
@@ -98,11 +88,10 @@ export const messageSlice = createSlice({
 		builder.addCase(createChatMessage.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.isSuccess = true;
-			state.userMessages.groupMessages = addMessageHistoryToEmptyArr(
+			state.userMessages.groupMessages = addDateLabelToNewMessages(
 				state.userMessages.groupMessages,
 				action.payload
 			);
-			// state.userMessages.groupMessages.push(action.payload);
 			state.newMessageToSocket = action.payload;
 		});
 		builder.addCase(createChatMessage.rejected, (state, action) => {
@@ -117,7 +106,7 @@ export const messageSlice = createSlice({
 			state.isLoading = false;
 			state.loadInitialMessages = true;
 			state.userMessages = action.payload;
-			state.userMessages.groupMessages = addMessageDateHistoryDisplay(
+			state.userMessages.groupMessages = addDateLabelToDatabaseMessages(
 				action.payload.groupMessages
 			);
 		});
@@ -126,32 +115,27 @@ export const messageSlice = createSlice({
 			state.isError = true;
 			state.errorMessage = action.payload;
 		});
-		builder.addCase(updateChatMessage.fulfilled, (state, action) => {
-			state.userMessages.groupMessages.push(action.payload);
-			state.userMessages.groupMessages = filterDuplicateMessages(
-				state.userMessages.groupMessages
-			);
-		});
 		builder.addCase(deleteChatMessage.fulfilled, (state, action) => {
-			console.log(action.payload);
-			state.userMessages.groupMessages = deleteData(
+			const removeMessage = deleteData(
 				state.userMessages.groupMessages,
 				action.payload
 			);
+			const removeLabel = removeDateLabel(removeMessage);
+			state.userMessages.groupMessages = removeLabel;
+
+			// state.userMessages.groupMessages = deleteData(
+			// 	state.userMessages.groupMessages,
+			// 	action.payload
+			// );
 			state.deletedMessageToSocket = action.payload;
 		});
-		builder.addCase(
-			updateDeletedMessageWithSocket.fulfilled,
-			(state, action) => {
-				state.userMessages.groupMessages = deleteData(
-					state.userMessages.groupMessages,
-					action.payload
-				);
-			}
-		);
 	},
 });
 
-export const { resetMessageState, resetMessagesWithGroupRemoval } =
-	messageSlice.actions;
+export const {
+	resetMessageState,
+	clearChatMessages,
+	socketDataAddMessage,
+	socketDataRemoveDeletedMessage,
+} = messageSlice.actions;
 export default messageSlice.reducer;
