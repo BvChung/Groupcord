@@ -83,7 +83,6 @@ io.on("connection", (socket) => {
 		});
 
 		if (member) {
-			console.log(member.socketId);
 			socket
 				.to(member.socketId)
 				.to(currentRoom)
