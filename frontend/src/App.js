@@ -38,7 +38,7 @@ export default function App() {
 				<ToastContainer
 					position="top-center"
 					limit={1}
-					autoClose={1500}
+					autoClose={1250}
 					transition={Slide}
 					theme={darkMode ? "dark" : "light"}
 				/>

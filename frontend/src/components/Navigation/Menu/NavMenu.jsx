@@ -1,11 +1,9 @@
 import * as React from "react";
-import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
 	logoutUser,
 	resetState,
-	resetUser,
 } from "../../../features/authentication/authSlice";
 import { resetMessageState } from "../../../features/messages/messageSlice";
 import { resetGroupState } from "../../../features/conversations/conversationSlice";
@@ -24,19 +22,13 @@ import { Tooltip } from "@mui/material";
 export default function NavMenu({ handleClickOpen }) {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const logout = () => {
+	const onLogout = () => {
 		dispatch(logoutUser());
 		dispatch(resetState());
-		dispatch(resetUser());
 		dispatch(resetMessageState());
 		dispatch(resetGroupState());
-
-		changePage();
-	};
-
-	const changePage = useCallback(() => {
 		navigate("/");
-	}, [navigate]);
+	};
 
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const isOpen = Boolean(anchorEl);
@@ -63,7 +55,6 @@ export default function NavMenu({ handleClickOpen }) {
 		setAnchorEl(null);
 		buttonRef.current.focus();
 	};
-
 	return (
 		<>
 			<TriggerButton
@@ -104,7 +95,7 @@ export default function NavMenu({ handleClickOpen }) {
 				</MenuSection>
 				<Divider />
 				<MenuSection label="Page">
-					<StyledMenuItem onClick={logout}>
+					<StyledMenuItem onClick={onLogout}>
 						<div className="flex items-center gap-2">
 							<LogoutIcon className="h-6 w-6" />
 							<span className="font-sans">Logout</span>

@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {
 	createChatMessage,
 	getChatMessage,
-	updateChatMessage,
-	updateDeletedMessageWithSocket,
+	socketDataAddMessage,
+	socketDataRemoveDeletedMessage,
 } from "../../../features/messages/messageSlice";
 import ChatItem from "./ChatItem";
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
@@ -107,7 +107,7 @@ export default function Chat() {
 	useEffect(() => {
 		socket.on("receive_message", (data) => {
 			if ("_id" in data) {
-				dispatch(updateChatMessage(data));
+				dispatch(socketDataAddMessage(data));
 			}
 		});
 	}, [dispatch, socket]);
@@ -118,7 +118,7 @@ export default function Chat() {
 
 	useEffect(() => {
 		socket.on("receive_deleted_message", (data) => {
-			dispatch(updateDeletedMessageWithSocket(data));
+			dispatch(socketDataRemoveDeletedMessage(data));
 		});
 	}, [deletedMessageToSocket, dispatch, socket]);
 

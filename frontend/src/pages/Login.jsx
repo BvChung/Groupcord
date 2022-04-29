@@ -92,23 +92,23 @@ function Login() {
 			className="flex justify-center h-screen w-screen first-letter:text-gray1 
 			sm:items-center bg-white dark:bg-dark2"
 		>
-			<section
-				className="h-max w-full pt-12 
-				sm:w-fit sm:p-8 sm:border-[1px] border-gray-300 rounded-md 
+			<main
+				className="h-max w-full mt-14
+				sm:w-fit sm:px-4 sm:py-6 sm:border-[1px] border-gray-300 rounded-md 
 				dark:border-dark5"
 			>
-				<div className="flex items-center justify-center gap-2 mb-6">
-					<LoginIcon className="h-12 w-12 text-sky-600" />
-					<p className="text-center font-bold text-xl sm:text-3xl dark:text-white">
+				<div className="flex items-center justify-center gap-2 mb-2 sm:mb-6">
+					<LoginIcon className="h-10 w-10 text-sky-600" />
+					<p className="text-center font-bold text-xl sm:text-2xl text-gray1 dark:text-gray-100">
 						Sign In
 					</p>
 				</div>
 				<form
 					className="flex flex-col align-center content-center 
-				h-fit w-screen px-6 sm:w-maxLogin"
+				h-fit w-screen px-8 sm:w-maxLogin"
 					onSubmit={handleSubmit}
 				>
-					<label className="font-semibold text-sm text-gray1 dark:text-slate-300">
+					<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
 						Email
 					</label>
 
@@ -122,7 +122,7 @@ function Login() {
 						border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
 					></input>
 
-					<label className="font-semibold text-sm text-gray1 dark:text-slate-300">
+					<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
 						Password
 					</label>
 					<input
@@ -156,11 +156,11 @@ function Login() {
 						<span className="text-xs text-center text-gray1  uppercase dark:text-slate-300">
 							Login With Guest Account
 						</span>
-						<span className="w-1/5 border-b  border-gray-500 dark:border-gray-400 lg:w-1/5"></span>
+						<span className="w-1/5 border-b border-gray-500 dark:border-gray-400 lg:w-1/5"></span>
 					</div>
 
 					<button
-						aria-label="Sign In with guest account"
+						aria-label="Sign in with guest account"
 						onClick={loadGuestAccount}
 						className="transition-all bg-blue-600 hover:bg-blue-500 text-offwhite2 
 							w-full self-center p-2 rounded-md mb-6 dark:bg-blue-700 dark:hover:bg-blue-600"
@@ -183,7 +183,7 @@ function Login() {
 						<Link to="/register">Register</Link>
 					</p>
 				</div>
-			</section>
+			</main>
 		</div>
 	);
 }
