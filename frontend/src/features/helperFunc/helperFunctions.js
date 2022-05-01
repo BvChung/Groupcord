@@ -14,7 +14,7 @@ export const addDateLabelToNewMessages = (state, payload) => {
 	});
 
 	// Add date label if
-	// 1) new group
+	// 1) Is new group
 	// 2) If date label for today is not present
 	if (current(state).length === 0) {
 		return [
@@ -42,10 +42,9 @@ export const addDateLabelToNewMessages = (state, payload) => {
 	}
 };
 
-export const addDateLabelToDatabaseMessages = (payload) => {
+export const createDateLabelForDatabaseMessages = (payload) => {
 	const groupMessagesByDate = payload.reduce((dateCreated, message) => {
 		const date = message.fullDate;
-		// const date = message.createdAt.split("T")[0];
 		if (!dateCreated[date]) {
 			dateCreated[date] = [];
 		}
@@ -71,20 +70,7 @@ export const addDateLabelToDatabaseMessages = (payload) => {
 	return messagesWithDateLabel;
 };
 
-export const removeDateLabel = (state) => {
-	// Have to check if label is followed by message else remove it
-	const findIndexLabel = state.findIndex((msg) => {
-		return msg.fullDate === currentDateFull;
-	});
-
-	if (findIndexLabel === state.length - 1) {
-		return state.slice(0, state.length - 1);
-	} else {
-		return state;
-	}
-};
-
-export const updateGroup = (state, currentGroup, payload) => {
+export const updateGroupData = (state, currentGroup, payload) => {
 	return current(state).map((data) => {
 		if (data._id === currentGroup.groupId) {
 			return {
@@ -146,6 +132,11 @@ export const removeDuplicateData = (messages) => {
 
 export const deleteData = (state, payload) => {
 	return current(state).filter((data) => {
+		// Remove date label if last message of that date is deleted
+		if (data.id === payload._id) {
+			return data.id !== payload._id;
+		}
+
 		return data._id !== payload._id;
 	});
 };

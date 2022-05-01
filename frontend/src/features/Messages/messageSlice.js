@@ -3,10 +3,9 @@ import chatService from "./messageService";
 import {
 	errorMessage,
 	removeDuplicateData,
-	removeDateLabel,
 	deleteData,
 	addDateLabelToNewMessages,
-	addDateLabelToDatabaseMessages,
+	createDateLabelForDatabaseMessages,
 } from "../helperFunc/helperFunctions";
 
 const initialState = {
@@ -68,7 +67,10 @@ export const messageSlice = createSlice({
 			state.userMessages.groupMessages = [];
 		},
 		socketDataAddMessage: (state, action) => {
-			state.userMessages.groupMessages.push(action.payload);
+			state.userMessages.groupMessages = addDateLabelToNewMessages(
+				state.userMessages.groupMessages,
+				action.payload
+			);
 			state.userMessages.groupMessages = removeDuplicateData(
 				state.userMessages.groupMessages
 			);
@@ -106,7 +108,7 @@ export const messageSlice = createSlice({
 			state.isLoading = false;
 			state.loadInitialMessages = true;
 			state.userMessages = action.payload;
-			state.userMessages.groupMessages = addDateLabelToDatabaseMessages(
+			state.userMessages.groupMessages = createDateLabelForDatabaseMessages(
 				action.payload.groupMessages
 			);
 		});
@@ -116,17 +118,10 @@ export const messageSlice = createSlice({
 			state.errorMessage = action.payload;
 		});
 		builder.addCase(deleteChatMessage.fulfilled, (state, action) => {
-			const removeMessage = deleteData(
+			state.userMessages.groupMessages = deleteData(
 				state.userMessages.groupMessages,
 				action.payload
 			);
-			const removeLabel = removeDateLabel(removeMessage);
-			state.userMessages.groupMessages = removeLabel;
-
-			// state.userMessages.groupMessages = deleteData(
-			// 	state.userMessages.groupMessages,
-			// 	action.payload
-			// );
 			state.deletedMessageToSocket = action.payload;
 		});
 	},

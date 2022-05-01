@@ -4,7 +4,7 @@ import {
 	filterMembers,
 	removeDuplicateData,
 	errorMessage,
-	updateGroup,
+	updateGroupData,
 	updateMembersGroups,
 	updateGroupName,
 	deleteData,
@@ -115,23 +115,6 @@ export const removeGroupMembers = createAsyncThunk(
 	}
 );
 
-// return {
-// 	registeredMembers: {},
-// 	groups: {},
-// 	groupInfo: {
-// 		groupId: "Global",
-// 		groupOwner: "",
-// 		members: [],
-// 	},
-// 	filteredMembers: [],
-// 	memberUpdatedToSocket: {},
-// 	groupDeletedToSocket: {},
-// 	groupNameUpdatedToSocket: {},
-// 	isLoading: false,
-// 	isSuccess: false,
-// 	loadInitialGroups: false,
-// 	isError: false,
-// };
 export const groupSlice = createSlice({
 	name: "chatGroup",
 	initialState,
@@ -170,7 +153,6 @@ export const groupSlice = createSlice({
 			state.isLoading = false;
 			state.isSuccess = true;
 			state.groups.push(action.payload);
-			// state.sendGroupToSocket = action.payload;
 		});
 		builder.addCase(createChatGroups.rejected, (state) => {
 			state.isLoading = false;
@@ -209,7 +191,7 @@ export const groupSlice = createSlice({
 
 			// Update users groups when group owner adds member
 			const currentGroupInfoState = current(state.groupInfo);
-			state.groups = updateGroup(
+			state.groups = updateGroupData(
 				state.groups,
 				currentGroupInfoState,
 				action.payload.updatedMembers
@@ -235,10 +217,10 @@ export const groupSlice = createSlice({
 			};
 
 			// Update users groups when group owner adds member
-			const currentGroupInfoState = current(state.groupInfo);
-			state.groups = updateGroup(
+			const activeGroupInfoState = current(state.groupInfo);
+			state.groups = updateGroupData(
 				state.groups,
-				currentGroupInfoState,
+				activeGroupInfoState,
 				action.payload.updatedMembers
 			);
 		});
