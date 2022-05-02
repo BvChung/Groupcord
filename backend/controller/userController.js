@@ -4,6 +4,13 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Messages = require("../models/messageModel");
 
+// Generate a JWT: used to validate user
+const generateToken = (id) => {
+	return jwt.sign({ id }, process.env.JWT_SECRET, {
+		expiresIn: "15m",
+	});
+};
+
 // @desc Register new user
 // @route POST /api/users
 // @access Public
@@ -132,7 +139,7 @@ const updateUser = asyncHandler(async (req, res) => {
 
 	// Update Messages Schema with affiliated username
 	if (username !== currentUser.username) {
-		const updateMsg = await Messages.updateMany({ username: username });
+		await Messages.updateMany({ username: username });
 	}
 
 	return res.status(200).json({
@@ -156,13 +163,6 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 	return res.status(200).json(returnedUsers);
 });
-
-// Generate a JWT: used to validate user
-const generateToken = (id) => {
-	return jwt.sign({ id }, process.env.JWT_SECRET, {
-		expiresIn: "30d",
-	});
-};
 
 module.exports = {
 	registerUser,
