@@ -1,10 +1,10 @@
-import ChatGroups from "./ChatContacts/ChatGroups";
-import Chat from "./ChatContent/Chat";
+import Groups from "./ChatGroups/Groups";
+import Chat from "./ChatMessages/Chat";
 
 function ChatBody() {
 	return (
 		<div className="flex flex-grow transition-transform h-full w-full">
-			<ChatGroups />
+			<Groups />
 			<Chat />
 		</div>
 	);

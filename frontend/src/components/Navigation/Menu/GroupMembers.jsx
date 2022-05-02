@@ -7,7 +7,7 @@ import {
 	socketDataUpdateGroups,
 	socketDataUpdateMembers,
 	leaveGroup,
-} from "../../../features/conversations/conversationSlice";
+} from "../../../features/groups/groupSlice";
 import { clearChatMessages } from "../../../features/messages/messageSlice";
 import { SocketContext } from "../../../appContext/socketContext";
 import PropTypes from "prop-types";
@@ -49,6 +49,7 @@ export default function AddMembers() {
 		setAnchorEl(null);
 	};
 
+	const socket = useContext(SocketContext);
 	const dispatch = useDispatch();
 	const { user } = useSelector((state) => state.auth);
 	const currentAccountId = useSelector((state) => state.auth.user._id);
@@ -61,9 +62,7 @@ export default function AddMembers() {
 	);
 	const { darkMode } = useSelector((state) => state.theme);
 
-	// Web sockets
-	const socket = useContext(SocketContext);
-
+	// Web socket data transmission
 	const sendData = useCallback(() => {
 		socket.emit("send_group_data", memberUpdatedToSocket);
 	}, [socket, memberUpdatedToSocket]);

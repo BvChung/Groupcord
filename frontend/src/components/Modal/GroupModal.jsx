@@ -2,7 +2,7 @@ import { useState, useContext } from "react";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import { useSelector, useDispatch } from "react-redux";
-import { createChatGroups } from "../../features/conversations/conversationSlice";
+import { createChatGroups } from "../../features/groups/groupSlice";
 import { toast } from "react-toastify";
 import { MenuContext } from "../../appContext/menuContext";
 
