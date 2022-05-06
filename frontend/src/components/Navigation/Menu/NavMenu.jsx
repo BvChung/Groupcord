@@ -6,7 +6,7 @@ import {
 	resetState,
 } from "../../../features/authentication/authSlice";
 import { resetMessageState } from "../../../features/messages/messageSlice";
-import { resetGroupState } from "../../../features/conversations/conversationSlice";
+import { resetGroupState } from "../../../features/groups/groupSlice";
 import PropTypes from "prop-types";
 import MenuUnstyled from "@mui/base/MenuUnstyled";
 import MenuItemUnstyled, {

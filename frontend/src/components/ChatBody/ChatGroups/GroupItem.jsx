@@ -8,6 +8,7 @@ import {
 } from "../../../features/groups/groupSlice";
 import GroupTools from "./GroupTools";
 import { SaveIcon, XIcon } from "@heroicons/react/outline";
+import Tooltip from "@mui/material/Tooltip";
 
 export default function GroupItem({ groupId, groupName, groupOwner, members }) {
 	const dispatch = useDispatch();
@@ -27,7 +28,7 @@ export default function GroupItem({ groupId, groupName, groupOwner, members }) {
 	const activeStyle =
 		groupInfo.groupId === groupId
 			? "bg-sky-100 dark:bg-slate-800 border-l-sky-400 border-l-[3px] dark:border-l-sky-500 "
-			: "border-l-[3px] border-l-gray-200 dark:border-l-gray-600 hover:border-l-gray-400 dark:hover:border-l-gray-400";
+			: "border-l-[3px] border-l-gray-300 dark:border-l-gray-600 hover:border-l-gray-400 dark:hover:border-l-gray-400";
 
 	const groupOwnerStyle =
 		groupOwner === user._id
@@ -87,30 +88,34 @@ export default function GroupItem({ groupId, groupName, groupOwner, members }) {
 						value={newGroupName.groupName}
 					></input>
 
-					<div className="flex items-center justify-center">
-						<button
-							onClick={handleSubmit}
-							className="flex items-center justify-center"
-						>
-							<SaveIcon
-								className="h-8 w-8 p-[4px] text-sky-700 hover:bg-slate-700 
+					<div className="flex items-center justify-between gap-2">
+						<Tooltip arrow describeChild title="Save">
+							<button
+								onClick={handleSubmit}
+								className="flex items-center justify-center"
+							>
+								<SaveIcon
+									className="h-6 w-6 p-[2px] text-sky-700 hover:bg-slate-700 
 							transition-colors hover:text-sky-600 rounded-full"
-							/>
-						</button>
-						<button
-							onClick={() => {
-								setNewGroupName({
-									groupName: "",
-								});
-								toggleEditingName();
-							}}
-							className="flex items-center justify-center"
-						>
-							<XIcon
-								className="h-8 w-8 p-[4px] text-red-900 hover:bg-red-700 
+								/>
+							</button>
+						</Tooltip>
+						<Tooltip arrow describeChild title="Cancel">
+							<button
+								onClick={() => {
+									setNewGroupName({
+										groupName: "",
+									});
+									toggleEditingName();
+								}}
+								className="flex items-center justify-center"
+							>
+								<XIcon
+									className="h-6 w-6 p-[2px] text-red-900 hover:bg-red-700 
 							transition-colors hover:text-white rounded-full"
-							/>
-						</button>
+								/>
+							</button>
+						</Tooltip>
 					</div>
 				</div>
 			) : (
