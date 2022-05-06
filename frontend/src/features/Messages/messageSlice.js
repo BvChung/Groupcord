@@ -3,7 +3,7 @@ import chatService from "./messageService";
 import {
 	errorMessage,
 	removeDuplicateData,
-	deleteData,
+	deleteMessageData,
 	addDateLabelToNewMessages,
 	createDateLabelForDatabaseMessages,
 } from "../helperFunc/helperFunctions";
@@ -16,6 +16,7 @@ const initialState = {
 	loadInitialMessages: false,
 	isSuccess: false,
 	isError: false,
+	expiredJSONWebToken: false,
 	errorMessage: "",
 };
 
@@ -76,7 +77,7 @@ export const messageSlice = createSlice({
 			);
 		},
 		socketDataRemoveDeletedMessage: (state, action) => {
-			state.userMessages.groupMessages = deleteData(
+			state.userMessages.groupMessages = deleteMessageData(
 				state.userMessages.groupMessages,
 				action.payload
 			);
@@ -114,11 +115,11 @@ export const messageSlice = createSlice({
 		});
 		builder.addCase(getChatMessage.rejected, (state, action) => {
 			state.isLoading = false;
-			state.isError = true;
+			state.expiredJSONWebToken = true;
 			state.errorMessage = action.payload;
 		});
 		builder.addCase(deleteChatMessage.fulfilled, (state, action) => {
-			state.userMessages.groupMessages = deleteData(
+			state.userMessages.groupMessages = deleteMessageData(
 				state.userMessages.groupMessages,
 				action.payload
 			);

@@ -7,7 +7,7 @@ const Messages = require("../models/messageModel");
 // Generate a JWT: used to validate user
 const generateToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
-		expiresIn: "15m",
+		expiresIn: "1d",
 	});
 };
 

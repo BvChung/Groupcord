@@ -43,6 +43,7 @@ export const addDateLabelToNewMessages = (state, payload) => {
 };
 
 export const createDateLabelForDatabaseMessages = (payload) => {
+	// Use reduce method to group messages in object with key => date and value => message arr
 	const groupMessagesByDate = payload.reduce((dateCreated, message) => {
 		const date = message.fullDate;
 		if (!dateCreated[date]) {
@@ -52,6 +53,7 @@ export const createDateLabelForDatabaseMessages = (payload) => {
 		return dateCreated;
 	}, {});
 
+	// Reduce method to concatenate all messages and provide the date
 	const messagesWithDateLabel = Object.values(groupMessagesByDate).reduce(
 		(accumulator, msgArrData) => {
 			return accumulator.concat([
@@ -123,21 +125,66 @@ export const filterMembers = (arr1, arr2) => {
 	return output;
 };
 
-export const removeDuplicateData = (messages) => {
-	return messages.filter(
-		(message, i, arr) =>
-			i === arr.findIndex((position) => position._id === message._id)
+export const removeDuplicateData = (data) => {
+	return data.filter(
+		(el, i, arr) => i === arr.findIndex((position) => position._id === el._id)
 	);
 };
 
-export const deleteData = (state, payload) => {
-	return current(state).filter((data) => {
-		// Remove date label if last message of that date is deleted
-		if (data.id === payload._id) {
-			return data.id !== payload._id;
+export const deleteMessageData = (state, payload) => {
+	return current(state).filter((data, i, arr) => {
+		// 1) Method to prevent 2 filters to remove date label
+		// 2) Fixes bug where deleting the message sequentially following the date label
+		// will delete both the msg and label
+		// 3) This method allows for the deletion of messages to be quicker, 2 filters => slows process
+
+		// Remove date label for older messages
+		// Use i + 2 b/c i + 1 will be the message from the payload that is deleted when returned
+		// Older messages will have the element at i + 2 to exist
+		if (
+			data.type === "renderNewDay" &&
+			data.fullDate === payload.fullDate &&
+			arr[i + 2]
+		) {
+			if (
+				arr[i + 1]._id === payload._id &&
+				arr[i + 2].fullDate !== data.fullDate
+			) {
+				return (
+					data.fullDate !== payload.fullDate && data.type === "renderNewDay"
+				);
+			}
 		}
 
+		// Newer messages sent on the current day
+		// Remove date label if last message of that date is deleted therefore i + 2 => undefined
+		if (
+			data.type === "renderNewDay" &&
+			data.fullDate === currentDateFull &&
+			arr[i + 1]._id === payload._id &&
+			typeof arr[i + 2] === "undefined"
+		) {
+			return data.fullDate !== data.fullDate && data.type === "renderNewDay";
+		}
+
+		// Removes deleted message from payload
 		return data._id !== payload._id;
+	});
+};
+
+export const deleteGroupData = (state, payload) => {
+	return current(state).filter((data, i, arr) => {
+		// Remove date label if last message of that date is deleted
+
+		return data._id !== payload._id;
+	});
+};
+
+export const removeLabel = (arr) => {
+	arr.filter((msg, i, arr) => {
+		if (msg.type === "renderNewDay" && arr[i + 1].fullDate !== msg.fulldate) {
+			return msg.type !== "renderNewDay";
+		}
 	});
 };
 

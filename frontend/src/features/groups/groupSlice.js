@@ -7,7 +7,7 @@ import {
 	updateGroupData,
 	updateMembersGroups,
 	updateGroupName,
-	deleteData,
+	deleteGroupData,
 } from "../helperFunc/helperFunctions";
 
 const initialState = {
@@ -128,7 +128,7 @@ export const groupSlice = createSlice({
 			);
 		},
 		leaveGroup: (state, action) => {
-			state.groups = deleteData(state.groups, action.payload);
+			state.groups = deleteGroupData(state.groups, action.payload);
 		},
 		socketDataUpdateMembers: (state, action) => {
 			state.groupInfo.members = action.payload.groupData.members;
@@ -142,7 +142,7 @@ export const groupSlice = createSlice({
 			state.groups = updateGroupName(state.groups, action.payload);
 		},
 		socketDataDeleteGroup: (state, action) => {
-			state.groups = deleteData(state.groups, action.payload);
+			state.groups = deleteGroupData(state.groups, action.payload);
 		},
 	},
 	extraReducers: (builder) => {
