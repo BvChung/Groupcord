@@ -6,21 +6,22 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { loginUser, resetState } from "../features/authentication/authSlice";
 import { SocketContext } from "../appContext/socketContext";
+import { Checkbox, FormControlLabel } from "@mui/material";
 
 function Login() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const socket = useContext(SocketContext);
 
-	const { user, loginError, isSuccess, isLoading, message } = useSelector(
-		(state) => state.auth
-	);
-
 	const [form, setForm] = useState({
 		guestAccount: false,
 		email: "",
 		password: "",
 	});
+	const [showPassword, setShowPassword] = useState(false);
+	const { user, loginError, isSuccess, isLoading, message } = useSelector(
+		(state) => state.auth
+	);
 
 	function handleChange(event) {
 		const { name, value } = event.target;
@@ -41,7 +42,6 @@ function Login() {
 
 		dispatch(loginUser(userData));
 	}
-
 	function loadGuestAccount() {
 		setForm(() => {
 			return {
@@ -50,6 +50,9 @@ function Login() {
 				password: "guest",
 			};
 		});
+	}
+	function toggleShowPassword() {
+		setShowPassword((prev) => !prev);
 	}
 
 	const displayError = useCallback(() => {
@@ -83,7 +86,6 @@ function Login() {
 		dispatch,
 		displayError,
 	]);
-	// [user, loginError, isSuccess, message, navigate, dispatch]
 
 	return (
 		<div
@@ -106,32 +108,41 @@ function Login() {
 				h-fit w-screen px-8 sm:w-maxLogin"
 					onSubmit={handleSubmit}
 				>
-					<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
-						Email
-					</label>
+					<div className="mb-2">
+						<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
+							Email
+						</label>
 
-					<input
-						name="email"
-						value={form.email}
-						type="email"
-						onChange={handleChange}
-						required
-						className="w-full border-[1px] mb-6 rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
+						<input
+							name="email"
+							value={form.email}
+							type="email"
+							onChange={handleChange}
+							required
+							className="w-full border-[1px] mb-4 rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
 						border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
-					></input>
+						></input>
 
-					<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
-						Password
-					</label>
-					<input
-						name="password"
-						value={form.password}
-						type="password"
-						onChange={handleChange}
-						required
-						className="w-full border-[1px] mb-8 rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
+						<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
+							Password
+						</label>
+						<input
+							name="password"
+							value={form.password}
+							type={showPassword ? "text" : "password"}
+							onChange={handleChange}
+							required
+							className="w-full border-[1px] rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
 						border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
-					></input>
+						></input>
+
+						<div className="flex items-center text-gray1 dark:text-offwhite">
+							<FormControlLabel
+								control={<Checkbox onClick={toggleShowPassword} />}
+								label="Show password"
+							/>
+						</div>
+					</div>
 					<button
 						aria-label="Sign In"
 						className="transition-all bg-sky-600 hover:bg-sky-500 text-offwhite2 

@@ -5,17 +5,23 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { registerUser, resetState } from "../features/authentication/authSlice";
+import { Checkbox, FormControlLabel } from "@mui/material";
 
 function Register() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
+	const { user, registerError, isSuccess, isLoading, message } = useSelector(
+		(state) => state.auth
+	);
 	const [form, setForm] = useState({
 		name: "",
 		username: "",
 		email: "",
 		password: "",
 	});
+	const [showPassword, setShowPassword] = useState(false);
+
 	function handleChange(event) {
 		const { name, value } = event.target;
 		setForm((prevFormData) => {
@@ -37,15 +43,13 @@ function Register() {
 
 		dispatch(registerUser(userData));
 	}
+	function toggleShowPassword() {
+		setShowPassword((prev) => !prev);
+	}
 
 	const resetAfterRegister = useCallback(() => {
 		dispatch(resetState());
 	}, [dispatch]);
-
-	const { user, registerError, isSuccess, isLoading, message } = useSelector(
-		(state) => state.auth
-	);
-	// console.log(user, isLoading, registerError, isSuccess, message);
 
 	useEffect(() => {
 		if (registerError) {
@@ -87,73 +91,83 @@ function Register() {
 						Create your account
 					</p>
 				</div>
+
 				<form
 					className="flex flex-col align-center content-center 
 				h-fit w-screen px-6 sm:w-maxLogin"
 					onSubmit={handleSubmit}
 				>
-					<div className="flex flex-col gap-4 mb-6 w-full sm:flex-row">
-						<div>
-							<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
-								Name
-							</label>
-							<input
-								name="name"
-								value={form.name}
-								type="text"
-								onChange={handleChange}
-								required
-								className="w-full border-[1px] rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
+					<div className="mb-3">
+						<div className="flex flex-col gap-4 mb-4 w-full sm:flex-row">
+							<div>
+								<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
+									Name
+								</label>
+								<input
+									name="name"
+									value={form.name}
+									type="text"
+									onChange={handleChange}
+									required
+									className="w-full border-[1px] rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
 								border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
-							></input>
+								></input>
+							</div>
+
+							<div>
+								<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
+									Username
+								</label>
+								<input
+									name="username"
+									value={form.username}
+									type="text"
+									onChange={handleChange}
+									required
+									className="w-full border-[1px] rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
+								border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
+								></input>
+							</div>
 						</div>
 
-						<div>
-							<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
-								Username
-							</label>
-							<input
-								name="username"
-								value={form.username}
-								type="text"
-								onChange={handleChange}
-								required
-								className="w-full border-[1px] rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
-								border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
-							></input>
+						<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
+							Email
+						</label>
+
+						<input
+							name="email"
+							value={form.email}
+							type="email"
+							onChange={handleChange}
+							required
+							className="w-full border-[1px] mb-4 rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
+						border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
+						></input>
+
+						<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
+							Password
+						</label>
+						<input
+							name="password"
+							value={form.password}
+							type={showPassword ? "text" : "password"}
+							onChange={handleChange}
+							required
+							className="w-full border-[1px] rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
+						border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
+						></input>
+						<div className="flex items-center text-gray1 dark:text-offwhite">
+							<FormControlLabel
+								control={<Checkbox onClick={toggleShowPassword} />}
+								label="Show password"
+							/>
 						</div>
 					</div>
 
-					<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
-						Email
-					</label>
-
-					<input
-						name="email"
-						value={form.email}
-						type="email"
-						onChange={handleChange}
-						required
-						className="w-full border-[1px] mb-6 rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
-						border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
-					></input>
-
-					<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
-						Password
-					</label>
-					<input
-						name="password"
-						value={form.password}
-						type="password"
-						onChange={handleChange}
-						required
-						className="w-full border-[1px] mb-8 rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
-						border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
-					></input>
 					<button
 						aria-label="Create Account"
 						className="transition-all bg-sky-600 hover:bg-sky-500 text-offwhite2 
-						w-full self-center p-2 rounded-md mb-6 dark:bg-sky-700 dark:hover:bg-sky-600"
+						w-full self-center p-2 rounded-md mb-4 dark:bg-sky-700 dark:hover:bg-sky-600"
 					>
 						{isLoading ? (
 							<div className="flex items-center justify-center gap-2">
