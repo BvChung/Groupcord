@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 import groupService from "./groupService";
 import {
-	filterMembers,
+	availableUsersToAddToGroup,
 	removeDuplicateData,
 	errorMessage,
 	updateGroupData,
-	updateMembersGroups,
+	addAndRemoveMembersFromGroups,
 	updateGroupName,
 	deleteGroupData,
 } from "../helperFunc/helperFunctions";
@@ -122,7 +122,7 @@ export const groupSlice = createSlice({
 		resetGroupState: (state) => initialState,
 		updateActiveGroup: (state, action) => {
 			state.groupInfo = action.payload;
-			state.filteredMembers = filterMembers(
+			state.filteredMembers = availableUsersToAddToGroup(
 				state.registeredMembers,
 				state.groupInfo.members
 			);
@@ -135,7 +135,10 @@ export const groupSlice = createSlice({
 			state.filteredMembers = action.payload.filteredMembers;
 		},
 		socketDataUpdateGroups: (state, action) => {
-			state.groups = updateMembersGroups(state.groups, action.payload);
+			state.groups = addAndRemoveMembersFromGroups(
+				state.groups,
+				action.payload
+			);
 			state.groups = removeDuplicateData(state.groups);
 		},
 		socketDataUpdateGroupName: (state, action) => {
@@ -178,7 +181,7 @@ export const groupSlice = createSlice({
 		builder.addCase(addGroupMembers.fulfilled, (state, action) => {
 			state.isSuccess = true;
 			state.groupInfo.members = action.payload.updatedMembers.members;
-			state.filteredMembers = filterMembers(
+			state.filteredMembers = availableUsersToAddToGroup(
 				state.registeredMembers,
 				state.groupInfo.members
 			);
@@ -201,7 +204,7 @@ export const groupSlice = createSlice({
 			state.isSuccess = true;
 			state.groupInfo.members = action.payload.updatedMembers.members;
 
-			state.filteredMembers = filterMembers(
+			state.filteredMembers = availableUsersToAddToGroup(
 				state.registeredMembers,
 				state.groupInfo.members
 			);

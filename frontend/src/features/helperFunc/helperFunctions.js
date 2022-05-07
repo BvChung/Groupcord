@@ -100,7 +100,7 @@ export const updateGroupName = (state, payload) => {
 	});
 };
 
-export const updateMembersGroups = (state, payload) => {
+export const addAndRemoveMembersFromGroups = (state, payload) => {
 	const { groupData, action } = payload;
 
 	const foundChatGroup = current(state).some(
@@ -116,7 +116,7 @@ export const updateMembersGroups = (state, payload) => {
 	}
 };
 
-export const filterMembers = (arr1, arr2) => {
+export const availableUsersToAddToGroup = (arr1, arr2) => {
 	const output = arr1.filter((el1) => {
 		return !arr2.find((el2) => {
 			return el2._id === el1._id;
@@ -136,11 +136,11 @@ export const deleteMessageData = (state, payload) => {
 		// 1) Method to prevent 2 filters to remove date label
 		// 2) Fixes bug where deleting the message sequentially following the date label
 		// will delete both the msg and label
-		// 3) This method allows for the deletion of messages to be quicker, 2 filters => slows process
+		// 3) This method allows for the deletion of messages/labels to be quicker, 2 filters => slows process
 
 		// Remove date label for older messages
 		// Use i + 2 b/c i + 1 will be the message from the payload that is deleted when returned
-		// Older messages will have the element at i + 2 to exist
+		// Older messages will have the element at i + 2 => condition met
 		if (
 			data.type === "renderNewDay" &&
 			data.fullDate === payload.fullDate &&
@@ -156,7 +156,7 @@ export const deleteMessageData = (state, payload) => {
 			}
 		}
 
-		// Newer messages sent on the current day
+		// New messages sent on the current day (today)
 		// Remove date label if last message of that date is deleted therefore i + 2 => undefined
 		if (
 			data.type === "renderNewDay" &&
@@ -164,7 +164,7 @@ export const deleteMessageData = (state, payload) => {
 			arr[i + 1]._id === payload._id &&
 			typeof arr[i + 2] === "undefined"
 		) {
-			return data.fullDate !== data.fullDate && data.type === "renderNewDay";
+			return data.fullDate !== payload.fullDate && data.type === "renderNewDay";
 		}
 
 		// Removes deleted message from payload
@@ -173,22 +173,13 @@ export const deleteMessageData = (state, payload) => {
 };
 
 export const deleteGroupData = (state, payload) => {
-	return current(state).filter((data, i, arr) => {
-		// Remove date label if last message of that date is deleted
-
+	return current(state).filter((data) => {
 		return data._id !== payload._id;
 	});
 };
 
-export const removeLabel = (arr) => {
-	arr.filter((msg, i, arr) => {
-		if (msg.type === "renderNewDay" && arr[i + 1].fullDate !== msg.fulldate) {
-			return msg.type !== "renderNewDay";
-		}
-	});
-};
-
 export const configuration = (token) => {
+	// JWT Token
 	return {
 		headers: {
 			Authorization: `Bearer ${token}`,
