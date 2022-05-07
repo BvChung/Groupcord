@@ -27,7 +27,6 @@ const registerUser = asyncHandler(async (req, res) => {
 			"An account registered with this email address already exists."
 		);
 	}
-
 	if (usernameExists) {
 		res.status(400);
 		throw new Error("This username is unavailable.");
@@ -80,7 +79,7 @@ const loginUser = asyncHandler(async (req, res) => {
 		});
 	} else {
 		res.status(400);
-		throw new Error("Invalid credentials");
+		throw new Error("Could not find account, try again.");
 	}
 });
 
@@ -97,22 +96,21 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 const updateUser = asyncHandler(async (req, res) => {
 	const currentUser = await User.findById(req.user._id);
 
-	if (!currentUser) {
-		res.status(400);
-		throw new Error("User not found");
-	}
-
 	const { username, email, currentPassword, newPassword } = req.body;
 
 	// If user updates password then hash it
 	let hashedPassword;
-
 	if (
 		currentPassword &&
 		!(await bcrypt.compare(currentPassword, currentUser.password))
 	) {
 		res.status(400);
-		throw new Error("Current password does not exist");
+		throw new Error("Current password is incorrect, try again.");
+	}
+
+	if (currentPassword && newPassword && currentPassword === newPassword) {
+		res.status(400);
+		throw new Error("New password cannot be the same as your old password.");
 	}
 
 	if (
