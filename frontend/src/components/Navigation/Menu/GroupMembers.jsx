@@ -95,39 +95,6 @@ export default function AddMembers() {
 	useEffect(() => {
 		receiveData();
 	}, [receiveData]);
-	// useEffect(() => {
-	// 	socket.on("receive_group_data", (data) => {
-	// 		console.log(data);
-	// 		// Members and filtered members should only be updated if users are the group is active for other useers
-	// 		// The dispatch should only affect the account that has been removed/added
-
-	// 		if (data.groupData._id === groupId) {
-	// 			// Updates the current active group with members/ users that can be added
-	// 			dispatch(updateMembersWithSocket(data));
-	// 		}
-	// 		if (user._id === data.memberChanged._id) {
-	// 			// Update groups in sidebar
-	// 			dispatch(updateGroupsWithSocket(data));
-
-	// 			if (data.action === "removeMember" && data.groupData._id === groupId) {
-	// 				// Clears the chat messages
-	// 				dispatch(clearChatMessages());
-	// 			}
-	// 		}
-	// 		// if (data.groupData._id === groupId) {
-	// 		// 	dispatch(updateMembersWithSocket(data));
-	// 		// }
-	// 		// if (user._id === data.memberChanged._id && data.action === "addMember") {
-	// 		// 	dispatch(updateGroupsWithSocket(data));
-	// 		// } else if (
-	// 		// 	user._id === data.memberChanged._id &&
-	// 		// 	data.action === "removeMember"
-	// 		// ) {
-	// 		// 	dispatch(updateGroupsWithSocket(data));
-	// 		// 	dispatch(clearChatMessages());
-	// 		// }
-	// 	});
-	// }, [socket, dispatch, user._id, groupId]);
 	return (
 		<ClickAwayListener onClickAway={close}>
 			<div className={groupId === "Global" ? "hidden" : ""}>

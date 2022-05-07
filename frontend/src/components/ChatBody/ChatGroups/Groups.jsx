@@ -88,7 +88,7 @@ export default function Groups() {
 					}}
 				>
 					<ChatAlt2Icon className="w-6 h-6 text-white" />
-					<span className="font-medium text-white">Create New Group</span>
+					<span className="font-medium text-gray-100">Create New Group</span>
 				</button>
 
 				<div
@@ -99,7 +99,7 @@ export default function Groups() {
 						name="searchText"
 						value={searchText}
 						type="text"
-						placeholder="Search messages"
+						placeholder="Search for group chat"
 						onChange={(e) => setSearchText(e.target.value)}
 						className="text-gray1 dark:text-white outline-none bg-transparent w-11/12 px-2 placeholder:text-gray-500 dark:placeholder:text-gray-600"
 					></input>

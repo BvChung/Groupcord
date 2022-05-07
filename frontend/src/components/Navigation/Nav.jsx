@@ -116,6 +116,3 @@ function Nav() {
 }
 
 export default Nav;
-
-const ex = [1, 2, 3];
-ex.map((x, i, arr) => console.log(arr[i + 1]));

@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { createChatGroups } from "../../features/groups/groupSlice";
 import { toast } from "react-toastify";
 import { MenuContext } from "../../appContext/menuContext";
+import { UserGroupIcon } from "@heroicons/react/outline";
 
 export default function ContactMenu() {
 	const dispatch = useDispatch();
@@ -44,13 +45,20 @@ export default function ContactMenu() {
 
 	const createButtonActive = darkMode
 		? "bg-sky-700 text-white hover:bg-sky-800 active:bg-sky-900"
-		: "bg-sky-600 text-white hover:bg-sky-500 active:bg-sky-400";
+		: "bg-sky-600 text-gray-100 hover:bg-sky-700 active:bg-sky-600";
 	const createButtonInactive = darkMode
 		? "bg-menu text-gray-700"
 		: "bg-white text-gray-300";
 	const buttonStyle = darkMode
-		? "bg-menu text-white hover:bg-gray-700 active:bg-gray-800"
-		: "bg-white text-gray1 hover:bg-gray-200 active:bg-gray-400";
+		? "bg-menu text-white hover:bg-gray-800"
+		: "bg-white text-gray1 hover:bg-gray-200";
+	const textStyle = darkMode ? "text-white" : "text-gray1";
+	const headerStyle = darkMode
+		? "border-b-[1px] border-gray-500 "
+		: "border-b-[1px] border-gray-300";
+	const formStyle = darkMode
+		? "border-b-[1px] border-gray-600"
+		: "border-b-[1px] border-gray-300";
 
 	return (
 		<>
@@ -64,26 +72,23 @@ export default function ContactMenu() {
 				}}
 			>
 				<div
-					className={`md:w-full py-6 px-8 ${
+					className={`md:w-full py-6 px-8  ${
 						darkMode ? "bg-menu" : "bg-offwhite"
 					} `}
 				>
-					<h1
-						className={` ${
-							darkMode
-								? "text-white border-b-[1px]  border-gray-500 "
-								: "text-gray1 border-b-[1px]  border-gray-300"
-						} text-2xl font-semibold pb-2 font-sans `}
-					>
-						Create Group
-					</h1>
+					<div className={`flex justify-between items-center ${headerStyle}`}>
+						<h1 className={`text-xl font-semibold pb-2 font-sans ${textStyle}`}>
+							Create Group
+						</h1>
+						<UserGroupIcon className="h-7 w-7" />
+					</div>
 
-					<div className="mt-4">
+					<div className={`flex mb-4 pb-4 pt-2  ${formStyle}`}>
 						<TextField
 							name="groupName"
 							value={formData.groupName}
 							onChange={handleFormData}
-							margin="dense"
+							margin="normal"
 							id="groupName"
 							label="Group name"
 							type="text"
@@ -91,7 +96,7 @@ export default function ContactMenu() {
 							variant="outlined"
 						/>
 					</div>
-					<div className="flex justify-end items-center mt-4 gap-2 ">
+					<div className="flex justify-end items-center gap-4 ">
 						<button
 							aria-label="Exit group creation"
 							onClick={() => {
@@ -99,7 +104,7 @@ export default function ContactMenu() {
 								resetFormData();
 							}}
 							className={`transition-colors ${buttonStyle}   
-							p-2 text-sm w-20 font-bold rounded-md`}
+							px-1 py-[.65rem] text-sm w-20 font-bold rounded-md`}
 						>
 							Cancel
 						</button>
@@ -112,7 +117,7 @@ export default function ContactMenu() {
 								formData.groupName !== ""
 									? createButtonActive
 									: createButtonInactive
-							}  w-20 p-2 text-sm font-bold rounded-md`}
+							}  w-20 px-1 py-[.65rem] text-sm font-bold rounded-md`}
 						>
 							Create
 						</button>
