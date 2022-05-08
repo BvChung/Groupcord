@@ -107,7 +107,7 @@ export default function Groups() {
 				</div>
 			</div>
 
-			<div className="mx-6 h-auto py-4 px-5 bg-white dark:bg-dark3 rounded-md shadow-md">
+			<section className="mx-6 h-auto py-4 px-5 bg-white dark:bg-dark3 rounded-md shadow-md">
 				<div
 					className="h-auto max-height bg-transparent py-1 pr-2
 						rounded-lg overflow-y-auto"
@@ -147,7 +147,7 @@ export default function Groups() {
 								);
 							})}
 				</div>
-			</div>
+			</section>
 		</div>
 	);
 }
