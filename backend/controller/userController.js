@@ -83,13 +83,6 @@ const loginUser = asyncHandler(async (req, res) => {
 	}
 });
 
-// @desc Get user data
-// @route GET /api/users/me
-// @access Private
-const getCurrentUser = asyncHandler(async (req, res) => {
-	return res.status(200).json(req.user);
-});
-
 // @desc Update user data
 // @route PUT /api/users/me
 // @access Private
@@ -165,7 +158,6 @@ const getAllUsers = asyncHandler(async (req, res) => {
 module.exports = {
 	registerUser,
 	loginUser,
-	getCurrentUser,
 	updateUser,
 	getAllUsers,
 };

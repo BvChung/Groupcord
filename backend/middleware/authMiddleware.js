@@ -34,13 +34,13 @@ const authWithToken = asyncHandler(async (req, res, next) => {
 		} catch (err) {
 			console.error(err);
 			res.status(401);
-			throw new Error("Not authorized");
+			throw new Error("Unauthorized.");
 		}
 	}
 
 	if (!token) {
 		res.status(401);
-		throw new Error("Not authorized, no token");
+		throw new Error("Unauthorized, no JSON Web Token.");
 	}
 });
 
