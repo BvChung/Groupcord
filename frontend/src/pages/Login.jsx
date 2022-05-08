@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useContext } from "react";
 import { Link } from "react-router-dom";
-import { LoginIcon, UserIcon } from "@heroicons/react/outline";
+import { UserIcon, AnnotationIcon } from "@heroicons/react/outline";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -36,7 +36,7 @@ function Login() {
 		e.preventDefault();
 
 		const userData = {
-			email: form.email,
+			email: form.email.toLowerCase(),
 			password: form.password,
 		};
 
@@ -92,20 +92,23 @@ function Login() {
 			className="flex justify-center h-screen w-screen first-letter:text-gray1 
 			sm:items-center bg-white dark:bg-dark2"
 		>
-			<main
+			<section
 				className="h-max w-full mt-14
-				sm:w-fit sm:px-4 sm:py-6 sm:border-[1px] border-gray-300 rounded-md 
+				sm:w-fit sm:px-4 sm:py-8 sm:border-[1px] border-gray-300 rounded-md 
 				dark:border-dark5"
 			>
-				<div className="flex items-center justify-center gap-2 mb-2 sm:mb-6">
-					<LoginIcon className="h-10 w-10 text-sky-600" />
-					<p className="text-center font-bold text-xl sm:text-2xl text-gray1 dark:text-gray-100">
-						Sign In
+				<div className="flex items-center justify-center gap-2 mb-2 sm:mb-4">
+					<AnnotationIcon className="h-10 w-10 text-sky-600" />
+					<p className="text-center font-semibold text-xl sm:text-2xl text-gray1 dark:text-gray-100">
+						Groupcord
 					</p>
 				</div>
+				<p className="text-center mb-1 font-medium text-xl text-gray1 dark:text-gray-100">
+					Sign In
+				</p>
 				<form
 					className="flex flex-col align-center content-center 
-				h-fit w-screen px-8 sm:w-maxLogin"
+				h-fit w-screen px-8 sm:w-[30rem]"
 					onSubmit={handleSubmit}
 				>
 					<div className="mb-2">
@@ -145,8 +148,8 @@ function Login() {
 					</div>
 					<button
 						aria-label="Sign In"
-						className="transition-all bg-sky-600 hover:bg-sky-500 text-offwhite2 
-							w-full self-center p-2 rounded-md mb-4 dark:bg-sky-700 dark:hover:bg-sky-600"
+						className="transition-all text-offwhite2 w-full self-center p-2 rounded-md mb-4 
+							bg-sky-500 hover:bg-sky-600 dark:bg-sky-800 dark:hover:bg-sky-700"
 					>
 						{isLoading && !form.guestAccount ? (
 							<div className="flex items-center justify-center gap-2">
@@ -180,11 +183,11 @@ function Login() {
 					</button>
 
 					<div className="flex items-center justify-between mb-4">
-						<span className="w-1/5 border-b border-gray-500 dark:border-slate-300 lg:w-1/5"></span>
-						<span className="text-xs text-center text-gray1  uppercase dark:text-slate-300">
-							Login With Guest Account
+						<span className="w-1/5 border-b border-gray-400 dark:border-gray-500 lg:w-1/5"></span>
+						<span className="text-xs text-center text-gray-600 uppercase dark:text-gray-300">
+							<strong>Login With Guest Account</strong>
 						</span>
-						<span className="w-1/5 border-b border-gray-500 dark:border-gray-400 lg:w-1/5"></span>
+						<span className="w-1/5 border-b border-gray-400 dark:border-gray-500 lg:w-1/5"></span>
 					</div>
 
 					<button
@@ -224,13 +227,13 @@ function Login() {
 						)}
 					</button>
 				</form>
-				<div className="text-center">
-					<p className="dark:text-slate-300">Don't have an account?</p>
-					<p className="font-semibold text-sky-600 hover:text-sky-500">
+				<div className="flex justify-center items-center gap-2 px-8">
+					<span className="dark:text-slate-300">New to GroupCord?</span>
+					<span className="font-semibold text-sky-600 hover:text-sky-500">
 						<Link to="/register">Register</Link>
-					</p>
+					</span>
 				</div>
-			</main>
+			</section>
 		</div>
 	);
 }

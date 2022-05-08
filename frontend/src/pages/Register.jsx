@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { UserAddIcon } from "@heroicons/react/solid";
+import { AnnotationIcon } from "@heroicons/react/outline";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -34,15 +34,20 @@ function Register() {
 	function handleSubmit(e) {
 		e.preventDefault();
 
+		if (form.password.slice(0, 1) === " " || form.password.slice(-1) === " ") {
+			return toast.error("Password cannot begin or end with a blank space.");
+		}
+
 		const userData = {
 			name: form.name,
 			username: form.username,
-			email: form.email,
+			email: form.email.toLowerCase(),
 			password: form.password,
 		};
 
 		dispatch(registerUser(userData));
 	}
+
 	function toggleShowPassword() {
 		setShowPassword((prev) => !prev);
 	}
@@ -82,19 +87,22 @@ function Register() {
 		>
 			<section
 				className="h-max w-full mt-14
-				sm:w-fit sm:px-4 sm:py-6 sm:border-[1px] border-gray-300 rounded-md 
+				sm:w-fit sm:px-4 sm:py-8 sm:border-[1px] border-gray-300 rounded-md 
 				dark:border-dark5"
 			>
-				<div className="flex items-center justify-center gap-2 mb-2 sm:mb-6">
-					<UserAddIcon className="h-10 w-10 text-sky-600" />
-					<p className="text-center font-bold text-xl sm:text-2xl text-gray1 dark:text-gray-100">
-						Create your account
+				<div className="flex items-center justify-center gap-2 mb-2 sm:mb-4">
+					<AnnotationIcon className="h-10 w-10 text-sky-600" />
+					<p className="text-center font-semibold text-xl sm:text-2xl text-gray1 dark:text-gray-100">
+						Groupcord
 					</p>
 				</div>
+				<p className="text-center mb-2 font-medium text-xl text-gray1 dark:text-gray-100">
+					Create Account
+				</p>
 
 				<form
 					className="flex flex-col align-center content-center 
-				h-fit w-screen px-6 sm:w-maxLogin"
+				h-fit w-screen px-8 sm:w-[30rem] mb-1"
 					onSubmit={handleSubmit}
 				>
 					<div className="mb-3">
@@ -166,8 +174,8 @@ function Register() {
 
 					<button
 						aria-label="Create Account"
-						className="transition-all bg-sky-600 hover:bg-sky-500 text-offwhite2 
-						w-full self-center p-2 rounded-md mb-4 dark:bg-sky-700 dark:hover:bg-sky-600"
+						className="transition-all  text-offwhite2 w-full self-center p-2 rounded-md mb-6 
+							bg-sky-500 hover:bg-sky-600 dark:bg-sky-800 dark:hover:bg-sky-700"
 					>
 						{isLoading ? (
 							<div className="flex items-center justify-center gap-2">
@@ -200,11 +208,11 @@ function Register() {
 						)}
 					</button>
 				</form>
-				<div className="text-center">
-					<p className="dark:text-slate-300">Already have an account?</p>
-					<p className="font-semibold text-sky-600 hover:text-sky-400">
+				<div className="flex justify-center items-center gap-2 px-8">
+					<span className="dark:text-slate-300">Already have an account?</span>
+					<span className="font-semibold text-sky-600 hover:text-sky-400">
 						<Link to="/">Sign in</Link>
-					</p>
+					</span>
 				</div>
 			</section>
 		</div>

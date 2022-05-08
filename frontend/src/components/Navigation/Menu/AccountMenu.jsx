@@ -111,11 +111,18 @@ export default function AccountMenu({ open, handleClose }) {
 		}
 		if (
 			user.username === formData.username &&
-			user.email === formData.email &&
+			user.email === formData.email.toLowerCase() &&
 			formData.currentPassword === "" &&
 			formData.newPassword === ""
 		)
 			return;
+
+		if (
+			formData.newPassword.slice(0, 1) === " " ||
+			formData.newPassword.slice(-1) === " "
+		) {
+			return toast.error("Password cannot begin or end with a blank space.");
+		}
 
 		if (formData.currentPassword === "" && formData.newPassword !== "") {
 			return toast.info("Please enter current password.");
@@ -133,7 +140,7 @@ export default function AccountMenu({ open, handleClose }) {
 
 		const sentData = {
 			username: formData.username,
-			email: formData.email,
+			email: formData.email.toLowerCase(),
 			currentPassword:
 				formData.currentPassword === "" ? undefined : formData.currentPassword,
 			newPassword:
@@ -172,6 +179,7 @@ export default function AccountMenu({ open, handleClose }) {
 
 	const bgStyle = darkMode ? "bg-menu" : "bg-offwhite";
 	const textStyle = darkMode ? "text-white" : "text-gray1";
+	const iconStyle = darkMode ? "text-gray-200" : "text-gray-700";
 	const titleStyle = darkMode
 		? "text-white border-b-[1px] border-gray-500 "
 		: "text-gray1 border-b-[1px] border-gray-300";
@@ -184,243 +192,280 @@ export default function AccountMenu({ open, handleClose }) {
 	const returnStyle = darkMode ? "hover:bg-dark4" : "hover:bg-gray-200";
 
 	return (
-		<>
-			<Dialog
-				open={open}
-				fullWidth={true}
-				maxWidth="sm"
-				onClose={() => {
-					handleClose();
-					resetFormData();
-					cancelEditingAccountInfo();
-				}}
-			>
-				<div className={`w-full py-6 px-8 ${bgStyle} `}>
-					<div className={`${textStyle} mb-6 py-2`}>
-						<h1
-							className={`${titleStyle} text-xl font-semibold pb-2 font-sans `}
-						>
-							Manage Account
-						</h1>
-					</div>
-
-					<div className="">
-						<div>
-							{!editUsername ? (
-								<Tooltip
-									arrow
-									describeChild
-									placement="right"
-									title="Edit Username"
-								>
-									<div
-										className={`flex gap-4 items-center py-[.84rem] px-4 w-full mb-6 cursor-pointer
-											${accountInfoStyle}`}
-										onClick={toggleEditUsername}
-									>
-										<div className="flex basis-32 items-center">
-											<p className="text-xs leading-6 uppercase font-medium">
-												Username
-											</p>
-										</div>
-										<div className="flex basis-96">
-											<p className="text-base">{user.username}</p>
-										</div>
-										<PencilIcon className="h-7 w-7" />
-									</div>
-								</Tooltip>
-							) : (
-								<div className={`flex flex-col mb-6 py-4 px-6 ${formStyle}`}>
-									<div className="flex items-center justify-between">
-										<Tooltip arrow describeChild title="Click to go back">
-											<button
-												onClick={() => {
-													resetUsernameForm();
-													toggleEditUsername();
-												}}
-											>
-												<ArrowLeftIcon
-													className={`h-9 w-9 rounded-full p-2 ${returnStyle}`}
-												/>
-											</button>
-										</Tooltip>
-										<PencilAltIcon className="h-6 w-6" />
-									</div>
-									<TextField
-										name="username"
-										value={formData.username}
-										onChange={handleFormData}
-										margin="normal"
-										id="username"
-										label="Username"
-										type="text"
-										fullWidth
-										variant="outlined"
-									/>
-								</div>
-							)}
-
-							{!editEmail ? (
-								<Tooltip
-									arrow
-									describeChild
-									placement="right"
-									title="Edit Email"
-								>
-									<div
-										className={`flex gap-4 mb-6 items-center px-4 py-[.81rem] w-full cursor-pointer
-											${accountInfoStyle}`}
-										onClick={toggleEditEmail}
-									>
-										<div className="flex basis-32 items-center">
-											<p className="text-xs leading-6 uppercase font-medium">
-												Email
-											</p>
-										</div>
-										<div className="flex basis-96">
-											<p className="text-base">{user.email}</p>
-										</div>
-										<MailIcon className="h-7 w-7" />
-									</div>
-								</Tooltip>
-							) : (
-								<div className={`flex flex-col mb-6 py-4 px-6 ${formStyle}`}>
-									<div className="flex items-center justify-between">
-										<Tooltip arrow describeChild title="Click to go back">
-											<button
-												onClick={() => {
-													resetEmailForm();
-													toggleEditEmail();
-												}}
-											>
-												<ArrowLeftIcon
-													className={`h-9 w-9 rounded-full p-2 ${returnStyle}`}
-												/>
-											</button>
-										</Tooltip>
-										<MailOpenIcon className="h-6 w-6" />
-									</div>
-									<TextField
-										name="email"
-										value={formData.email}
-										onChange={handleFormData}
-										margin="normal"
-										id="email"
-										label="Email"
-										type="text"
-										fullWidth
-										variant="outlined"
-									/>
-								</div>
-							)}
-						</div>
-
-						<div>
-							{!editPassword ? (
-								<Tooltip
-									arrow
-									describeChild
-									placement="right"
-									title="Edit Password"
-								>
-									<div
-										className={`flex gap-4 items-center px-4 py-[.81rem] w-full cursor-pointer
-											${accountInfoStyle}`}
-										onClick={toggleEditPassword}
-									>
-										<div className="flex basis-32 items-center">
-											<p className="text-xs leading-6 uppercase font-medium">
-												Password
-											</p>
-										</div>
-										<div className="flex basis-96">
-											<p className="text-base"></p>
-										</div>
-										<LockClosedIcon className="h-7 w-7" />
-									</div>
-								</Tooltip>
-							) : (
-								<div className={`flex flex-col py-4 px-6 ${formStyle}`}>
-									<div className="flex items-center justify-between">
-										<Tooltip arrow describeChild title="Click to go back">
-											<button
-												onClick={() => {
-													resetPasswordForm();
-													toggleEditPassword();
-												}}
-												className=""
-											>
-												<ArrowLeftIcon
-													className={`h-9 w-9 rounded-full p-2 ${returnStyle}`}
-												/>
-											</button>
-										</Tooltip>
-										<LockOpenIcon className="h-6 w-6" />
-									</div>
-									<fieldset className="flex-col">
-										<TextField
-											name="currentPassword"
-											value={formData.currentPassword}
-											onChange={handleFormData}
-											margin="normal"
-											id="currentPassword"
-											label="Verify Current Password"
-											type={showPassword ? "text" : "password"}
-											fullWidth
-											variant="outlined"
-											className="bg-transparent"
-										/>
-										<TextField
-											name="newPassword"
-											value={formData.newPassword}
-											onChange={handleFormData}
-											margin="normal"
-											id="newPassword"
-											label="New Password"
-											type={showPassword ? "text" : "password"}
-											fullWidth
-											variant="outlined"
-										/>
-										<TextField
-											name="confirmNewPassword"
-											value={formData.confirmNewPassword}
-											onChange={handleFormData}
-											margin="normal"
-											id="confirmNewPassword"
-											label="Confirm New Password"
-											type={showPassword ? "text" : "password"}
-											fullWidth
-											variant="outlined"
-										/>
-										<div className="pl-[.1rem] mt-1">
-											<FormControlLabel
-												control={<Checkbox onClick={toggleShowPasswords} />}
-												label="Show password"
-											/>
-										</div>
-									</fieldset>
-								</div>
-							)}
-						</div>
-					</div>
-					{(editEmail || editPassword || editUsername) && (
-						<div className="md:col-start-2 flex justify-end items-center mt-4 md:mt-5 gap-4">
-							<button
-								onClick={(e) => {
-									handleSubmit(e);
-								}}
-								className={`${
-									darkMode
-										? "bg-sky-800 text-white hover:bg-sky-900 active:bg-sky-800"
-										: "bg-sky-600 text-gray-100 hover:bg-sky-700 active:bg-sky-600"
-								}  w-20 px-1 py-[.65rem] text-sm font-bold rounded-md`}
-							>
-								Save
-							</button>
-						</div>
-					)}
+		<Dialog
+			open={open}
+			fullWidth={true}
+			maxWidth="sm"
+			onClose={() => {
+				handleClose();
+				resetFormData();
+				cancelEditingAccountInfo();
+			}}
+		>
+			<div className={`w-full px-4 py-6 sm:py-6 sm:px-8 ${bgStyle} `}>
+				<div className={`${textStyle} mb-6 py-2`}>
+					<h1 className={`${titleStyle} text-xl font-semibold pb-2 font-sans `}>
+						Manage Account
+					</h1>
 				</div>
-			</Dialog>
-		</>
+
+				<div className="">
+					<div>
+						{!editUsername ? (
+							<Tooltip
+								arrow
+								describeChild
+								placement="right"
+								title="Edit Username"
+							>
+								<div
+									className={`grid grid-cols-3 items-center py-2 sm:py-[.84rem] px-2 sm:px-4 w-full mb-6 cursor-pointer
+											${accountInfoStyle}`}
+									onClick={() => {
+										toggleEditUsername();
+										if (editEmail) {
+											setEditEmail(false);
+											resetEmailForm();
+										}
+										if (editPassword) {
+											setEditPassword(false);
+											resetPasswordForm();
+										}
+									}}
+								>
+									<div className="flex basis-24 sm:basis-32 items-center">
+										<p className="text-xs leading-6 uppercase font-medium">
+											Username
+										</p>
+									</div>
+									<div className="flex basis-72 sm:basis-96">
+										<p className="text-sm sm:text-base">{user.username}</p>
+									</div>
+									<div className="flex justify-end">
+										<PencilIcon
+											className={`h-6 w-6 sm:h-7 sm:w-7 ${iconStyle}`}
+										/>
+									</div>
+								</div>
+							</Tooltip>
+						) : (
+							<div
+								className={`flex flex-col mb-6 px-4 py-4 sm:px-6 ${formStyle}`}
+							>
+								<div className="flex items-center justify-between">
+									<Tooltip arrow describeChild title="Click to go back">
+										<button
+											onClick={() => {
+												resetUsernameForm();
+												toggleEditUsername();
+											}}
+										>
+											<ArrowLeftIcon
+												className={`h-9 w-9 rounded-full p-2 ${returnStyle}`}
+											/>
+										</button>
+									</Tooltip>
+									<PencilAltIcon className={`h-6 w-6 ${iconStyle}`} />
+								</div>
+								<TextField
+									name="username"
+									value={formData.username}
+									onChange={handleFormData}
+									margin="normal"
+									id="username"
+									label="Username"
+									type="text"
+									fullWidth
+									variant="outlined"
+								/>
+							</div>
+						)}
+
+						{!editEmail ? (
+							<Tooltip arrow describeChild placement="right" title="Edit Email">
+								<div
+									className={`grid grid-cols-3 mb-6 items-center px-2 py-2 sm:py-[.81rem] sm:px-4 w-full cursor-pointer
+											${accountInfoStyle}`}
+									onClick={() => {
+										toggleEditEmail();
+										if (editUsername) {
+											setEditUsername(false);
+											resetUsernameForm();
+										}
+										if (editPassword) {
+											setEditPassword(false);
+											resetPasswordForm();
+										}
+									}}
+								>
+									<div className="flex basis-24 sm:basis-32 items-center">
+										<p className="text-xs leading-6 uppercase font-medium">
+											Email
+										</p>
+									</div>
+									<div className="flex basis-64 sm:basis-96">
+										<p className="text-sm sm:text-base">{user.email}</p>
+									</div>
+									<div className="flex justify-end">
+										<MailIcon
+											className={`h-6 w-6 sm:h-7 sm:w-7 ${iconStyle}`}
+										/>
+									</div>
+								</div>
+							</Tooltip>
+						) : (
+							<div
+								className={`flex flex-col mb-6 px-4 py-4 sm:px-6 ${formStyle}`}
+							>
+								<div className="flex items-center justify-between">
+									<Tooltip arrow describeChild title="Click to go back">
+										<button
+											onClick={() => {
+												resetEmailForm();
+												toggleEditEmail();
+											}}
+										>
+											<ArrowLeftIcon
+												className={`h-9 w-9 rounded-full p-2 ${returnStyle}`}
+											/>
+										</button>
+									</Tooltip>
+									<MailOpenIcon className={`h-6 w-6 ${iconStyle}`} />
+								</div>
+								<TextField
+									name="email"
+									value={formData.email}
+									onChange={handleFormData}
+									margin="normal"
+									id="email"
+									label="Email"
+									type="text"
+									fullWidth
+									variant="outlined"
+								/>
+							</div>
+						)}
+					</div>
+
+					<div>
+						{!editPassword ? (
+							<Tooltip
+								arrow
+								describeChild
+								placement="right"
+								title="Edit Password"
+							>
+								<div
+									className={`grid grid-cols-3 items-center px-2 py-2 sm:px-4 sm:py-[.81rem] w-full cursor-pointer
+											${accountInfoStyle}`}
+									onClick={() => {
+										toggleEditPassword();
+										if (editUsername) {
+											setEditUsername(false);
+											resetUsernameForm();
+										}
+										if (editEmail) {
+											setEditEmail(false);
+											resetEmailForm();
+										}
+									}}
+								>
+									<div className="flex items-center">
+										<p className="text-xs leading-6 uppercase font-medium">
+											Password
+										</p>
+									</div>
+									<div className="flex basis-96">
+										<p className="text-base"></p>
+									</div>
+									<div className="flex justify-end">
+										<LockClosedIcon
+											className={`h-6 w-6 sm:h-7 sm:w-7 ${iconStyle}`}
+										/>
+									</div>
+								</div>
+							</Tooltip>
+						) : (
+							<div className={`flex flex-col px-4 py-4 sm:px-6 ${formStyle}`}>
+								<div className="flex items-center justify-between">
+									<Tooltip arrow describeChild title="Click to go back">
+										<button
+											onClick={() => {
+												resetPasswordForm();
+												toggleEditPassword();
+											}}
+											className=""
+										>
+											<ArrowLeftIcon
+												className={`h-9 w-9 rounded-full p-2 ${returnStyle}`}
+											/>
+										</button>
+									</Tooltip>
+									<LockOpenIcon className={`h-6 w-6 ${iconStyle}`} />
+								</div>
+								<fieldset className="flex-col">
+									<TextField
+										name="currentPassword"
+										value={formData.currentPassword}
+										onChange={handleFormData}
+										margin="normal"
+										id="currentPassword"
+										label="Verify Current Password"
+										type={showPassword ? "text" : "password"}
+										fullWidth
+										variant="outlined"
+										className="bg-transparent"
+									/>
+									<TextField
+										name="newPassword"
+										value={formData.newPassword}
+										onChange={handleFormData}
+										margin="normal"
+										id="newPassword"
+										label="New Password"
+										type={showPassword ? "text" : "password"}
+										fullWidth
+										variant="outlined"
+									/>
+									<TextField
+										name="confirmNewPassword"
+										value={formData.confirmNewPassword}
+										onChange={handleFormData}
+										margin="normal"
+										id="confirmNewPassword"
+										label="Confirm New Password"
+										type={showPassword ? "text" : "password"}
+										fullWidth
+										variant="outlined"
+									/>
+									<div className="pl-[.1rem] mt-1">
+										<FormControlLabel
+											control={<Checkbox onClick={toggleShowPasswords} />}
+											label="Show password"
+										/>
+									</div>
+								</fieldset>
+							</div>
+						)}
+					</div>
+				</div>
+				{(editEmail || editPassword || editUsername) && (
+					<div className="md:col-start-2 flex justify-end items-center mt-4 md:mt-5 gap-4">
+						<button
+							onClick={(e) => {
+								handleSubmit(e);
+							}}
+							className={`${
+								darkMode
+									? "bg-sky-800 text-white hover:bg-sky-900 active:bg-sky-800"
+									: "bg-sky-600 text-gray-100 hover:bg-sky-700 active:bg-sky-600"
+							}  w-20 px-1 py-[.65rem] text-sm font-bold rounded-md`}
+						>
+							Save
+						</button>
+					</div>
+				)}
+			</div>
+		</Dialog>
 	);
 }

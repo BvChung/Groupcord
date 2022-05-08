@@ -127,7 +127,7 @@ export default function Chat() {
 
 	return (
 		<div className="flex-grow bg-white dark:bg-dark2">
-			<div
+			<section
 				className="h-[90%] min-h-[375px] max-height-chat px-4 md:px-6 lg:px-12 xl:px-16 2xl:px-20 py-4 
 				overflow-y-auto transition-all fade relative"
 			>
@@ -148,7 +148,7 @@ export default function Chat() {
 						);
 					})}
 				<div ref={refMessage}></div>
-			</div>
+			</section>
 
 			<div className="flex h-[10%] w-full justify-center items-center px-6">
 				<div

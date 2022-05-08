@@ -128,7 +128,16 @@ export default function AddMembers() {
 										<div className="flex items-center justify-between pr-2">
 											<div className="flex items-center gap-2">
 												{groupOwner === member._id ? (
-													<KeyIcon className="h-5 w-5 text-sky-500" />
+													<Tooltip
+														arrow
+														describeChild
+														placement="left"
+														title={
+															groupOwner === member._id ? "Group Owner" : ""
+														}
+													>
+														<KeyIcon className="h-5 w-5 text-sky-500" />
+													</Tooltip>
 												) : (
 													<UserIcon
 														className={`h-5 w-5  ${
@@ -140,6 +149,7 @@ export default function AddMembers() {
 													{member.username}
 												</span>
 											</div>
+
 											{currentAccountId === groupOwner &&
 												groupOwner !== member._id && (
 													<Tooltip arrow describeChild title="Remove user">
