@@ -25,6 +25,7 @@ export default function Chat() {
 	const { groupId, members } = useSelector(
 		(state) => state.conversations.groupInfo
 	);
+	// console.log(user);
 
 	const refMessage = useRef(null);
 	const scrollToMessage = () => refMessage.current.scrollIntoView();

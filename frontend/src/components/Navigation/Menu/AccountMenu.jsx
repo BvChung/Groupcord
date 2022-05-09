@@ -33,10 +33,13 @@ export default function AccountMenu({ open, handleClose }) {
 		newPassword: "",
 		confirmNewPassword: "",
 	});
+	const [imageUpload, setImageUpload] = useState(null);
 	const [editUsername, setEditUsername] = useState(false);
 	const [editEmail, setEditEmail] = useState(false);
 	const [editPassword, setEditPassword] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
+
+	// console.log(imageUpload);
 
 	function toggleEditUsername() {
 		setEditUsername((prev) => !prev);
@@ -448,6 +451,17 @@ export default function AccountMenu({ open, handleClose }) {
 							</div>
 						)}
 					</div>
+				</div>
+				<div>
+					<input
+						encType="multipart/form-data"
+						type="file"
+						id="image"
+						name="image"
+						accept=".png,.jpeg,.jpg"
+						onChange={(e) => setImageUpload(e.target.files[0])}
+					/>
+					<button>Upload image</button>
 				</div>
 				{(editEmail || editPassword || editUsername) && (
 					<div className="md:col-start-2 flex justify-end items-center mt-4 md:mt-5 gap-4">

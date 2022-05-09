@@ -22,6 +22,10 @@ const register = async (userData) => {
 const login = async (userData) => {
 	const response = await axios.post(`${API_URL}`, userData);
 
+	// const token = {
+	// 	token: response.data.token,
+	// };
+
 	if (response.data) {
 		localStorage.setItem("user", JSON.stringify(response.data));
 	}
@@ -32,7 +36,7 @@ const login = async (userData) => {
 // Update user
 const update = async (userData, token) => {
 	const response = await axios.put(
-		`${API_URL}/me`,
+		`${API_URL}/account`,
 		userData,
 		configuration(token)
 	);
@@ -43,6 +47,8 @@ const update = async (userData, token) => {
 
 	return response.data;
 };
+
+const updatePicture = async (file, token) => {};
 
 // Logout user
 const logout = () => {

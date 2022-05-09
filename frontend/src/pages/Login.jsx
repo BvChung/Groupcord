@@ -46,8 +46,8 @@ function Login() {
 		setForm(() => {
 			return {
 				guestAccount: true,
-				email: "guest@gmail.com",
-				password: "guest",
+				email: "guestaccount@gmail.com",
+				password: "guestaccount",
 			};
 		});
 	}
