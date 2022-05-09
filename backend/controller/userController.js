@@ -86,7 +86,7 @@ const loginUser = asyncHandler(async (req, res) => {
 // @desc Update user data
 // @route PUT /api/users/me
 // @access Private
-const updateUser = asyncHandler(async (req, res) => {
+const updateAccount = asyncHandler(async (req, res) => {
 	const currentUser = await User.findById(req.user._id);
 
 	const { username, email, currentPassword, newPassword } = req.body;
@@ -122,6 +122,7 @@ const updateUser = asyncHandler(async (req, res) => {
 			username,
 			email,
 			password: hashedPassword ? hashedPassword : currentUser.password,
+			// profilePicture: req.file ? req.file : currentUser.profilePicture,
 		},
 		{
 			new: true,
@@ -142,6 +143,30 @@ const updateUser = asyncHandler(async (req, res) => {
 	});
 });
 
+const updateProfilePicture = asyncHandler(async (req, res) => {
+	console.log(req.file);
+	const currentUser = await User.findById(req.user._id);
+
+	await User.findByIdAndUpdate(
+		req.user._id,
+		{
+			profilePicture: req.file ? req.file.filename : currentUser.profilePicture,
+		},
+		{
+			new: true,
+		}
+	);
+
+	return res.status(200).json({
+		_id: currentUser.id,
+		name: currentUser.name,
+		username: currentUser.username,
+		email: currentUser.email,
+		profilePicture: req.file.filename,
+		token: generateToken(currentUser._id),
+	});
+});
+
 // @desc Get all registered user's username/id except for current user
 // @route GET /api/users/all
 // @access Private
@@ -155,9 +180,15 @@ const getAllUsers = asyncHandler(async (req, res) => {
 	return res.status(200).json(returnedUsers);
 });
 
+const testImage = asyncHandler(async (req, res) => {
+	res.json(req.file);
+});
+
 module.exports = {
 	registerUser,
 	loginUser,
-	updateUser,
+	updateAccount,
 	getAllUsers,
+	updateProfilePicture,
+	testImage,
 };
