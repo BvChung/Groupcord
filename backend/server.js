@@ -1,9 +1,9 @@
 const express = require("express");
-const path = require("path");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
 const http = require("http");
 const port = process.env.PORT || 3001;
+const path = require("path");
 const { Server } = require("socket.io");
 const colors = require("colors");
 const { errorHandler } = require("./middleware/errorMiddleware");
@@ -21,6 +21,9 @@ const io = new Server(server, {
 		methods: ["GET", "POST"],
 	},
 });
+
+// If /images path is used => prevent API request => instead goes to directory uploads/images/image.png
+app.use("/images", express.static(path.join(__dirname, "uploads/images")));
 
 // middleware
 app.use(cors());
@@ -61,7 +64,7 @@ io.on("connection", (socket) => {
 			userData.username,
 			userData._id
 		);
-		console.log(connectedUsers);
+		// console.log(connectedUsers);
 	});
 
 	let currentRoom;

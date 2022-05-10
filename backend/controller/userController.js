@@ -1,8 +1,11 @@
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
+const path = "backend/uploads/images/";
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Messages = require("../models/messageModel");
+const { equal } = require("assert");
 
 // Generate a JWT: used to validate user
 const generateToken = (id) => {
@@ -75,6 +78,7 @@ const loginUser = asyncHandler(async (req, res) => {
 			name: user.name,
 			username: user.username,
 			email: user.email,
+			userAvatar: user.userAvatar,
 			token: generateToken(user._id),
 		});
 	} else {
@@ -122,7 +126,7 @@ const updateAccount = asyncHandler(async (req, res) => {
 			username,
 			email,
 			password: hashedPassword ? hashedPassword : currentUser.password,
-			// profilePicture: req.file ? req.file : currentUser.profilePicture,
+			// userAvatar: req.file ? req.file : currentUser.userAvatar,
 		},
 		{
 			new: true,
@@ -143,26 +147,37 @@ const updateAccount = asyncHandler(async (req, res) => {
 	});
 });
 
-const updateProfilePicture = asyncHandler(async (req, res) => {
-	console.log(req.file);
+const updateAvatar = asyncHandler(async (req, res) => {
+	if (!req.file) {
+		res.status(400);
+		throw new Error("File is unable to be found.");
+	}
 	const currentUser = await User.findById(req.user._id);
 
 	await User.findByIdAndUpdate(
 		req.user._id,
 		{
-			profilePicture: req.file ? req.file.filename : currentUser.profilePicture,
+			userAvatar: req.file ? req.file.filename : currentUser.userAvatar,
 		},
 		{
 			new: true,
 		}
 	);
 
+	// Remove old image file if image req is successful and !default avatar
+	if (req.file && currentUser.userAvatar !== "") {
+		fs.unlink(`${path}${currentUser.userAvatar}`, (err) => {
+			if (err) console.error(err);
+			console.log(`${path}${currentUser.userAvatar} was deleted`);
+		});
+	}
+
 	return res.status(200).json({
 		_id: currentUser.id,
 		name: currentUser.name,
 		username: currentUser.username,
 		email: currentUser.email,
-		profilePicture: req.file.filename,
+		userAvatar: req.file.filename,
 		token: generateToken(currentUser._id),
 	});
 });
@@ -180,15 +195,10 @@ const getAllUsers = asyncHandler(async (req, res) => {
 	return res.status(200).json(returnedUsers);
 });
 
-const testImage = asyncHandler(async (req, res) => {
-	res.json(req.file);
-});
-
 module.exports = {
 	registerUser,
 	loginUser,
 	updateAccount,
 	getAllUsers,
-	updateProfilePicture,
-	testImage,
+	updateAvatar,
 };
