@@ -48,7 +48,19 @@ const update = async (userData, token) => {
 	return response.data;
 };
 
-const updatePicture = async (file, token) => {};
+const updateAvatar = async (file, token) => {
+	const response = await axios.put(
+		`${API_URL}/account/profile`,
+		file,
+		configuration(token)
+	);
+
+	if (response.data) {
+		localStorage.setItem("user", JSON.stringify(response.data));
+	}
+
+	return response.data;
+};
 
 // Logout user
 const logout = () => {
@@ -60,6 +72,7 @@ const authService = {
 	logout,
 	login,
 	update,
+	updateAvatar,
 };
 
 export default authService;

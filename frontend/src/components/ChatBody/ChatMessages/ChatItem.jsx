@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { deleteChatMessage } from "../../../features/messages/messageSlice";
 import { TrashIcon } from "@heroicons/react/solid";
 import Tooltip from "@mui/material/Tooltip";
+import DefaultAvatar from "../../../assets/images/avatar.jpg";
 
 export default function ChatItem({
 	type,
@@ -15,6 +16,7 @@ export default function ChatItem({
 }) {
 	const dispatch = useDispatch();
 	const { user } = useSelector((state) => state.auth);
+	const imageEnvPath = process.env.REACT_APP_PUBLIC_FOLDER;
 
 	const messagePosition = userId === user._id ? "justify-end" : "";
 	const messageStyle =
@@ -73,6 +75,15 @@ export default function ChatItem({
 							<p className="text-gray1 dark:text-gray-100 ">{message}</p>
 						</div>
 					</div>
+					<img
+						src={
+							user.userAvatar !== ""
+								? `${imageEnvPath}${user.userAvatar}`
+								: DefaultAvatar
+						}
+						className="object-fill w-12 h-12"
+						alt="Avatar"
+					/>
 				</div>
 			) : (
 				<div className="w-full flex items-center justify-between my-4">

@@ -1,25 +1,31 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import { useSelector, useDispatch } from "react-redux";
 import {
 	updateUser,
 	resetState,
+	updateAccountAvatar,
 } from "../../../features/authentication/authSlice";
 import {
 	PencilAltIcon,
 	PencilIcon,
 	ArrowLeftIcon,
 	MailIcon,
+	PlusIcon,
 	MailOpenIcon,
 	LockClosedIcon,
 	LockOpenIcon,
 } from "@heroicons/react/outline";
+import { PhotographIcon } from "@heroicons/react/solid";
 import { toast } from "react-toastify";
 import { Tooltip, Checkbox, FormControlLabel } from "@mui/material";
+import DefaultAvatar from "../../../assets/images/avatar.jpg";
 
 export default function AccountMenu({ open, handleClose }) {
 	const dispatch = useDispatch();
+	const ref = useRef();
+	const imageEnvPath = process.env.REACT_APP_PUBLIC_FOLDER;
 
 	const { user } = useSelector((state) => state.auth);
 	const { darkMode } = useSelector((state) => state.theme);
@@ -38,8 +44,7 @@ export default function AccountMenu({ open, handleClose }) {
 	const [editEmail, setEditEmail] = useState(false);
 	const [editPassword, setEditPassword] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
-
-	// console.log(imageUpload);
+	const [showChangeAvatar, setShowChangeAvatar] = useState(false);
 
 	function toggleEditUsername() {
 		setEditUsername((prev) => !prev);
@@ -153,16 +158,32 @@ export default function AccountMenu({ open, handleClose }) {
 		dispatch(updateUser(sentData));
 	}
 
+	function uploadAvatarImage(e) {
+		e.preventDefault();
+
+		if (imageUpload) {
+			const data = new FormData();
+			data.append("image", imageUpload);
+
+			dispatch(updateAccountAvatar(data));
+			ref.current.value = "";
+			setImageUpload(null);
+		}
+	}
+
 	const displayError = useCallback(() => {
 		if (updateError) {
-			toast.error(message);
+			if (message === "File too large") {
+				toast.error(message + " to upload. Maximum image size is 1 MB.");
+			} else {
+				toast.error(message);
+			}
 		}
 	}, [message, updateError]);
 
 	const displaySuccess = useCallback(() => {
 		if (isSuccess) {
 			toast.success("Your account has been updated");
-
 			resetFormData();
 		}
 	}, [isSuccess, resetFormData]);
@@ -210,6 +231,71 @@ export default function AccountMenu({ open, handleClose }) {
 					<h1 className={`${titleStyle} text-xl font-semibold pb-2 font-sans `}>
 						Manage Account
 					</h1>
+				</div>
+
+				{/* <div className="w-fit">
+					<label
+						htmlFor="image"
+						className="flex items-center gap-2 cursor-pointer bg-slate-600 py-2 px-3 rounded-md"
+					>
+						<PlusIcon className="h-5 w-5" />
+						<span>Choose a image</span>
+					</label>
+					<input
+						type="file"
+						id="image"
+						name="image"
+						className="hidden"
+						ref={ref}
+						accept=".png,.jpeg,.jpg"
+						onChange={(e) => setImageUpload(e.target.files[0])}
+					/>
+				</div> */}
+				<div className="flex items-end">
+					<div className="relative rounded-full overflow-hidden">
+						<label
+							htmlFor="image"
+							className="relative flex items-center cursor-pointer"
+							onMouseEnter={() => {
+								setShowChangeAvatar(true);
+							}}
+							onMouseLeave={() => {
+								setShowChangeAvatar(false);
+							}}
+						>
+							<img
+								src={
+									user.userAvatar !== ""
+										? `${imageEnvPath}${user.userAvatar}`
+										: DefaultAvatar
+								}
+								className="object-fill w-36 h-36"
+								alt="Avatar"
+							/>
+							{showChangeAvatar && (
+								<div className="absolute bg-gray-800 w-full h-full bg-opacity-30 z-[100]">
+									<p className="z-20 absolute flex items-center justify-center top-[34%]  text-lg text-gray-800">
+										<strong className="text-white text-center text-lg uppercase">
+											Change Avatar
+										</strong>
+									</p>
+								</div>
+							)}
+						</label>
+					</div>
+
+					<div className="justify-end">
+						<button onClick={uploadAvatarImage}>Save</button>
+					</div>
+					<input
+						type="file"
+						id="image"
+						name="image"
+						className="hidden"
+						ref={ref}
+						accept=".png,.jpeg,.jpg,.gif"
+						onChange={(e) => setImageUpload(e.target.files[0])}
+					/>
 				</div>
 
 				<div className="">
@@ -452,17 +538,7 @@ export default function AccountMenu({ open, handleClose }) {
 						)}
 					</div>
 				</div>
-				<div>
-					<input
-						encType="multipart/form-data"
-						type="file"
-						id="image"
-						name="image"
-						accept=".png,.jpeg,.jpg"
-						onChange={(e) => setImageUpload(e.target.files[0])}
-					/>
-					<button>Upload image</button>
-				</div>
+
 				{(editEmail || editPassword || editUsername) && (
 					<div className="md:col-start-2 flex justify-end items-center mt-4 md:mt-5 gap-4">
 						<button

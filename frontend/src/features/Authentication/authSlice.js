@@ -57,6 +57,18 @@ export const updateUser = createAsyncThunk(
 	}
 );
 
+export const updateAccountAvatar = createAsyncThunk(
+	"auth/avatar",
+	async (file, thunkAPI) => {
+		try {
+			const token = thunkAPI.getState().auth.user.token;
+			return await authService.updateAvatar(file, token);
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+
 export const authSlice = createSlice({
 	name: "auth",
 	initialState,
@@ -119,6 +131,20 @@ export const authSlice = createSlice({
 				state.user = action.payload;
 			})
 			.addCase(updateUser.rejected, (state, action) => {
+				state.isLoading = false;
+				state.updateError = true;
+				state.message = action.payload;
+			})
+			.addCase(updateAccountAvatar.pending, (state) => {
+				state.isLoading = true;
+				state.isSuccess = false;
+			})
+			.addCase(updateAccountAvatar.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.isSuccess = true;
+				state.user = action.payload;
+			})
+			.addCase(updateAccountAvatar.rejected, (state, action) => {
 				state.isLoading = false;
 				state.updateError = true;
 				state.message = action.payload;
