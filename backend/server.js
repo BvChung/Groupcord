@@ -55,7 +55,9 @@ app.use(errorHandler);
 let connectedUsers = [];
 
 io.on("connection", (socket) => {
-	console.log(`A user connected ${socket.id}`.brightMagenta.underline);
+	// 1) Objects are used to keep track of data sent via websockets using Socket.io
+	// 2) Method is used to fix issue with Socket.io emitting the same data twice
+	// 3) Prevents multiple dispatch methods in the redux store on the frontend causing components to render twice
 	let storeMessageData = {
 		_id: "",
 	};
@@ -78,6 +80,8 @@ io.on("connection", (socket) => {
 		username: "",
 	};
 
+	// Web socket data transmission ----------------------------------
+	console.log(`A user connected ${socket.id}`.brightMagenta.underline);
 	socket.on("user_connected", (userData) => {
 		connectedUsers = createUser(
 			connectedUsers,
@@ -138,7 +142,7 @@ io.on("connection", (socket) => {
 
 	socket.on("send_group_data", (groupData) => {
 		if (Object.keys(groupData).length === 0) return;
-		console.log(groupData);
+		// console.log(groupData);
 
 		const member = connectedUsers.find((user) => {
 			return user.userId === groupData.memberChanged._id && user.userId;
@@ -154,17 +158,20 @@ io.on("connection", (socket) => {
 		}
 	});
 
-	socket.on("send_group_name_updated", (groupNameData) => {
-		if (Object.keys(groupNameData).length === 0) return;
+	socket.on("send_group_name_updated", (groupData) => {
+		if (Object.keys(groupData).length === 0) return;
+		console.log(groupData);
 
-		socket.broadcast.emit("receive_group_name_updated", groupNameData);
+		if (storeGroupNameData._id !== groupData._id) {
+			socket.broadcast.emit("receive_group_name_updated", groupData);
+			storeGroupNameData = groupData;
+		}
 	});
 
 	socket.on("send_group_deleted", (groupData) => {
 		if (Object.keys(groupData).length === 0) return;
 
 		if (storeDeletedGroupData._id !== groupData._id) {
-			console.log(groupData);
 			socket.broadcast.emit("receive_group_deleted", groupData);
 			storeDeletedGroupData = groupData;
 		}

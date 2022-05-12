@@ -19,7 +19,7 @@ import { LogoutIcon, IdentificationIcon } from "@heroicons/react/outline";
 import { UserCircleIcon } from "@heroicons/react/solid";
 import { Tooltip } from "@mui/material";
 
-export default function NavMenu({ handleClickOpen }) {
+export default function NavMenu() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const onLogout = () => {
@@ -83,7 +83,7 @@ export default function NavMenu({ handleClickOpen }) {
 					<StyledMenuItem
 						className="mb-1"
 						onClick={() => {
-							handleClickOpen();
+							navigate("/profile");
 							close();
 						}}
 					>

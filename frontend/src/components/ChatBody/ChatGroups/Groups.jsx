@@ -20,7 +20,7 @@ export default function Groups() {
 	const {
 		groups,
 		groupDeletedToSocket,
-		groupNameUpdatedToSocket,
+		updatedGroupNameToSocket,
 		loadInitialGroups,
 	} = useSelector((state) => state.conversations);
 	const { groupId } = useSelector((state) => state.conversations.groupInfo);
@@ -34,38 +34,54 @@ export default function Groups() {
 			? "bg-sky-100 dark:bg-slate-800 border-l-sky-400 border-l-[3px] dark:border-l-sky-500"
 			: "border-l-[3px] border-l-gray4 dark:border-l-gray-600 hover:border-l-gray-400 dark:hover:border-l-gray-400";
 
-	const sendDeletedGroup = useCallback(() => {
-		socket.emit("send_group_deleted", groupDeletedToSocket);
-	}, [socket, groupDeletedToSocket]);
+	// console.log(groups);
 
-	const sendUpdatedGroupName = useCallback(() => {
-		socket.emit("send_group_name_updated", groupNameUpdatedToSocket);
-	}, [socket, groupNameUpdatedToSocket]);
-
-	useEffect(() => {
-		sendDeletedGroup();
-	}, [sendDeletedGroup]);
-	useEffect(() => {
-		sendUpdatedGroupName();
-	}, [sendUpdatedGroupName]);
-
-	useEffect(() => {
-		socket.on("receive_group_deleted", (data) => {
+	const dispatchDeletedGroupSocketData = useCallback(
+		(data) => {
 			dispatch(socketDataDeleteGroup(data));
+		},
+		[dispatch]
+	);
+	const dispatchGroupNameSocketData = useCallback(
+		(data) => {
+			dispatch(socketDataUpdateGroupName(data));
+		},
+		[dispatch]
+	);
 
-			// Only if accounts are currently in the group
-			if (data._id === groupId) {
+	useEffect(() => {
+		socket.emit("send_group_deleted", groupDeletedToSocket);
+		socket.on("receive_group_deleted", (groupData) => {
+			console.log(groupData);
+			dispatchDeletedGroupSocketData(groupData);
+
+			if (groupData._id === groupId) {
 				dispatch(clearChatMessages());
-				toast.info(`${data.groupName} has been deleted`);
+				toast.info(`${groupData.groupName} has been deleted`);
 			}
 		});
-	}, [socket, dispatch, groupId]);
+
+		return () => {
+			socket.off("receive_group_deleted");
+		};
+	}, [
+		socket,
+		groupDeletedToSocket,
+		dispatch,
+		groupId,
+		dispatchDeletedGroupSocketData,
+	]);
 
 	useEffect(() => {
-		socket.on("receive_group_name_updated", (data) => {
-			dispatch(socketDataUpdateGroupName(data));
+		socket.emit("send_group_name_updated", updatedGroupNameToSocket);
+		socket.on("receive_group_name_updated", (groupData) => {
+			dispatchGroupNameSocketData(groupData);
 		});
-	}, [socket, dispatch]);
+
+		return () => {
+			socket.off("receive_group_name_updated");
+		};
+	}, [socket, updatedGroupNameToSocket, dispatchGroupNameSocketData]);
 
 	return (
 		<div

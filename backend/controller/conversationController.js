@@ -25,7 +25,11 @@ const createChatGroup = asyncHandler(async (req, res) => {
 		groupOwner: req.user.id,
 		groupName,
 		membersId: req.user.id,
-		members: { _id: req.user.id, username: req.user.username },
+		members: {
+			_id: req.user.id,
+			username: req.user.username,
+			userAvatar: req.user.userAvatar,
+		},
 	});
 
 	return res.status(200).json(conversation);
@@ -73,9 +77,12 @@ const deleteChatGroup = asyncHandler(async (req, res) => {
 // @route GET /api/conversation/members
 // @access Private
 const getMembers = asyncHandler(async (req, res) => {
-	const users = await User.find({}).select("username");
+	const registeredMembers = await User.find({}).select({
+		username: 1,
+		userAvatar: 1,
+	});
 
-	const returnedUsers = users.filter((user) => {
+	const returnedUsers = registeredMembers.filter((user) => {
 		return user.username !== req.user.username;
 	});
 
@@ -89,14 +96,17 @@ const addGroupMembers = asyncHandler(async (req, res) => {
 	const { groupId } = req.params;
 	const { memberId } = req.body;
 
-	const user = await User.findById(memberId).select("username");
+	const currentUser = await User.findById(memberId).select({
+		username: 1,
+		userAvatar: 1,
+	});
 
 	const updatedMembers = await Conversation.findByIdAndUpdate(
 		groupId,
 		{
 			$addToSet: {
 				membersId: memberId,
-				members: { _id: memberId, username: user.username },
+				members: currentUser,
 			},
 		},
 		{
@@ -106,7 +116,7 @@ const addGroupMembers = asyncHandler(async (req, res) => {
 
 	return res.status(200).json({
 		updatedMembers: updatedMembers,
-		memberChanged: { _id: memberId, username: user.username },
+		memberChanged: currentUser,
 	});
 });
 
@@ -117,14 +127,17 @@ const removeGroupMembers = asyncHandler(async (req, res) => {
 	const { groupId } = req.params;
 	const { memberId } = req.body;
 
-	const user = await User.findById(memberId).select("username");
+	const currentUser = await User.findById(memberId).select({
+		username: 1,
+		userAvatar: 1,
+	});
 
 	const updatedMembers = await Conversation.findByIdAndUpdate(
 		groupId,
 		{
 			$pull: {
 				membersId: memberId,
-				members: { _id: memberId, username: user.username },
+				members: currentUser,
 			},
 		},
 		{
@@ -134,7 +147,7 @@ const removeGroupMembers = asyncHandler(async (req, res) => {
 
 	return res.status(200).json({
 		updatedMembers: updatedMembers,
-		memberChanged: { _id: memberId, username: user.username },
+		memberChanged: currentUser,
 	});
 });
 

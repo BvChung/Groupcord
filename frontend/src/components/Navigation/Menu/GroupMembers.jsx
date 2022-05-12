@@ -53,9 +53,10 @@ export default function AddMembers() {
 	const dispatch = useDispatch();
 	const { user } = useSelector((state) => state.auth);
 	const currentAccountId = useSelector((state) => state.auth.user._id);
-	const { groupId } = useSelector((state) => state.conversations.groupInfo);
-	const { groupOwner } = useSelector((state) => state?.conversations.groupInfo);
-	const { members } = useSelector((state) => state?.conversations.groupInfo);
+	const { groupId, groupOwner, members } = useSelector(
+		(state) => state.conversations.groupInfo
+	);
+
 	const { filteredMembers } = useSelector((state) => state?.conversations);
 	const { memberUpdatedToSocket } = useSelector(
 		(state) => state?.conversations
@@ -95,12 +96,15 @@ export default function AddMembers() {
 	useEffect(() => {
 		receiveData();
 	}, [receiveData]);
+
 	return (
 		<ClickAwayListener onClickAway={close}>
 			<div className={groupId === "Global" ? "hidden" : ""}>
 				<TriggerButton
 					type="button"
-					onClick={handleButtonClick}
+					onClick={(e) => {
+						handleButtonClick(e);
+					}}
 					onKeyDown={handleButtonKeyDown}
 					ref={buttonRef}
 					aria-controls={isOpen ? "wrapped-menu" : undefined}
