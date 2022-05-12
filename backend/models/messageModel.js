@@ -14,6 +14,11 @@ const messageSchema = mongoose.Schema(
 			required: [true, "Please add a username"],
 			ref: "User",
 		},
+		userAvatar: {
+			type: String,
+			default: "",
+			ref: "User",
+		},
 		groupId: {
 			type: String,
 			required: [true, "Please add a groupId value"],

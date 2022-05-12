@@ -56,6 +56,27 @@ let connectedUsers = [];
 
 io.on("connection", (socket) => {
 	console.log(`A user connected ${socket.id}`.brightMagenta.underline);
+	let storeMessageData = {
+		_id: "",
+	};
+	let storeDeletedMessageData = {
+		_id: "",
+	};
+	let storeAvatarData = {
+		userAvatar: "",
+	};
+	let storeUsernameData = {
+		username: "",
+	};
+	let storeGroupData = {
+		username: "",
+	};
+	let storeDeletedGroupData = {
+		username: "",
+	};
+	let storeGroupNameData = {
+		username: "",
+	};
 
 	socket.on("user_connected", (userData) => {
 		connectedUsers = createUser(
@@ -81,14 +102,38 @@ io.on("connection", (socket) => {
 
 	socket.on("send_message", (messageData) => {
 		if (Object.keys(messageData).length === 0) return;
-		// console.log(messageData);
-		// socket.to(currentRoom).emit("receive_message", messageData);
-		socket.to(messageData.groupId).emit("receive_message", messageData);
+
+		if (storeMessageData._id !== messageData._id) {
+			socket.to(messageData.groupId).emit("receive_message", messageData);
+			storeMessageData = messageData;
+		}
 	});
 
 	socket.on("send_deleted_message", (messageData) => {
 		if (Object.keys(messageData).length === 0) return;
-		socket.to(currentRoom).emit("receive_deleted_message", messageData);
+
+		if (storeDeletedMessageData._id !== messageData._id) {
+			socket.to(currentRoom).emit("receive_deleted_message", messageData);
+			storeDeletedMessageData = messageData;
+		}
+	});
+
+	socket.on("send_message_avatar_updated", (messageData) => {
+		if (Object.keys(messageData).length === 0) return;
+
+		if (storeAvatarData.userAvatar !== messageData.userAvatar) {
+			socket.broadcast.emit("receive_message_avatar_updated", messageData);
+			storeAvatarData = messageData;
+		}
+	});
+
+	socket.on("send_message_username_updated", (messageData) => {
+		if (Object.keys(messageData).length === 0) return;
+
+		if (storeUsernameData.username !== messageData.username) {
+			socket.broadcast.emit("receive_message_username_updated", messageData);
+			storeUsernameData = messageData;
+		}
 	});
 
 	socket.on("send_group_data", (groupData) => {
@@ -111,15 +156,19 @@ io.on("connection", (socket) => {
 
 	socket.on("send_group_name_updated", (groupNameData) => {
 		if (Object.keys(groupNameData).length === 0) return;
+
 		socket.broadcast.emit("receive_group_name_updated", groupNameData);
 	});
 
-	socket.on("send_group_deleted", (groupDeletedData) => {
-		if (Object.keys(groupDeletedData).length === 0) return;
-		socket.broadcast.emit("receive_group_deleted", groupDeletedData);
-	});
+	socket.on("send_group_deleted", (groupData) => {
+		if (Object.keys(groupData).length === 0) return;
 
-	// && Object.keys(data.membersData).length > 1
+		if (storeDeletedGroupData._id !== groupData._id) {
+			console.log(groupData);
+			socket.broadcast.emit("receive_group_deleted", groupData);
+			storeDeletedGroupData = groupData;
+		}
+	});
 
 	socket.on("disconnect", () => {
 		console.log(`A user disconnected ${socket.id}`.brightRed.underline);

@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import chatService from "./messageService";
+import { errorMessage } from "../helperFunctions/helperFunctions";
 import {
-	errorMessage,
-	removeDuplicateData,
 	deleteMessageData,
 	addDateLabelToNewMessages,
 	createDateLabelForDatabaseMessages,
-} from "../helperFunc/helperFunctions";
+	updateAvatar,
+	updateUsername,
+} from "../helperFunctions/messageFunctions";
 
 const initialState = {
 	userMessages: {},
@@ -64,16 +65,26 @@ export const messageSlice = createSlice({
 	initialState,
 	reducers: {
 		resetMessageState: (state) => initialState,
+		socketDataUpdateMessageUsername: (state, action) => {
+			state.userMessages.groupMessages = updateUsername(
+				state.userMessages.groupMessages,
+				action.payload
+			);
+		},
+		socketDataUpdateMessageAvatar: (state, action) => {
+			state.userMessages.groupMessages = updateAvatar(
+				state.userMessages.groupMessages,
+				action.payload
+			);
+		},
 		clearChatMessages: (state) => {
 			state.userMessages.groupMessages = [];
 		},
 		socketDataAddMessage: (state, action) => {
+			console.log("new message");
 			state.userMessages.groupMessages = addDateLabelToNewMessages(
 				state.userMessages.groupMessages,
 				action.payload
-			);
-			state.userMessages.groupMessages = removeDuplicateData(
-				state.userMessages.groupMessages
 			);
 		},
 		socketDataRemoveDeletedMessage: (state, action) => {
@@ -131,6 +142,8 @@ export const messageSlice = createSlice({
 export const {
 	resetMessageState,
 	clearChatMessages,
+	socketDataUpdateMessageUsername,
+	socketDataUpdateMessageAvatar,
 	socketDataAddMessage,
 	socketDataRemoveDeletedMessage,
 } = messageSlice.actions;

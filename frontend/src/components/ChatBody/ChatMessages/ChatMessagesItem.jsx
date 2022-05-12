@@ -9,6 +9,7 @@ export default function ChatItem({
 	messageId,
 	userId,
 	username,
+	userAvatar,
 	message,
 	fullDate,
 	timeCreated,
@@ -36,10 +37,22 @@ export default function ChatItem({
 	});
 	return (
 		<>
-			{type !== "renderNewDay" ? (
+			{/* Render Message or render new date label if type present */}
+			{type !== "newDateLabel" ? (
 				<div
 					className={`flex items-center my-6 first:mt-0 last:mb-0 fade transition-all ${messagePosition}`}
 				>
+					{userId !== user._id && (
+						<img
+							src={
+								userAvatar !== ""
+									? `${imageEnvPath}${userAvatar}`
+									: DefaultAvatar
+							}
+							className="object-fill w-12 h-12 mr-2 sm:mr-4 rounded-full"
+							alt="Avatar"
+						/>
+					)}
 					<div
 						className={`rounded-lg w-fit max-w-4xl h-fit p-4 break-words ${messageStyle} `}
 					>
@@ -75,15 +88,17 @@ export default function ChatItem({
 							<p className="text-gray1 dark:text-gray-100 ">{message}</p>
 						</div>
 					</div>
-					<img
-						src={
-							user.userAvatar !== ""
-								? `${imageEnvPath}${user.userAvatar}`
-								: DefaultAvatar
-						}
-						className="object-fill w-12 h-12"
-						alt="Avatar"
-					/>
+					{userId === user._id && (
+						<img
+							src={
+								userAvatar !== ""
+									? `${imageEnvPath}${userAvatar}`
+									: DefaultAvatar
+							}
+							className="object-fill w-12 h-12 ml-2 sm:ml-4 rounded-full"
+							alt="Avatar"
+						/>
+					)}
 				</div>
 			) : (
 				<div className="w-full flex items-center justify-between my-4">

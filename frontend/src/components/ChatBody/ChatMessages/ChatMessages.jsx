@@ -5,8 +5,10 @@ import {
 	getChatMessage,
 	socketDataAddMessage,
 	socketDataRemoveDeletedMessage,
+	socketDataUpdateMessageUsername,
+	socketDataUpdateMessageAvatar,
 } from "../../../features/messages/messageSlice";
-import ChatItem from "./ChatItem";
+import ChatItem from "./ChatMessagesItem";
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
 import { SocketContext } from "../../../appContext/socketContext";
 import { toast } from "react-toastify";
@@ -18,14 +20,15 @@ export default function Chat() {
 	const [userMessage, setUserMessage] = useState({
 		message: "",
 	});
-	const { user } = useSelector((state) => state.auth);
+	const { user, updatedAvatarToSocket, updatedUsernameToSocket } = useSelector(
+		(state) => state.auth
+	);
 	const { groupMessages } = useSelector((state) => state.messages.userMessages);
 	const { newMessageToSocket, deletedMessageToSocket, loadInitialMessages } =
 		useSelector((state) => state.messages);
 	const { groupId, members } = useSelector(
 		(state) => state.conversations.groupInfo
 	);
-
 	const refMessage = useRef(null);
 	const scrollToMessage = () => refMessage.current.scrollIntoView();
 	useEffect(() => {
@@ -79,6 +82,7 @@ export default function Chat() {
 		});
 	}
 
+	// --------------- Socket.io Websocket Transmission -------------------
 	// Loading messages/ joining chat room
 	const loadMessages = useCallback(() => {
 		dispatch(getChatMessage());
@@ -89,46 +93,79 @@ export default function Chat() {
 		socket.emit("join_room", groupId);
 	}, [groupId, socket, loadMessages]);
 
-	// --------------- Socket.io
-	const sendMessage = useCallback(
-		(messageData) => {
-			socket.emit("send_message", messageData);
+	const dispatchUsernameSocketData = useCallback(
+		(data) => {
+			dispatch(socketDataUpdateMessageUsername(data));
 		},
-		[socket]
+		[dispatch]
 	);
-	const sendDeletedMessage = useCallback(
-		(messageData) => {
-			socket.emit("send_deleted_message", messageData);
+	const dispatchAvatarSocketData = useCallback(
+		(data) => {
+			dispatch(socketDataUpdateMessageAvatar(data));
 		},
-		[socket]
+		[dispatch]
 	);
-
-	useEffect(() => {
-		sendMessage(newMessageToSocket);
-	}, [newMessageToSocket, sendMessage]);
-
-	useEffect(() => {
-		socket.on("receive_message", (data) => {
-			if ("_id" in data) {
-				dispatch(socketDataAddMessage(data));
-			}
-		});
-	}, [dispatch, socket]);
-
-	useEffect(() => {
-		sendDeletedMessage(deletedMessageToSocket);
-	}, [deletedMessageToSocket, sendDeletedMessage]);
-
-	useEffect(() => {
-		socket.on("receive_deleted_message", (data) => {
+	const dispatchNewMessageSocketData = useCallback(
+		(data) => {
+			dispatch(socketDataAddMessage(data));
+		},
+		[dispatch]
+	);
+	const dispatchDeletedMessageSocketData = useCallback(
+		(data) => {
 			dispatch(socketDataRemoveDeletedMessage(data));
+		},
+		[dispatch]
+	);
+
+	useEffect(() => {
+		socket.emit("send_message_username_updated", updatedUsernameToSocket);
+		socket.on("receive_message_username_updated", (messageData) => {
+			dispatchUsernameSocketData(messageData);
 		});
-	}, [deletedMessageToSocket, dispatch, socket]);
+
+		return () => {
+			socket.off("receive_message_username_updated");
+		};
+	}, [socket, updatedUsernameToSocket, dispatchUsernameSocketData]);
+
+	useEffect(() => {
+		socket.emit("send_message_avatar_updated", updatedAvatarToSocket);
+		socket.on("receive_message_avatar_updated", (messageData) => {
+			dispatchAvatarSocketData(messageData);
+		});
+
+		return () => {
+			socket.off("receive_message_avatar_updated");
+		};
+	}, [socket, updatedAvatarToSocket, dispatchAvatarSocketData]);
+
+	useEffect(() => {
+		socket.emit("send_message", newMessageToSocket);
+		socket.on("receive_message", (messageData) => {
+			dispatchNewMessageSocketData(messageData);
+		});
+
+		return () => {
+			socket.off("receive_message");
+		};
+	}, [socket, newMessageToSocket, dispatchNewMessageSocketData]);
+
+	useEffect(() => {
+		socket.emit("send_deleted_message", deletedMessageToSocket);
+		socket.on("receive_deleted_message", (messageData) => {
+			dispatchDeletedMessageSocketData(messageData);
+		});
+
+		return () => {
+			socket.off("receive_deleted_message");
+		};
+	}, [socket, deletedMessageToSocket, dispatchDeletedMessageSocketData]);
 
 	return (
 		<div className="flex-grow bg-white dark:bg-dark2">
 			<section
-				className="h-[90%] min-h-[375px] max-height-chat px-4 md:px-6 lg:px-12 xl:px-16 2xl:px-20 py-4 
+				className="h-[90%] min-h-[375px] max-height-chat px-2 sm:px-4 md:px-6 lg:px-12 xl:px-16 2xl:px-20 py-4 
 				overflow-y-auto transition-all fade relative"
 			>
 				{loadInitialMessages &&
@@ -140,6 +177,7 @@ export default function Chat() {
 								messageId={message._id}
 								userId={message.user}
 								username={message.username}
+								userAvatar={message.userAvatar}
 								message={message.message}
 								fullDate={message.fullDate}
 								timeCreated={message.timeCreated}

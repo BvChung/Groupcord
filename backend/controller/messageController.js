@@ -51,8 +51,9 @@ const setMessages = asyncHandler(async (req, res) => {
 
 	const chatlog = await Messages.create({
 		user: req.user.id,
-		groupId: groupId,
 		username: req.user.username,
+		userAvatar: req.user.userAvatar,
+		groupId: groupId,
 		message: req.body.message,
 		fullDate: fullDate,
 		timeCreated: convertedTime,
