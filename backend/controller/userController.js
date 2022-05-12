@@ -202,6 +202,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
 // @access Private
 const getAllUsers = asyncHandler(async (req, res) => {
 	const users = await User.find({}).select("username");
+	const allUsers = await User.find({});
 
 	const returnedUsers = users.filter((user) => {
 		return user.username !== req.user.username;

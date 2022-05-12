@@ -1,9 +1,9 @@
 import { useState, useContext } from "react";
 import { MoonIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
-import { SunIcon } from "@heroicons/react/solid";
+import { SunIcon, UserAddIcon } from "@heroicons/react/solid";
 import { useSelector, useDispatch } from "react-redux";
 import { changeTheme } from "../../../features/theme/themeSlice";
-import Account from "../Menu/AccountMenu";
+import MemberList from "../DisplayMembers/DisplayMembers";
 import NavMenu from "../Menu/NavMenu";
 import GroupMembers from "../Menu/GroupMembers";
 import { MenuContext } from "../../../appContext/menuContext";
@@ -12,7 +12,16 @@ import { Tooltip } from "@mui/material";
 export default function ChatNav() {
 	const dispatch = useDispatch();
 	const { activeGroupMenu, toggleGroupMenu } = useContext(MenuContext);
+	const { groupId } = useSelector((state) => state.conversations.groupInfo);
 	const { darkMode } = useSelector((state) => state.theme);
+
+	const [open, setOpen] = useState(false);
+	const handleClickOpen = () => {
+		setOpen(true);
+	};
+	const handleClose = () => {
+		setOpen(false);
+	};
 
 	function toggleTheme() {
 		dispatch(changeTheme());
@@ -49,6 +58,22 @@ export default function ChatNav() {
 			</div>
 			<div>
 				<ul className="flex flex-row justify-center items-center gap-2">
+					<li className="flex items-center">
+						{groupId !== "Global" && (
+							<Tooltip arrow describeChild title="Member List">
+								<button onClick={handleClickOpen}>
+									<UserAddIcon
+										className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 
+									p-1 rounded-full 
+									border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
+									hover:bg-gray-200 dark:hover:bg-dark3
+									transition-all"
+									/>
+								</button>
+							</Tooltip>
+						)}
+						<MemberList open={open} handleClose={handleClose} />
+					</li>
 					<li>
 						<GroupMembers />
 					</li>

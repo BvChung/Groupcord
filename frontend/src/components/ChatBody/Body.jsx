@@ -1,5 +1,5 @@
 import Groups from "./ChatGroups/Groups";
-import Chat from "./ChatMessages/Chat";
+import Chat from "./ChatMessages/ChatMessages";
 
 function ChatBody() {
 	return (

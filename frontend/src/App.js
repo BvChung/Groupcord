@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
+import Chat from "./pages/Chat";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Profile from "./pages/Profile";
 import "./index.css";
 import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -30,13 +31,13 @@ export default function App() {
 							<Route path="/register" element={<Register />}></Route>
 							<Route
 								path="/chat"
-								element={user ? <Dashboard /> : <Navigate to="/" />}
+								element={user ? <Chat /> : <Navigate to="/" />}
 							></Route>
+							<Route path="/profile" element={<Profile />}></Route>
 						</Routes>
 					</div>
 				</BrowserRouter>
 				<ToastContainer
-					position="top-center"
 					limit={1}
 					autoClose={1250}
 					transition={Slide}
