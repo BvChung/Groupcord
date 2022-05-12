@@ -5,7 +5,10 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Messages = require("../models/messageModel");
-const { equal } = require("assert");
+
+// For schema data:
+// .id => 6278dd9dadc7cdbc6f7ec28c
+// ._id => new ObjectId("6278dd9dadc7cdbc6f7ec28c")
 
 // Generate a JWT: used to validate user
 const generateToken = (id) => {
@@ -133,9 +136,9 @@ const updateAccount = asyncHandler(async (req, res) => {
 		}
 	);
 
-	// Update Messages Schema with affiliated username
+	// Find messages in Message schema with user id then update username
 	if (username !== currentUser.username) {
-		await Messages.updateMany({ username: username });
+		await Messages.updateMany({ user: currentUser.id }, { username: username });
 	}
 
 	return res.status(200).json({
@@ -143,15 +146,16 @@ const updateAccount = asyncHandler(async (req, res) => {
 		name: currentUser.name,
 		username: username ? username : currentUser.username,
 		email: email ? email : currentUser.email,
+		userAvatar: currentUser.userAvatar,
 		token: generateToken(currentUser._id),
 	});
 });
 
 const updateAvatar = asyncHandler(async (req, res) => {
-	if (!req.file) {
-		res.status(400);
-		throw new Error("File is unable to be found.");
-	}
+	// if (!req.file) {
+	// 	res.status(400);
+	// 	throw new Error("File is unable to be found.");
+	// }
 	const currentUser = await User.findById(req.user._id);
 
 	await User.findByIdAndUpdate(
@@ -164,11 +168,22 @@ const updateAvatar = asyncHandler(async (req, res) => {
 		}
 	);
 
+	// Find messages in Message schema with user id then update avatar
+	if (req.file !== currentUser.userAvatar) {
+		await Messages.updateMany(
+			{ user: currentUser.id },
+			{ userAvatar: req.file.filename }
+		);
+	}
+
 	// Remove old image file if image req is successful and !default avatar
 	if (req.file && currentUser.userAvatar !== "") {
 		fs.unlink(`${path}${currentUser.userAvatar}`, (err) => {
-			if (err) console.error(err);
-			console.log(`${path}${currentUser.userAvatar} was deleted`);
+			if (err) {
+				console.error(`${currentUser.userAvatar} does not exist.`);
+			}
+
+			console.log(`${currentUser.userAvatar} was deleted`);
 		});
 	}
 

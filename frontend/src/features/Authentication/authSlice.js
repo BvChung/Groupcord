@@ -1,17 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "./authService";
-import { errorMessage } from "../helperFunc/helperFunctions";
+import { errorMessage } from "../helperFunctions/helperFunctions";
 
 // Get user from localStorage
 const user = JSON.parse(localStorage.getItem("user"));
 
 const initialState = {
 	user: user ? user : null,
+	updatedUsernameToSocket: {},
+	updatedAvatarToSocket: {},
 	loginError: false,
 	registerError: false,
 	updateError: false,
 	loggedIn: false,
 	isSuccess: false,
+	changedAvatar: false,
 	isLoading: false,
 	message: "",
 };
@@ -86,6 +89,9 @@ export const authSlice = createSlice({
 			state.loggedIn = false;
 			authService.logout();
 		},
+		resetSuccessNotifications: (state) => {
+			state.changedAvatar = false;
+		},
 	},
 	// Create extra reducers for the pending, fulfilled and rejected states
 	// Placed in extrareducers since registering uses asyncThunk
@@ -129,6 +135,11 @@ export const authSlice = createSlice({
 				state.isLoading = false;
 				state.isSuccess = true;
 				state.user = action.payload;
+				state.updatedUsernameToSocket = {
+					_id: action.payload._id,
+					username: action.payload.username,
+					userAvatar: action.payload.userAvatar,
+				};
 			})
 			.addCase(updateUser.rejected, (state, action) => {
 				state.isLoading = false;
@@ -141,8 +152,13 @@ export const authSlice = createSlice({
 			})
 			.addCase(updateAccountAvatar.fulfilled, (state, action) => {
 				state.isLoading = false;
-				state.isSuccess = true;
+				state.changedAvatar = true;
 				state.user = action.payload;
+				state.updatedAvatarToSocket = {
+					_id: action.payload._id,
+					username: action.payload.username,
+					userAvatar: action.payload.userAvatar,
+				};
 			})
 			.addCase(updateAccountAvatar.rejected, (state, action) => {
 				state.isLoading = false;
@@ -152,5 +168,6 @@ export const authSlice = createSlice({
 	},
 });
 
-export const { resetState, logoutUser } = authSlice.actions;
+export const { resetState, logoutUser, resetSuccessNotifications } =
+	authSlice.actions;
 export default authSlice.reducer;

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { configuration } from "../helperFunc/helperFunctions";
+import { configuration } from "../helperFunctions/helperFunctions";
 
 // Axios connects the frontend to the backend
 
