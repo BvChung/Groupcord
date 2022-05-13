@@ -5,9 +5,10 @@ import {
 	removeDuplicateData,
 } from "../helperFunctions/helperFunctions";
 import {
-	availableUsersToAddToGroup,
+	filterUsers,
 	updateGroupData,
 	addAndRemoveMembersFromGroups,
+	removeMemberFromGroup,
 	updateGroupName,
 	deleteGroupData,
 } from "../helperFunctions/groupFunctions";
@@ -15,13 +16,15 @@ import {
 const initialState = {
 	registeredMembers: {},
 	groups: {},
-	groupInfo: {
+	activeGroupInfo: {
 		groupId: "Global",
 		groupOwner: "",
 		members: [],
 	},
-	filteredMembers: [],
+	membersAvailableToAddToGroup: {},
 	memberUpdatedToSocket: {},
+	joinedMemberToSocket: {},
+	removedMemberToSocket: {},
 	groupDeletedToSocket: {},
 	updatedGroupNameToSocket: {},
 	isLoading: false,
@@ -96,7 +99,7 @@ export const addGroupMembers = createAsyncThunk(
 	async (memberId, thunkAPI) => {
 		try {
 			const token = thunkAPI.getState().auth.user.token;
-			const { groupId } = thunkAPI.getState().conversations.groupInfo;
+			const { groupId } = thunkAPI.getState().conversations.activeGroupInfo;
 			return await groupService.addMembers(memberId, groupId, token);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
@@ -109,7 +112,7 @@ export const removeGroupMembers = createAsyncThunk(
 	async (memberId, thunkAPI) => {
 		try {
 			const token = thunkAPI.getState().auth.user.token;
-			const { groupId } = thunkAPI.getState().conversations.groupInfo;
+			const { groupId } = thunkAPI.getState().conversations.activeGroupInfo;
 			return await groupService.removeMembers(memberId, groupId, token);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
@@ -123,10 +126,10 @@ export const groupSlice = createSlice({
 	reducers: {
 		resetGroupState: (state) => initialState,
 		updateActiveGroup: (state, action) => {
-			state.groupInfo = action.payload;
-			state.filteredMembers = availableUsersToAddToGroup(
+			state.activeGroupInfo = action.payload;
+			state.membersAvailableToAddToGroup = filterUsers(
 				state.registeredMembers,
-				state.groupInfo.members
+				state.activeGroupInfo.members
 			);
 		},
 		leaveGroup: (state, action) => {
@@ -134,8 +137,9 @@ export const groupSlice = createSlice({
 		},
 		socketDataUpdateMembers: (state, action) => {
 			console.log("update members");
-			state.groupInfo.members = action.payload.groupData.members;
-			state.filteredMembers = action.payload.filteredMembers;
+			state.activeGroupInfo.members = action.payload.groupData.members;
+			state.membersAvailableToAddToGroup =
+				action.payload.membersAvailableToAddToGroup;
 		},
 		socketDataUpdateGroups: (state, action) => {
 			console.log("update group");
@@ -152,6 +156,15 @@ export const groupSlice = createSlice({
 				action.payload
 			);
 			state.groups = removeDuplicateData(state.groups);
+		},
+		// -----
+		socketDataAddGroupForMember: (state, action) => {
+			console.log("update group");
+			state.groups = [...state.groups, action.payload];
+		},
+		socketDataRemoveGroupForMember: (state, action) => {
+			console.log("update group");
+			state.groups = removeMemberFromGroup(state.groups, action.payload);
 		},
 		socketDataUpdateGroupName: (state, action) => {
 			state.groups = updateGroupName(state.groups, action.payload);
@@ -192,19 +205,19 @@ export const groupSlice = createSlice({
 		builder.addCase(addGroupMembers.fulfilled, (state, action) => {
 			state.isSuccess = true;
 			console.log(action.payload);
-			// Update current group
-			state.groupInfo.members = action.payload.updatedMembers.members;
+			// Update current group info
+			state.activeGroupInfo.members = action.payload.updatedMembers.members;
 
-			// Update all groups
+			// Update groups
 			state.groups = updateGroupData(
 				state.groups,
-				state.groupInfo,
+				state.activeGroupInfo,
 				action.payload.updatedMembers
 			);
 
-			state.filteredMembers = availableUsersToAddToGroup(
+			state.membersAvailableToAddToGroup = filterUsers(
 				state.registeredMembers,
-				state.groupInfo.members
+				state.activeGroupInfo.members
 			);
 
 			state.memberUpdatedToSocket = {
@@ -212,34 +225,45 @@ export const groupSlice = createSlice({
 				memberChanged: action.payload.memberChanged,
 				action: "addMember",
 			};
-
-			// Update users groups when group owner adds member
+			state.joinedMemberToSocket = {
+				groupData: action.payload.updatedMembers,
+				memberChanged: action.payload.memberChanged,
+				action: "addMember",
+			};
 		});
 		builder.addCase(removeGroupMembers.fulfilled, (state, action) => {
 			state.isSuccess = true;
-			state.groupInfo.members = action.payload.updatedMembers.members;
+			state.activeGroupInfo.members = action.payload.updatedMembers.members;
 
-			state.filteredMembers = availableUsersToAddToGroup(
+			state.groups = updateGroupData(
+				state.groups,
+				state.activeGroupInfo,
+				action.payload.updatedMembers
+			);
+
+			state.membersAvailableToAddToGroup = filterUsers(
 				state.registeredMembers,
-				state.groupInfo.members
+				state.activeGroupInfo.members
 			);
 
 			state.memberUpdatedToSocket = {
 				groupData: action.payload.updatedMembers,
 				memberChanged: action.payload.memberChanged,
-				filteredMembers: [
-					...state.filteredMembers,
+				membersAvailableToAddToGroup: [
+					...state.membersAvailableToAddToGroup,
 					action.payload.memberChanged,
 				],
 				action: "removeMember",
 			};
-
-			// Update users groups when group owner adds member
-			state.groups = updateGroupData(
-				state.groups,
-				state.groupInfo,
-				action.payload.updatedMembers
-			);
+			state.removedMemberToSocket = {
+				groupData: action.payload.updatedMembers,
+				memberChanged: action.payload.memberChanged,
+				membersAvailableToAddToGroup: [
+					...state.membersAvailableToAddToGroup,
+					action.payload.memberChanged,
+				],
+				action: "removeMember",
+			};
 		});
 		builder.addCase(getRegisteredMembers.fulfilled, (state, action) => {
 			state.registeredMembers = action.payload;

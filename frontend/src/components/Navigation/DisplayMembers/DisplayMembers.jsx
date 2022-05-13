@@ -25,60 +25,41 @@ import { UserIcon, KeyIcon, UserAddIcon } from "@heroicons/react/solid";
 
 export default function DisplayMembers({ open, handleClose }) {
 	const dispatch = useDispatch();
+	const socket = useContext(SocketContext);
 
 	const { user } = useSelector((state) => state.auth);
-	const socket = useContext(SocketContext);
-	const currentAccountId = useSelector((state) => state.auth.user._id);
 	const { groupId, members } = useSelector(
-		(state) => state.conversations.groupInfo
+		(state) => state.conversations.activeGroupInfo
 	);
-	const { filteredMembers } = useSelector((state) => state?.conversations);
-	const { memberUpdatedToSocket } = useSelector(
-		(state) => state?.conversations
-	);
+	const {
+		membersAvailableToAddToGroup,
+		memberUpdatedToSocket,
+		joinedMemberToSocket,
+		removedMemberToSocket,
+	} = useSelector((state) => state?.conversations);
 	const { darkMode } = useSelector((state) => state.theme);
-
 	const [switchMemberDisplay, setSwitchMemberDisplay] = useState(false);
 	function toggleMemberDisplay() {
 		setSwitchMemberDisplay((prev) => !prev);
 	}
 
-	console.log(filteredMembers);
-	// console.log(members);
+	console.log(joinedMemberToSocket);
+	console.log(members);
 
 	// Web socket data transmission
-	const sendData = useCallback(() => {
-		socket.emit("send_group_data", memberUpdatedToSocket);
-	}, [socket, memberUpdatedToSocket]);
 
-	const receiveData = useCallback(() => {
-		socket.on("receive_group_data", (data) => {
-			// Members and filtered members should only be updated if users are the group is active for other useers
-			// The dispatch should only affect the account that has been removed/added
-
-			if (data.groupData._id === groupId) {
-				// Updates the current active group with members/ users that can be added
-				dispatch(socketDataUpdateMembers(data));
-			}
-			if (user._id === data.memberChanged._id) {
-				// Update groups in sidebar
-				dispatch(socketDataUpdateGroups(data));
-
-				if (data.action === "removeMember" && data.groupData._id === groupId) {
-					// Clears the chat messages
-					dispatch(clearChatMessages());
-				}
-			}
-		});
-	}, [socket, dispatch, user._id, groupId]);
-
-	useEffect(() => {
-		sendData();
-	}, [sendData]);
-
-	useEffect(() => {
-		receiveData();
-	}, [receiveData]);
+	const dispatchAddGroupMemberSocketData = useCallback(
+		(data) => {
+			dispatch(data);
+		},
+		[dispatch]
+	);
+	const dispatchRemoveGroupMemberSocketData = useCallback(
+		(data) => {
+			dispatch(data);
+		},
+		[dispatch]
+	);
 
 	const bgStyle = darkMode ? "bg-menu" : "bg-offwhite";
 	const textStyle = darkMode ? "text-white" : "text-gray1";
@@ -103,7 +84,7 @@ export default function DisplayMembers({ open, handleClose }) {
 				handleClose();
 			}}
 		>
-			<div className={`w-96 px-4 py-6 sm:py-6 sm:px-8 ${bgStyle} `}>
+			<div className={`w-[30rem] px-4 py-6 sm:py-6 sm:px-8 ${bgStyle} `}>
 				<div className={`${textStyle} mb-2 py-2`}>
 					<h1 className={`${titleStyle} text-xl font-semibold pb-2 font-sans `}>
 						{switchMemberDisplay ? "Invite Members" : "Members"}
@@ -122,16 +103,18 @@ export default function DisplayMembers({ open, handleClose }) {
 							return (
 								<MemberList
 									key={member._id}
+									id={member._id}
 									username={member.username}
 									userAvatar={member.userAvatar}
 								/>
 							);
 						})}
 					{switchMemberDisplay &&
-						filteredMembers.map((member) => {
+						membersAvailableToAddToGroup.map((member) => {
 							return (
 								<InviteMembers
 									key={member._id}
+									id={member._id}
 									username={member.username}
 									userAvatar={member.userAvatar}
 								/>

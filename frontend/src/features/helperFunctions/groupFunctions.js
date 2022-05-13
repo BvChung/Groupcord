@@ -46,7 +46,21 @@ export const addAndRemoveMembersFromGroups = (state, payload) => {
 	}
 };
 
-export const availableUsersToAddToGroup = (arr1, arr2) => {
+export const addMemberToGroup = (state, payload) => {
+	const { groupData, action } = payload;
+
+	return [...current(state), groupData];
+};
+
+export const removeMemberFromGroup = (state, payload) => {
+	const { groupData, action } = payload;
+
+	return current(state).filter((data) => {
+		return data._id !== groupData._id;
+	});
+};
+
+export const filterUsers = (arr1, arr2) => {
 	const output = arr1.filter((el1) => {
 		return !arr2.find((el2) => {
 			return el2._id === el1._id;

@@ -54,10 +54,12 @@ export default function AddMembers() {
 	const { user } = useSelector((state) => state.auth);
 	const currentAccountId = useSelector((state) => state.auth.user._id);
 	const { groupId, groupOwner, members } = useSelector(
-		(state) => state.conversations.groupInfo
+		(state) => state.conversations.activeGroupInfo
 	);
 
-	const { filteredMembers } = useSelector((state) => state?.conversations);
+	const { membersAvailableToAddToGroup } = useSelector(
+		(state) => state?.conversations
+	);
 	const { memberUpdatedToSocket } = useSelector(
 		(state) => state?.conversations
 	);
@@ -188,11 +190,13 @@ export default function AddMembers() {
 							})}
 					</MenuSection>
 					{currentAccountId === groupOwner &&
-						Object.keys(filteredMembers).length !== 0 && <Divider />}
+						Object.keys(membersAvailableToAddToGroup).length !== 0 && (
+							<Divider />
+						)}
 					{currentAccountId === groupOwner &&
-						Object.keys(filteredMembers).length !== 0 && (
+						Object.keys(membersAvailableToAddToGroup).length !== 0 && (
 							<MenuSection label="Add Users">
-								{filteredMembers?.map((user) => {
+								{membersAvailableToAddToGroup?.map((user) => {
 									return (
 										<StyledMenuItem className="mb-1" key={user._id}>
 											<div className="flex items-center justify-between pr-2">
