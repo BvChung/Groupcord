@@ -1,7 +1,10 @@
 import * as React from "react";
 import { useDispatch } from "react-redux";
 import { deleteChatGroup } from "../../../features/groups/groupSlice";
-import { clearChatMessages } from "../../../features/messages/messageSlice";
+import {
+	clearChatMessages,
+	hideTextInput,
+} from "../../../features/messages/messageSlice";
 import PropTypes from "prop-types";
 import MenuUnstyled from "@mui/base/MenuUnstyled";
 import { Tooltip } from "@mui/material";
@@ -87,6 +90,7 @@ export default function GroupTools({ groupId, groupName, toggleEditingName }) {
 						onClick={() => {
 							dispatch(deleteChatGroup(groupId));
 							dispatch(clearChatMessages());
+							dispatch(hideTextInput());
 							toast.success(`Group ${groupName} has been deleted`);
 						}}
 						className="mb-1"
@@ -97,6 +101,16 @@ export default function GroupTools({ groupId, groupName, toggleEditingName }) {
 							</div>
 							<div className="flex items-center gap-2">
 								<span className="font-sans text-sm">Delete Group</span>
+							</div>
+						</div>
+					</StyledMenuItem>
+					<StyledMenuItem onClick={() => {}} className="mb-1">
+						<div className="flex items-center gap-4 px-2 py-1">
+							<div className="text-gray-600 ">
+								<TrashIcon className="h-5 w-5" />
+							</div>
+							<div className="flex items-center gap-2">
+								<span className="font-sans text-sm">Change Group Icon</span>
 							</div>
 						</div>
 					</StyledMenuItem>

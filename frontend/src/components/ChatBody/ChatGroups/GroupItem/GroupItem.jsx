@@ -5,28 +5,43 @@ import {
 	updateChatGroupName,
 	getChatGroups,
 	updateActiveGroup,
-} from "../../../features/groups/groupSlice";
-import GroupTools from "./GroupTools";
-import { SaveIcon, XIcon } from "@heroicons/react/outline";
+} from "../../../../features/groups/groupSlice";
+import GroupTools from "../GroupTools";
+import GroupSettings from "../GroupSettings/GroupSettings";
+import { SaveIcon, XIcon, DotsVerticalIcon } from "@heroicons/react/outline";
 import Tooltip from "@mui/material/Tooltip";
 
-export default function GroupItem({ groupId, groupName, groupOwner, members }) {
+export default function GroupItem({
+	groupId,
+	groupName,
+	groupOwner,
+	members,
+	groupIcon,
+}) {
 	const dispatch = useDispatch();
 
+	const [open, setOpen] = useState(false);
+	const handleClickOpen = () => {
+		setOpen(true);
+	};
+	const handleClose = () => {
+		setOpen(false);
+	};
 	const [newGroupName, setNewGroupName] = useState({
 		groupName: "",
 	});
 	const [isEditingName, setIsEditingName] = useState(false);
-	const { groupInfo } = useSelector((state) => state.conversations);
+	const { activeGroupInfo } = useSelector((state) => state.conversations);
 	const { user } = useSelector((state) => state.auth);
 
 	const sendGroupInfo = {
 		groupId,
+		groupName,
 		groupOwner,
 		members,
 	};
 	const activeStyle =
-		groupInfo.groupId === groupId
+		activeGroupInfo.groupId === groupId
 			? "bg-sky-100 dark:bg-slate-800 border-l-sky-400 border-l-[3px] dark:border-l-sky-500 "
 			: "border-l-[3px] border-l-gray-300 dark:border-l-gray-600 hover:border-l-gray-400 dark:hover:border-l-gray-400";
 
@@ -47,12 +62,12 @@ export default function GroupItem({ groupId, groupName, groupOwner, members }) {
 	function handleSubmit(e) {
 		e.preventDefault();
 
+		if (sendGroupData.groupName === "") return;
+
 		const sendGroupData = {
 			groupName: newGroupName.groupName,
 			groupId: groupId,
 		};
-
-		if (sendGroupData.groupName === "") return;
 
 		dispatch(updateChatGroupName(sendGroupData));
 		setNewGroupName({
@@ -67,9 +82,9 @@ export default function GroupItem({ groupId, groupName, groupOwner, members }) {
 		<div
 			onClick={() => {
 				// Prevent rerendering by clicking the group that is already active
-				if (groupId !== groupInfo.groupId) {
+				if (groupId !== activeGroupInfo.groupId) {
 					dispatch(updateActiveGroup(sendGroupInfo));
-					dispatch(getChatGroups());
+					// dispatch(getChatGroups());
 				}
 			}}
 			className={`flex items-center justify-between w-full h-12 px-3 gap-2 cursor-pointer
@@ -128,12 +143,28 @@ export default function GroupItem({ groupId, groupName, groupOwner, members }) {
 			)}
 			{!isEditingName &&
 				groupOwner === user._id &&
-				groupInfo.groupId === groupId && (
+				activeGroupInfo.groupId === groupId && (
 					<GroupTools
 						groupName={groupName}
 						groupId={groupId}
 						toggleEditingName={toggleEditingName}
 					/>
+				)}
+			{!isEditingName &&
+				groupOwner === user._id &&
+				activeGroupInfo.groupId === groupId && (
+					<>
+						<Tooltip placement="right" arrow describeChild title="More">
+							<button onClick={handleClickOpen}>
+								<DotsVerticalIcon
+									className="w-8 h-8 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 
+									p-1 rounded-full border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
+									hover:bg-gray-200 dark:hover:bg-dark3 transition-all"
+								/>
+							</button>
+						</Tooltip>
+						<GroupSettings open={open} handleClose={handleClose} />
+					</>
 				)}
 		</div>
 	);
