@@ -13,6 +13,7 @@ const initialState = {
 	userMessages: {},
 	newMessageToSocket: {},
 	deletedMessageToSocket: {},
+	hideTextInput: false,
 	isLoading: false,
 	loadInitialMessages: false,
 	isSuccess: false,
@@ -27,7 +28,7 @@ export const getChatMessage = createAsyncThunk(
 		try {
 			// thunkAPI has a method to get any state value from the redux store
 			const token = thunkAPI.getState().auth.user.token;
-			const { groupId } = thunkAPI.getState().conversations.groupInfo;
+			const { groupId } = thunkAPI.getState().conversations.activeGroupInfo;
 			return await chatService.getMessage(groupId, token);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
@@ -65,6 +66,17 @@ export const messageSlice = createSlice({
 	initialState,
 	reducers: {
 		resetMessageState: (state) => initialState,
+		hideTextInput: (state) => {
+			state.hideTextInput = true;
+		},
+		resetTextInput: (state) => {
+			if (state.hideTextInput) {
+				state.hideTextInput = false;
+			}
+		},
+		clearChatMessages: (state) => {
+			state.userMessages.groupMessages = [];
+		},
 		socketDataUpdateMessageUsername: (state, action) => {
 			state.userMessages.groupMessages = updateUsername(
 				state.userMessages.groupMessages,
@@ -76,9 +88,6 @@ export const messageSlice = createSlice({
 				state.userMessages.groupMessages,
 				action.payload
 			);
-		},
-		clearChatMessages: (state) => {
-			state.userMessages.groupMessages = [];
 		},
 		socketDataAddMessage: (state, action) => {
 			console.log("new message");
@@ -142,6 +151,8 @@ export const messageSlice = createSlice({
 export const {
 	resetMessageState,
 	clearChatMessages,
+	hideTextInput,
+	resetTextInput,
 	socketDataUpdateMessageUsername,
 	socketDataUpdateMessageAvatar,
 	socketDataAddMessage,

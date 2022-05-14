@@ -7,6 +7,7 @@ import {
 	socketDataRemoveDeletedMessage,
 	socketDataUpdateMessageUsername,
 	socketDataUpdateMessageAvatar,
+	resetTextInput,
 } from "../../../features/messages/messageSlice";
 import ChatItem from "./ChatMessagesItem";
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
@@ -24,16 +25,21 @@ export default function Chat() {
 		(state) => state.auth
 	);
 	const { groupMessages } = useSelector((state) => state.messages.userMessages);
-	const { newMessageToSocket, deletedMessageToSocket, loadInitialMessages } =
-		useSelector((state) => state.messages);
+	const {
+		newMessageToSocket,
+		deletedMessageToSocket,
+		loadInitialMessages,
+		hideTextInput,
+	} = useSelector((state) => state.messages);
 	const { groupId, members } = useSelector(
-		(state) => state.conversations.groupInfo
+		(state) => state.conversations.activeGroupInfo
 	);
 	const refMessage = useRef(null);
 	const scrollToMessage = () => refMessage.current.scrollIntoView();
 	useEffect(() => {
 		scrollToMessage();
 	}, [groupMessages]);
+	// console.log(hideTextInput);
 
 	const [textInputActive, setTextInputActive] = useState(false);
 	function toggleTextInputActive() {
@@ -90,8 +96,9 @@ export default function Chat() {
 
 	useEffect(() => {
 		loadMessages();
+		dispatch(resetTextInput());
 		socket.emit("join_room", groupId);
-	}, [groupId, socket, loadMessages]);
+	}, [groupId, socket, dispatch, loadMessages]);
 
 	const dispatchUsernameSocketData = useCallback(
 		(data) => {
@@ -189,38 +196,40 @@ export default function Chat() {
 			</section>
 
 			<div className="flex h-[10%] w-full justify-center items-center px-6">
-				<div
-					className="flex items-center justify-end w-full max-w-5xl border-[1px] h-fit rounded-lg border-gray-300
+				{!hideTextInput && (
+					<div
+						className="flex items-center justify-end w-full max-w-5xl border-[1px] h-fit rounded-lg border-gray-300
 					bg-offwhite focus-within:border-sky-500 dark:focus-within:border-sky-700 dark:border-gray-600 dark:bg-gray-800"
-				>
-					<form
-						onFocus={toggleTextInputActive}
-						onBlur={toggleTextInputInactive}
-						className="flex w-full"
-						onSubmit={handleSubmit}
 					>
-						<input
-							name="message"
-							value={userMessage.message}
-							type="text"
-							autoComplete="off"
-							onChange={handleChange}
-							placeholder="Send a message"
-							className="w-full max-w-5xl outline-none text-lg px-4 bg-transparent
+						<form
+							onFocus={toggleTextInputActive}
+							onBlur={toggleTextInputInactive}
+							className="flex w-full"
+							onSubmit={handleSubmit}
+						>
+							<input
+								name="message"
+								value={userMessage.message}
+								type="text"
+								autoComplete="off"
+								onChange={handleChange}
+								placeholder="Send a message"
+								className="w-full max-w-5xl outline-none text-lg px-4 bg-transparent
 									text-gray1 dark:text-white
 									placeholder:text-gray-500 dark:placeholder:text-gray-600"
-						></input>
-						<button
-							aria-label="Submit message text"
-							className="float-right bg-transparent rounded-[50%] p-2"
-						>
-							<PaperAirplaneIcon
-								className={`w-6 h-6 
+							></input>
+							<button
+								aria-label="Submit message text"
+								className="float-right bg-transparent rounded-[50%] p-2"
+							>
+								<PaperAirplaneIcon
+									className={`w-6 h-6 
 									${inputActiveStyle} transition-all`}
-							/>
-						</button>
-					</form>
-				</div>
+								/>
+							</button>
+						</form>
+					</div>
+				)}
 			</div>
 		</div>
 	);

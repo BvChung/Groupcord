@@ -4,11 +4,7 @@ import ChatBody from "../components/ChatBody/Body";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser, resetState } from "../features/authentication/authSlice";
 import { resetMessageState } from "../features/messages/messageSlice";
-import {
-	getRegisteredMembers,
-	getChatGroups,
-	resetGroupState,
-} from "../features/groups/groupSlice";
+import { getChatGroups, resetGroupState } from "../features/groups/groupSlice";
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../appContext/socketContext";
 import { MenuContext } from "../appContext/menuContext";
@@ -36,7 +32,6 @@ function Chat() {
 		[socket]
 	);
 	useEffect(() => {
-		dispatch(getRegisteredMembers());
 		dispatch(getChatGroups());
 	}, [dispatch]);
 	useEffect(() => {
