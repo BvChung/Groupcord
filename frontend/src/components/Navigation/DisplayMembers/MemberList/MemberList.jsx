@@ -1,18 +1,23 @@
-import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
 	removeGroupMembers,
 	leaveGroup,
 } from "../../../../features/groups/groupSlice";
-import { KeyIcon } from "@heroicons/react/solid";
+import {
+	hideTextInput,
+	clearChatMessages,
+} from "../../../../features/messages/messageSlice";
+import { KeyIcon, MinusCircleIcon } from "@heroicons/react/solid";
+import { LogoutIcon } from "@heroicons/react/outline";
 import DefaultAvatar from "../../../../assets/images/avatar.jpg";
 import { Tooltip } from "@mui/material";
+import Spinner from "../../../Spinner/Spinner";
 
 export default function MemberList({ id, username, userAvatar }) {
 	const dispatch = useDispatch();
 
 	const { user } = useSelector((state) => state.auth);
-	const { groupOwner } = useSelector(
+	const { groupOwner, groupId } = useSelector(
 		(state) => state.conversations.activeGroupInfo
 	);
 	const imageEnvPath = process.env.REACT_APP_PUBLIC_FOLDER;
@@ -40,19 +45,29 @@ export default function MemberList({ id, username, userAvatar }) {
 						onClick={() => {
 							dispatch(removeGroupMembers(id));
 						}}
-						className="bg-red-600 p-2 rounded-lg"
+						className="bg-red-700 dark:bg-red-900 text-white w-fit py-[.5rem] text-sm font-bold rounded-sm"
 					>
-						Remove
+						<div className="flex items-center justify-center gap-1 px-2">
+							<MinusCircleIcon className="h-5 w-5" />
+							<p>Remove</p>
+						</div>
+						{/* <Spinner /> */}
 					</button>
 				)}
-				{user._id === groupOwner && id !== groupOwner && (
+				{user._id === id && user._id !== groupOwner && id !== groupOwner && (
 					<button
 						onClick={() => {
+							dispatch(leaveGroup({ _id: groupId }));
 							dispatch(removeGroupMembers(id));
+							dispatch(clearChatMessages());
+							dispatch(hideTextInput());
 						}}
-						className="bg-red-600 p-2 rounded-lg"
+						className="bg-red-600 dark:bg-red-800 text-white w-fit py-[.5rem] text-sm font-bold rounded-sm"
 					>
-						Leave
+						<div className="flex items-center justify-center gap-1 px-2">
+							<LogoutIcon className="h-5 w-5" />
+							<p>Leave Group</p>
+						</div>
 					</button>
 				)}
 			</div>

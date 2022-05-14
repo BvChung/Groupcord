@@ -57,7 +57,7 @@ let connectedUsers = [];
 io.on("connection", (socket) => {
 	// 1) Objects are used to keep track of data sent via websockets using Socket.io
 	// 2) Method is used to fix issue with Socket.io emitting the same data twice
-	// 3) Prevents multiple dispatch methods in the redux store on the frontend causing components to render twice
+	// 3) Prevents multiple dispatch methods in the redux store on the frontend causing data to be added twice
 	let storeMessageData = {
 		_id: "",
 	};
@@ -70,7 +70,10 @@ io.on("connection", (socket) => {
 	let storeUsernameData = {
 		username: "",
 	};
-	let storeGroupData = {
+	let storeAddedMember = {
+		username: "",
+	};
+	let storeRemovedMember = {
 		username: "",
 	};
 	let storeDeletedGroupData = {
@@ -107,42 +110,42 @@ io.on("connection", (socket) => {
 	socket.on("send_message", (messageData) => {
 		if (Object.keys(messageData).length === 0) return;
 
-		if (storeMessageData._id !== messageData._id) {
-			socket.to(messageData.groupId).emit("receive_message", messageData);
-			storeMessageData = messageData;
-		}
+		if (storeMessageData._id === messageData._id) return;
+
+		socket.to(messageData.groupId).emit("receive_message", messageData);
+		storeMessageData = messageData;
 	});
 
 	socket.on("send_deleted_message", (messageData) => {
 		if (Object.keys(messageData).length === 0) return;
 
-		if (storeDeletedMessageData._id !== messageData._id) {
-			socket.to(currentRoom).emit("receive_deleted_message", messageData);
-			storeDeletedMessageData = messageData;
-		}
+		if (storeDeletedMessageData._id === messageData._id) return;
+
+		socket.to(currentRoom).emit("receive_deleted_message", messageData);
+		storeDeletedMessageData = messageData;
 	});
 
 	socket.on("send_message_avatar_updated", (messageData) => {
 		if (Object.keys(messageData).length === 0) return;
 
-		if (storeAvatarData.userAvatar !== messageData.userAvatar) {
-			socket.broadcast.emit("receive_message_avatar_updated", messageData);
-			storeAvatarData = messageData;
-		}
+		if (storeAvatarData.userAvatar === messageData.userAvatar) return;
+
+		socket.broadcast.emit("receive_message_avatar_updated", messageData);
+		storeAvatarData = messageData;
 	});
 
 	socket.on("send_message_username_updated", (messageData) => {
 		if (Object.keys(messageData).length === 0) return;
 
-		if (storeUsernameData.username !== messageData.username) {
-			socket.broadcast.emit("receive_message_username_updated", messageData);
-			storeUsernameData = messageData;
-		}
+		if (storeUsernameData.username === messageData.username) return;
+
+		socket.broadcast.emit("receive_message_username_updated", messageData);
+		storeUsernameData = messageData;
 	});
 
 	socket.on("send_group_data", (groupData) => {
 		if (Object.keys(groupData).length === 0) return;
-		// console.log(groupData);
+		console.log(groupData);
 
 		const member = connectedUsers.find((user) => {
 			return user.userId === groupData.memberChanged._id && user.userId;
@@ -158,23 +161,58 @@ io.on("connection", (socket) => {
 		}
 	});
 
+	socket.on("send_added_group_member", (groupData) => {
+		if (Object.keys(groupData).length === 0) return;
+
+		if (storeAddedMember.id === groupData.id) return;
+
+		// const member = connectedUsers.find((user) => {
+		// 	return user.userId === groupData.memberChanged._id && user.userId;
+		// });
+
+		// if (member) {
+		// 	socket
+		// 		.to(member.socketId)
+		// 		.to(currentRoom)
+		// 		.emit("receive_added_group_member", groupData);
+		// 	console.log(groupData);
+		// 	storeAddedMember = groupData;
+		// } else {
+		// 	socket.to(currentRoom).emit("receive_added_group_member", groupData);
+		// 	console.log(groupData);
+		// 	storeAddedMember = groupData;
+		// }
+
+		socket.broadcast.emit("receive_added_group_member", groupData);
+		storeAddedMember = groupData;
+	});
+
+	socket.on("send_removed_group_member", (groupData) => {
+		if (Object.keys(groupData).length === 0) return;
+		// console.log(groupData);
+
+		if (storeRemovedMember.id === groupData.id) return;
+
+		socket.broadcast.emit("receive_removed_group_member", groupData);
+		storeRemovedMember = groupData;
+	});
+
 	socket.on("send_group_name_updated", (groupData) => {
 		if (Object.keys(groupData).length === 0) return;
-		console.log(groupData);
 
-		if (storeGroupNameData._id !== groupData._id) {
-			socket.broadcast.emit("receive_group_name_updated", groupData);
-			storeGroupNameData = groupData;
-		}
+		if (storeGroupNameData._id === groupData._id) return;
+
+		socket.broadcast.emit("receive_group_name_updated", groupData);
+		storeGroupNameData = groupData;
 	});
 
 	socket.on("send_group_deleted", (groupData) => {
 		if (Object.keys(groupData).length === 0) return;
 
-		if (storeDeletedGroupData._id !== groupData._id) {
-			socket.broadcast.emit("receive_group_deleted", groupData);
-			storeDeletedGroupData = groupData;
-		}
+		if (storeDeletedGroupData._id === groupData._id) return;
+
+		socket.broadcast.emit("receive_group_deleted", groupData);
+		storeDeletedGroupData = groupData;
 	});
 
 	socket.on("disconnect", () => {

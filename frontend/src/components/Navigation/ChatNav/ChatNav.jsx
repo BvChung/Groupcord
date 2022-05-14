@@ -3,16 +3,18 @@ import { MoonIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { SunIcon, UserAddIcon } from "@heroicons/react/solid";
 import { useSelector, useDispatch } from "react-redux";
 import { changeTheme } from "../../../features/theme/themeSlice";
+import { getRegisteredMembers } from "../../../features/groups/groupSlice";
 import MemberList from "../DisplayMembers/DisplayMembers";
 import NavMenu from "../Menu/NavMenu";
-import GroupMembers from "../Menu/GroupMembers";
 import { MenuContext } from "../../../appContext/menuContext";
 import { Tooltip } from "@mui/material";
 
 export default function ChatNav() {
 	const dispatch = useDispatch();
 	const { activeGroupMenu, toggleGroupMenu } = useContext(MenuContext);
-	const { groupId } = useSelector((state) => state.conversations.groupInfo);
+	const { groupId } = useSelector(
+		(state) => state.conversations.activeGroupInfo
+	);
 	const { darkMode } = useSelector((state) => state.theme);
 
 	const [open, setOpen] = useState(false);
@@ -61,7 +63,12 @@ export default function ChatNav() {
 					<li className="flex items-center">
 						{groupId !== "Global" && (
 							<Tooltip arrow describeChild title="Member List">
-								<button onClick={handleClickOpen}>
+								<button
+									onClick={() => {
+										handleClickOpen();
+										dispatch(getRegisteredMembers());
+									}}
+								>
 									<UserAddIcon
 										className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 
 									p-1 rounded-full 
@@ -73,9 +80,6 @@ export default function ChatNav() {
 							</Tooltip>
 						)}
 						<MemberList open={open} handleClose={handleClose} />
-					</li>
-					<li>
-						<GroupMembers />
 					</li>
 					<li>
 						<NavMenu />

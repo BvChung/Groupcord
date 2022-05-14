@@ -30,30 +30,14 @@ export const updateGroupName = (state, payload) => {
 	});
 };
 
-export const addAndRemoveMembersFromGroups = (state, payload) => {
-	const { groupData, action } = payload;
-
-	const foundChatGroup = current(state).some(
-		(data) => data._id === groupData._id
-	);
-
-	if (foundChatGroup && action === "removeMember") {
-		return current(state).filter((data) => {
-			return data._id !== groupData._id;
-		});
-	} else {
-		return [...current(state), groupData];
-	}
-};
-
 export const addMemberToGroup = (state, payload) => {
-	const { groupData, action } = payload;
+	const { groupData } = payload;
 
 	return [...current(state), groupData];
 };
 
 export const removeMemberFromGroup = (state, payload) => {
-	const { groupData, action } = payload;
+	const { groupData } = payload;
 
 	return current(state).filter((data) => {
 		return data._id !== groupData._id;
