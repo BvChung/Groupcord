@@ -250,11 +250,14 @@ export default function ProfileSettings() {
 						/>
 						{showChangeAvatar && (
 							<div className="absolute bg-gray-900 w-full h-full bg-opacity-40 z-[100]">
-								<p className="z-20 absolute flex items-center justify-center top-[34%]  text-lg text-gray-800">
-									<strong className="text-white text-center text-md uppercase">
-										Change Avatar
+								<div className="z-20 absolute flex flex-col items-center justify-center top-[38%] left-[28%] text-lg text-gray-800">
+									<strong className="text-white text-center text-sm uppercase">
+										Change
 									</strong>
-								</p>
+									<strong className="text-white text-center text-sm uppercase">
+										Avatar
+									</strong>
+								</div>
 							</div>
 						)}
 					</label>

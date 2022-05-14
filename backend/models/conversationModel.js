@@ -12,6 +12,11 @@ const conversationSchema = mongoose.Schema(
 		members: [Object],
 		groupName: {
 			type: String,
+			required: true,
+		},
+		groupIcon: {
+			type: String,
+			default: "",
 		},
 	},
 	{
