@@ -33,7 +33,7 @@ app.use(express.urlencoded({ extended: false }));
 // When front end reaches /api/chatlogs app looks into route folder to establish route
 app.use("/api/messages", require("./routes/messageRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
-app.use("/api/conversation", require("./routes/conversationRoutes"));
+app.use("/api/chatgroups", require("./routes/conversationRoutes"));
 
 // Frontend
 // if (process.env.NODE_ENV === "production") {
@@ -81,6 +81,9 @@ io.on("connection", (socket) => {
 	};
 	let storeGroupNameData = {
 		username: "",
+	};
+	let storeGroupIconData = {
+		groupIcon: "",
 	};
 
 	// Web socket data transmission ----------------------------------
@@ -204,6 +207,15 @@ io.on("connection", (socket) => {
 
 		socket.broadcast.emit("receive_group_name_updated", groupData);
 		storeGroupNameData = groupData;
+	});
+
+	socket.on("send_group_icon_updated", (groupData) => {
+		if (Object.keys(groupData).length === 0) return;
+
+		if (storeGroupIconData.groupIcon === groupData.groupIcon) return;
+
+		socket.broadcast.emit("receive_group_icon_updated", groupData);
+		storeGroupIconData = groupData;
 	});
 
 	socket.on("send_group_deleted", (groupData) => {

@@ -2,6 +2,8 @@ const asyncHandler = require("express-async-handler");
 const Conversation = require("../models/conversationModel");
 const User = require("../models/userModel");
 const Messages = require("../models/messageModel");
+const fs = require("fs");
+const path = "backend/uploads/images/";
 
 // @desc Get chat groups based on user
 // @route Get /api/conversation
@@ -56,6 +58,35 @@ const updateChatGroupName = asyncHandler(async (req, res) => {
 	});
 });
 
+const updateIcon = asyncHandler(async (req, res) => {
+	const { groupId } = req.params;
+
+	const currentGroup = await Conversation.findById(groupId);
+
+	const updatedGroup = await Conversation.findByIdAndUpdate(
+		groupId,
+		{
+			groupIcon: req.file ? req.file.filename : currentGroup.groupIcon,
+		},
+		{
+			new: true,
+		}
+	);
+
+	// Remove old image file if image req is successful and !default avatar
+	if (req.file && currentGroup.groupIcon !== "") {
+		fs.unlink(`${path}${currentGroup.groupIcon}`, (err) => {
+			if (err) {
+				console.error(`${currentGroup.groupIcon} does not exist.`);
+			}
+
+			console.log(`${currentGroup.groupIcon} was deleted`);
+		});
+	}
+
+	return res.status(200).json(updatedGroup);
+});
+
 // @desc Delete group
 // @route DELETE /api/conversation/:id
 // @access Private
@@ -65,6 +96,17 @@ const deleteChatGroup = asyncHandler(async (req, res) => {
 
 	// Delete all messages associated with group in database
 	await Messages.deleteMany({ groupId: req.params.groupId });
+
+	// Remove image file with group deletion
+	if (deletedGroup.groupIcon !== "") {
+		fs.unlink(`${path}${deletedGroup.groupIcon}`, (err) => {
+			if (err) {
+				console.error(`${deletedGroup.groupIcon} does not exist.`);
+			}
+
+			console.log(`${deletedGroup.groupIcon} was deleted`);
+		});
+	}
 
 	const allGroups = await Conversation.find({ membersId: req.user.id });
 	return res.status(200).json({
@@ -106,7 +148,11 @@ const addGroupMembers = asyncHandler(async (req, res) => {
 		{
 			$addToSet: {
 				membersId: memberId,
-				members: currentUser,
+				members: {
+					_id: currentUser.id,
+					username: currentUser.username,
+					userAvatar: currentUser.userAvatar,
+				},
 			},
 		},
 		{
@@ -137,7 +183,11 @@ const removeGroupMembers = asyncHandler(async (req, res) => {
 		{
 			$pull: {
 				membersId: memberId,
-				members: currentUser,
+				members: {
+					_id: currentUser.id,
+					username: currentUser.username,
+					userAvatar: currentUser.userAvatar,
+				},
 			},
 		},
 		{
@@ -155,6 +205,7 @@ module.exports = {
 	getChatGroups,
 	createChatGroup,
 	updateChatGroupName,
+	updateIcon,
 	deleteChatGroup,
 	getMembers,
 	addGroupMembers,

@@ -4,6 +4,7 @@ const {
 	getChatGroups,
 	createChatGroup,
 	updateChatGroupName,
+	updateIcon,
 	deleteChatGroup,
 	getMembers,
 	addGroupMembers,
@@ -11,16 +12,21 @@ const {
 } = require("../controller/conversationController");
 
 const { authWithToken } = require("../middleware/authMiddleware");
+const { uploadFile } = require("../middleware/multerMiddleware");
 
 router
 	.route("/")
 	.get(authWithToken, getChatGroups)
 	.post(authWithToken, createChatGroup);
+router.route("/:groupId").delete(authWithToken, deleteChatGroup);
 
 router.route("/members").get(authWithToken, getMembers);
-router.route("/update/:groupId").put(authWithToken, updateChatGroupName);
-router.route("/add/:groupId").put(authWithToken, addGroupMembers);
-router.route("/remove/:groupId").put(authWithToken, removeGroupMembers);
-router.route("/delete/:groupId").delete(authWithToken, deleteChatGroup);
+router.route("/members/add/:groupId").put(authWithToken, addGroupMembers);
+router.route("/members/remove/:groupId").put(authWithToken, removeGroupMembers);
+
+router.route("/update/name/:groupId").put(authWithToken, updateChatGroupName);
+router
+	.route("/update/icon/:groupId")
+	.put([authWithToken, uploadFile], updateIcon);
 
 module.exports = router;
