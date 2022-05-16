@@ -31,9 +31,19 @@ function Chat() {
 		},
 		[socket]
 	);
-	useEffect(() => {
+
+	const dispatchGetGroups = useCallback(() => {
 		dispatch(getChatGroups());
 	}, [dispatch]);
+
+	useEffect(() => {
+		// console.log("initial");
+		dispatchGetGroups();
+	}, [dispatchGetGroups]);
+	// useEffect(() => {
+	// 	console.log("initial");
+	// 	dispatch(getChatGroups());
+	// }, [dispatch]);
 	useEffect(() => {
 		createUser(user);
 	}, [user, createUser]);

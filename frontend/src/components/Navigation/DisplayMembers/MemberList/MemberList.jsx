@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
 	removeGroupMembers,
 	leaveGroup,
+	hideGroupMemberDisplay,
 } from "../../../../features/groups/groupSlice";
 import {
 	hideTextInput,
@@ -13,7 +14,7 @@ import DefaultAvatar from "../../../../assets/images/avatar.jpg";
 import { Tooltip } from "@mui/material";
 import Spinner from "../../../Spinner/Spinner";
 
-export default function MemberList({ id, username, userAvatar }) {
+export default function MemberList({ id, username, userAvatar, handleClose }) {
 	const dispatch = useDispatch();
 
 	const { user } = useSelector((state) => state.auth);
@@ -61,6 +62,8 @@ export default function MemberList({ id, username, userAvatar }) {
 							dispatch(removeGroupMembers(id));
 							dispatch(clearChatMessages());
 							dispatch(hideTextInput());
+							dispatch(hideGroupMemberDisplay());
+							handleClose();
 						}}
 						className="bg-red-600 dark:bg-red-800 text-white w-fit py-[.5rem] text-sm font-bold rounded-sm"
 					>

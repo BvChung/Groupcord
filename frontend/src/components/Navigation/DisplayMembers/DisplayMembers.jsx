@@ -104,6 +104,7 @@ export default function DisplayMembers({ open, handleClose }) {
 									id={member._id}
 									username={member.username}
 									userAvatar={member.userAvatar}
+									handleClose={handleClose}
 								/>
 							);
 						})}

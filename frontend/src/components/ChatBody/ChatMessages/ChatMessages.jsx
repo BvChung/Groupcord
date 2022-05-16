@@ -9,6 +9,10 @@ import {
 	socketDataUpdateMessageAvatar,
 	resetTextInput,
 } from "../../../features/messages/messageSlice";
+import {
+	resetGroupMemberDisplay,
+	socketDataUpdateMembersPeronalInfo,
+} from "../../../features/groups/groupSlice";
 import ChatItem from "./ChatMessagesItem";
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
 import { SocketContext } from "../../../appContext/socketContext";
@@ -97,18 +101,21 @@ export default function Chat() {
 	useEffect(() => {
 		loadMessages();
 		dispatch(resetTextInput());
+		dispatch(resetGroupMemberDisplay());
 		socket.emit("join_room", groupId);
 	}, [groupId, socket, dispatch, loadMessages]);
 
-	const dispatchUsernameSocketData = useCallback(
+	const dispatchChangedUsernameSocketData = useCallback(
 		(data) => {
 			dispatch(socketDataUpdateMessageUsername(data));
+			dispatch(socketDataUpdateMembersPeronalInfo(data));
 		},
 		[dispatch]
 	);
-	const dispatchAvatarSocketData = useCallback(
+	const dispatchChangedAvatarSocketData = useCallback(
 		(data) => {
 			dispatch(socketDataUpdateMessageAvatar(data));
+			dispatch(socketDataUpdateMembersPeronalInfo(data));
 		},
 		[dispatch]
 	);
@@ -128,24 +135,24 @@ export default function Chat() {
 	useEffect(() => {
 		socket.emit("send_message_username_updated", updatedUsernameToSocket);
 		socket.on("receive_message_username_updated", (messageData) => {
-			dispatchUsernameSocketData(messageData);
+			dispatchChangedUsernameSocketData(messageData);
 		});
 
 		return () => {
 			socket.off("receive_message_username_updated");
 		};
-	}, [socket, updatedUsernameToSocket, dispatchUsernameSocketData]);
+	}, [socket, updatedUsernameToSocket, dispatchChangedUsernameSocketData]);
 
 	useEffect(() => {
 		socket.emit("send_message_avatar_updated", updatedAvatarToSocket);
 		socket.on("receive_message_avatar_updated", (messageData) => {
-			dispatchAvatarSocketData(messageData);
+			dispatchChangedAvatarSocketData(messageData);
 		});
 
 		return () => {
 			socket.off("receive_message_avatar_updated");
 		};
-	}, [socket, updatedAvatarToSocket, dispatchAvatarSocketData]);
+	}, [socket, updatedAvatarToSocket, dispatchChangedAvatarSocketData]);
 
 	useEffect(() => {
 		socket.emit("send_message", newMessageToSocket);
