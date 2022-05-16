@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Dialog from "@mui/material/Dialog";
 import { useSelector, useDispatch } from "react-redux";
 import {
 	deleteChatGroup,
 	updateChatGroupName,
+	updateChatGroupIcon,
+	hideGroupMemberDisplay,
 } from "../../../../features/groups/groupSlice";
 import {
 	clearChatMessages,
@@ -11,28 +13,39 @@ import {
 } from "../../../../features/messages/messageSlice";
 import { toast } from "react-toastify";
 import {
-	SearchIcon,
 	PencilIcon,
 	PencilAltIcon,
 	ArrowLeftIcon,
+	TrashIcon,
 } from "@heroicons/react/outline";
+import DefaultAvatar from "../../../../assets/images/avatar.jpg";
 import { Tooltip, TextField } from "@mui/material";
 import Spinner from "../../../Spinner/Spinner";
 
-export default function GroupSettings({ open, handleClose }) {
+export default function GroupSettings({
+	groupId,
+	open,
+	handleClose,
+	groupIcon,
+	groupName,
+}) {
 	const dispatch = useDispatch();
+	const ref = useRef();
+	const imageEnvPath = process.env.REACT_APP_PUBLIC_FOLDER;
 
-	const { user } = useSelector((state) => state.auth);
-	const { membersAvailableToAddToGroup, isLoading, activeGroupInfo } =
-		useSelector((state) => state?.conversations);
+	const { isLoading, activeGroupInfo } = useSelector(
+		(state) => state?.conversations
+	);
 	const { darkMode } = useSelector((state) => state.theme);
 
+	const [showChangeAvatar, setShowChangeAvatar] = useState(false);
+	const [imageUpload, setImageUpload] = useState(null);
 	const [editGroupName, setEditGroupName] = useState(false);
 	function toggleEditGroupName() {
 		setEditGroupName((prev) => !prev);
 	}
 	const [textInput, setTextInput] = useState({
-		groupName: activeGroupInfo.groupName,
+		groupName: groupName,
 	});
 
 	function handleChange(e) {
@@ -48,7 +61,7 @@ export default function GroupSettings({ open, handleClose }) {
 	function handleSubmit(e) {
 		e.preventDefault();
 
-		if (textInput.groupName === activeGroupInfo.groupName) return;
+		if (textInput.groupName === groupName) return;
 
 		const sendGroupData = {
 			groupName: textInput.groupName,
@@ -59,17 +72,36 @@ export default function GroupSettings({ open, handleClose }) {
 		setEditGroupName("");
 	}
 
-	const bgStyle = darkMode ? "bg-menu" : "bg-offwhite";
+	function uploadAvatarImage(e) {
+		e.preventDefault();
+
+		if (imageUpload) {
+			const file = new FormData();
+			file.append("image", imageUpload);
+
+			const sendData = {
+				file,
+				groupId,
+			};
+			console.log(sendData);
+
+			dispatch(updateChatGroupIcon(sendData));
+			ref.current.value = "";
+			setImageUpload(null);
+		}
+	}
+
+	const bgStyle = darkMode ? "bg-dark2" : "bg-offwhite";
 	const textStyle = darkMode ? "text-white" : "text-gray1";
 	const iconStyle = darkMode ? "text-gray-200" : "text-gray-700";
 	const titleStyle = darkMode
 		? "text-white border-b-[1px] border-gray-500 "
 		: "text-gray1 border-b-[1px] border-gray-300";
 	const accountInfoStyle = darkMode
-		? "text-white border-t-[1px] border-b-[1px] border-gray-500 hover:bg-slate-800 "
-		: "text-gray1 border-t-[1px] border-b-[1px] border-gray-300 hover:bg-gray-100 ";
+		? "text-white border-[1px] border-gray-500 hover:bg-slate-800 bg-menu"
+		: "text-gray1 border-[1px] border-gray-300 hover:bg-gray-100 ";
 	const formStyle = darkMode
-		? "border-[1px] border-gray-500 "
+		? "border-[1px] border-gray-500 bg-menu"
 		: "border-[1px] border-gray-300 ";
 	const returnStyle = darkMode ? "hover:bg-dark4" : "hover:bg-gray-200";
 
@@ -89,11 +121,63 @@ export default function GroupSettings({ open, handleClose }) {
 					</h1>
 				</div>
 
+				<div className="flex justify-center items-end mb-6">
+					<div className="relative rounded-full overflow-hidden">
+						<label
+							htmlFor="image"
+							className="relative flex items-center cursor-pointer"
+							onMouseEnter={() => {
+								setShowChangeAvatar(true);
+							}}
+							onMouseLeave={() => {
+								setShowChangeAvatar(false);
+							}}
+						>
+							<img
+								src={
+									groupIcon !== ""
+										? `${imageEnvPath}${groupIcon}`
+										: DefaultAvatar
+								}
+								className="object-fill w-24 h-w-24"
+								alt="Avatar"
+							/>
+							{showChangeAvatar && (
+								<div className="absolute bg-gray-900 w-full h-full bg-opacity-40 z-[100]">
+									<div className="z-20 absolute flex flex-col items-center justify-center top-[38%] left-[28%] text-lg text-gray-800">
+										<strong className="text-white text-center text-sm uppercase">
+											Change
+										</strong>
+										<strong className="text-white text-center text-sm uppercase">
+											Icon
+										</strong>
+									</div>
+								</div>
+							)}
+						</label>
+					</div>
+
+					<div className="justify-end">
+						<button onClick={uploadAvatarImage}>Save</button>
+					</div>
+					<input
+						type="file"
+						id="image"
+						name="image"
+						className="hidden"
+						ref={ref}
+						accept=".png,.jpeg,.jpg,.gif"
+						onChange={(e) => setImageUpload(e.target.files[0])}
+					/>
+				</div>
+				<div className="mb-4">
+					<strong>Edit Group Name</strong>
+				</div>
 				{!editGroupName ? (
 					<Tooltip arrow describeChild title="Edit Group Name">
 						<div
-							className={`grid grid-cols-3 items-center py-2 sm:py-[.84rem] px-2 sm:px-4 w-full mb-6 cursor-pointer
-											${accountInfoStyle}`}
+							className={`grid grid-cols-3 items-center py-2 sm:py-[.84rem] px-2 sm:px-4 
+										w-full mb-6 cursor-pointer rounded-md ${accountInfoStyle}`}
 							onClick={() => {
 								toggleEditGroupName();
 							}}
@@ -159,6 +243,30 @@ export default function GroupSettings({ open, handleClose }) {
 						</div>
 					</div>
 				)}
+				<div></div>
+
+				<div>
+					<div className="mb-4">
+						<strong>Group Deletion</strong>
+					</div>
+					<div className="flex">
+						<button
+							onClick={() => {
+								dispatch(deleteChatGroup(groupId));
+								dispatch(clearChatMessages());
+								dispatch(hideTextInput());
+								dispatch(hideGroupMemberDisplay());
+								toast.success(`Group ${groupName} has been deleted`);
+							}}
+							className="flex items-center w-1/2 justify-center gap-2 h-12 mb-6 text-white
+						bg-red-800 hover:bg-red-700 dark:bg-red-800 dark:hover:bg-red-700 rounded-lg shadow-md
+					 	active:shadow-lg cursor-pointer transition-all"
+						>
+							<TrashIcon className="h-6 w-6" />
+							<span className="font-semibold">Delete Group</span>
+						</button>
+					</div>
+				</div>
 
 				{isLoading && <Spinner />}
 

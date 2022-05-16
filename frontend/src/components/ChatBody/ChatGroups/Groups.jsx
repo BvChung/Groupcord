@@ -9,7 +9,9 @@ import {
 	socketDataAddGroupForMember,
 	socketDataRemoveGroupForMember,
 	socketDataUpdateGroupName,
+	socketDataUpdateGroupIcon,
 	socketDataDeleteGroup,
+	hideGroupMemberDisplay,
 } from "../../../features/groups/groupSlice";
 import {
 	clearChatMessages,
@@ -28,6 +30,7 @@ export default function Groups() {
 		groups,
 		groupDeletedToSocket,
 		updatedGroupNameToSocket,
+		updatedGroupIconToSocket,
 		loadInitialGroups,
 		addedMemberToSocket,
 		removedMemberToSocket,
@@ -76,6 +79,13 @@ export default function Groups() {
 		},
 		[dispatch]
 	);
+	const dispatchUpdatedGroupIconSocketData = useCallback(
+		(data) => {
+			dispatch(socketDataUpdateGroupIcon(data));
+		},
+		[dispatch]
+	);
+	// console.log(groups);
 
 	useEffect(() => {
 		socket.emit("send_added_group_member", addedMemberToSocket);
@@ -112,6 +122,7 @@ export default function Groups() {
 				// Clear chat and hide text input for removed member
 				dispatch(clearChatMessages());
 				dispatch(hideTextInput());
+				dispatch(hideGroupMemberDisplay());
 			}
 			if (data.groupData._id === groupId) {
 				// Updates the current active group with members/users that can be added
@@ -144,6 +155,7 @@ export default function Groups() {
 			if (groupData._id === groupId) {
 				dispatch(clearChatMessages());
 				dispatch(hideTextInput());
+				dispatch(hideGroupMemberDisplay());
 				toast.info(`${groupData.groupName} has been deleted`);
 			}
 		});
@@ -169,7 +181,17 @@ export default function Groups() {
 			socket.off("receive_group_name_updated");
 		};
 	}, [socket, updatedGroupNameToSocket, dispatchUpdatedGroupNameSocketData]);
-	console.log(groups);
+
+	useEffect(() => {
+		socket.emit("send_group_icon_updated", updatedGroupIconToSocket);
+		socket.on("receive_group_icon_updated", (groupData) => {
+			dispatchUpdatedGroupIconSocketData(groupData);
+		});
+
+		return () => {
+			socket.off("receive_group_icon_updated");
+		};
+	}, [socket, updatedGroupIconToSocket, dispatchUpdatedGroupIconSocketData]);
 
 	return (
 		<div

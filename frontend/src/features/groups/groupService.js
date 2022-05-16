@@ -1,7 +1,7 @@
 import axios from "axios";
 import { configuration } from "../helperFunctions/helperFunctions";
 
-const API_URL = "/api/conversation";
+const API_URL = "/api/chatgroups";
 
 const getGroup = async (token) => {
 	const response = await axios.get(API_URL, configuration(token));
@@ -19,9 +19,18 @@ const createGroup = async (conversationData, token) => {
 	return response.data;
 };
 
-const updateGroup = async (groupId, groupName, token) => {
+const deleteGroup = async (groupId, token) => {
+	const response = await axios.delete(
+		`${API_URL}/${groupId}`,
+		configuration(token)
+	);
+
+	return response.data;
+};
+
+const updateName = async (groupId, groupName, token) => {
 	const response = await axios.put(
-		`${API_URL}/update/${groupId}`,
+		`${API_URL}/update/name/${groupId}`,
 		{ groupName },
 		configuration(token)
 	);
@@ -29,9 +38,10 @@ const updateGroup = async (groupId, groupName, token) => {
 	return response.data;
 };
 
-const deleteGroup = async (groupId, token) => {
-	const response = await axios.delete(
-		`${API_URL}/delete/${groupId}`,
+const updateIcon = async (groupId, file, token) => {
+	const response = await axios.put(
+		`${API_URL}/update/icon/${groupId}`,
+		file,
 		configuration(token)
 	);
 
@@ -46,7 +56,7 @@ const getMembers = async (token) => {
 
 const addMembers = async (memberId, groupId, token) => {
 	const response = await axios.put(
-		`${API_URL}/add/${groupId}`,
+		`${API_URL}/members/add/${groupId}`,
 		{ memberId },
 		configuration(token)
 	);
@@ -56,7 +66,7 @@ const addMembers = async (memberId, groupId, token) => {
 
 const removeMembers = async (memberId, groupId, token) => {
 	const response = await axios.put(
-		`${API_URL}/remove/${groupId}`,
+		`${API_URL}/members/remove/${groupId}`,
 		{ memberId },
 		configuration(token)
 	);
@@ -67,7 +77,8 @@ const removeMembers = async (memberId, groupId, token) => {
 const groupService = {
 	getGroup,
 	createGroup,
-	updateGroup,
+	updateName,
+	updateIcon,
 	deleteGroup,
 	getMembers,
 	addMembers,

@@ -1,22 +1,6 @@
 import { current } from "@reduxjs/toolkit";
 
-export const updateGroupData = (state, currentGroup, payload) => {
-	const currentGroupInfoState = current(currentGroup);
-
-	return current(state).map((data) => {
-		if (data._id === currentGroupInfoState.groupId) {
-			return {
-				...payload,
-			};
-		} else {
-			return {
-				...data,
-			};
-		}
-	});
-};
-
-export const updateGroupName = (state, payload) => {
+export const updateData = (state, payload) => {
 	return current(state).map((data) => {
 		if (data._id === payload._id) {
 			return {
@@ -28,6 +12,14 @@ export const updateGroupName = (state, payload) => {
 			};
 		}
 	});
+};
+
+export const findGroupData = (state, payload) => {
+	const currentGroup = payload.find((groupData) => {
+		return groupData._id === current(state).groupId;
+	});
+
+	return currentGroup.members;
 };
 
 export const addMemberToGroup = (state, payload) => {

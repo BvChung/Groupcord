@@ -8,9 +8,9 @@ import groupService from "./groupService";
 import { errorMessage } from "../helperFunctions/helperFunctions";
 import {
 	filterUsers,
-	updateGroupData,
+	updateData,
+	findGroupData,
 	removeMemberFromGroup,
-	updateGroupName,
 	deleteGroupData,
 } from "../helperFunctions/groupFunctions";
 
@@ -29,10 +29,13 @@ const initialState = {
 	removedMemberToSocket: {},
 	groupDeletedToSocket: {},
 	updatedGroupNameToSocket: {},
+	updatedGroupIconToSocket: {},
+	hideGroupMemberDisplay: false,
 	isLoading: false,
 	isSuccess: false,
 	loadInitialGroups: false,
 	isError: false,
+	errorMessage: "",
 };
 
 export const createChatGroups = createAsyncThunk(
@@ -65,7 +68,20 @@ export const updateChatGroupName = createAsyncThunk(
 		try {
 			const token = thunkAPI.getState().auth.user.token;
 			const { groupId, groupName } = groupData;
-			return await groupService.updateGroup(groupId, groupName, token);
+			return await groupService.updateName(groupId, groupName, token);
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+
+export const updateChatGroupIcon = createAsyncThunk(
+	"group/updateGroupIcon",
+	async (groupData, thunkAPI) => {
+		try {
+			const token = thunkAPI.getState().auth.user.token;
+			const { groupId, file } = groupData;
+			return await groupService.updateIcon(groupId, file, token);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -133,21 +149,36 @@ export const groupSlice = createSlice({
 		leaveGroup: (state, action) => {
 			state.groups = deleteGroupData(state.groups, action.payload);
 		},
+		hideGroupMemberDisplay: (state) => {
+			state.hideGroupMemberDisplay = true;
+		},
+		resetGroupMemberDisplay: (state) => {
+			if (state.hideGroupMemberDisplay) {
+				state.hideGroupMemberDisplay = false;
+			}
+		},
 		socketDataUpdateMembers: (state, action) => {
 			state.activeGroupInfo.members = action.payload.groupData.members;
 			state.membersAvailableToAddToGroup =
 				action.payload.membersAvailableToAddToGroup;
 		},
+		socketDataUpdateMembersPeronalInfo: (state, action) => {
+			state.activeGroupInfo.members = updateData(
+				state.activeGroupInfo.members,
+				action.payload
+			);
+		},
 		socketDataAddGroupForMember: (state, action) => {
-			console.log("update group");
 			state.groups = [...current(state.groups), action.payload.groupData];
 		},
 		socketDataRemoveGroupForMember: (state, action) => {
-			console.log("remove group");
 			state.groups = removeMemberFromGroup(state.groups, action.payload);
 		},
 		socketDataUpdateGroupName: (state, action) => {
-			state.groups = updateGroupName(state.groups, action.payload);
+			state.groups = updateData(state.groups, action.payload);
+		},
+		socketDataUpdateGroupIcon: (state, action) => {
+			state.groups = updateData(state.groups, action.payload);
 		},
 		socketDataDeleteGroup: (state, action) => {
 			state.groups = deleteGroupData(state.groups, action.payload);
@@ -173,6 +204,13 @@ export const groupSlice = createSlice({
 			state.isLoading = false;
 			state.loadInitialGroups = true;
 			state.groups = action.payload.userConversations;
+
+			if (state.activeGroupInfo.groupId !== "Global") {
+				state.activeGroupInfo.members = findGroupData(
+					state.activeGroupInfo,
+					action.payload.userConversations
+				);
+			}
 		});
 		builder.addCase(getChatGroups.rejected, (state) => {
 			state.isLoading = false;
@@ -187,15 +225,12 @@ export const groupSlice = createSlice({
 		});
 		builder.addCase(addGroupMembers.fulfilled, (state, action) => {
 			state.isLoading = false;
+			console.log(action.payload);
 			// Update current group info
 			state.activeGroupInfo.members = action.payload.updatedMembers.members;
 
 			// Update groups
-			state.groups = updateGroupData(
-				state.groups,
-				state.activeGroupInfo,
-				action.payload.updatedMembers
-			);
+			state.groups = updateData(state.groups, action.payload.updatedMembers);
 
 			state.membersAvailableToAddToGroup = filterUsers(
 				state.registeredMembers,
@@ -216,11 +251,7 @@ export const groupSlice = createSlice({
 
 			state.activeGroupInfo.members = action.payload.updatedMembers.members;
 
-			state.groups = updateGroupData(
-				state.groups,
-				state.activeGroupInfo,
-				action.payload.updatedMembers
-			);
+			state.groups = updateData(state.groups, action.payload.updatedMembers);
 
 			state.membersAvailableToAddToGroup = filterUsers(
 				state.registeredMembers,
@@ -255,10 +286,25 @@ export const groupSlice = createSlice({
 		});
 		builder.addCase(updateChatGroupName.fulfilled, (state, action) => {
 			state.isLoading = false;
+
 			state.activeGroupInfo.groupName =
 				action.payload.updatedGroupName.groupName;
 			state.groups = action.payload.allGroups;
 			state.updatedGroupNameToSocket = action.payload.updatedGroupName;
+		});
+		builder.addCase(updateChatGroupIcon.pending, (state, action) => {
+			state.isLoading = true;
+		});
+		builder.addCase(updateChatGroupIcon.fulfilled, (state, action) => {
+			state.isLoading = false;
+
+			state.groups = updateData(state.groups, action.payload);
+			state.updatedGroupIconToSocket = action.payload;
+		});
+		builder.addCase(updateChatGroupIcon.rejected, (state, action) => {
+			state.isLoading = false;
+			state.isError = true;
+			state.errorMessage = action.payload;
 		});
 	},
 });
@@ -266,12 +312,16 @@ export const groupSlice = createSlice({
 export const {
 	resetGroupState,
 	leaveGroup,
-	socketDataUpdateMembers,
+	hideGroupMemberDisplay,
+	resetGroupMemberDisplay,
 	updateActiveGroup,
+	socketDataUpdateMembers,
+	socketDataUpdateMembersPeronalInfo,
 	socketDataUpdateGroups,
 	socketDataAddGroupForMember,
 	socketDataRemoveGroupForMember,
 	socketDataUpdateGroupName,
+	socketDataUpdateGroupIcon,
 	socketDataDeleteGroup,
 } = groupSlice.actions;
 export default groupSlice.reducer;
