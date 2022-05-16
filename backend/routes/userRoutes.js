@@ -5,6 +5,9 @@ const {
 	loginUser,
 	getAllUsers,
 	updateAccount,
+	updateUsername,
+	updateEmail,
+	updatePassword,
 	updateAvatar,
 } = require("../controller/userController");
 
@@ -14,7 +17,11 @@ const { uploadFile } = require("../middleware/multerMiddleware");
 router.post("/register", registerUser);
 router.post("/", loginUser);
 router.get("/all", authWithToken, getAllUsers);
+
 router.put("/account", authWithToken, updateAccount);
+router.put("/account/username", authWithToken, updateUsername);
+router.put("/account/email", authWithToken, updateEmail);
+router.put("/account/password", authWithToken, updatePassword);
 router.put("/account/profile", [authWithToken, uploadFile], updateAvatar);
 
 module.exports = router;

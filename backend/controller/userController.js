@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Messages = require("../models/messageModel");
+const Conversation = require("../models/conversationModel");
 
 // For schema data:
 // .id => 6278dd9dadc7cdbc6f7ec28c
@@ -29,13 +30,11 @@ const registerUser = asyncHandler(async (req, res) => {
 
 	if (emailExists) {
 		res.status(400);
-		throw new Error(
-			"An account registered with this email address already exists."
-		);
+		throw new Error("This email address is already in use.");
 	}
 	if (usernameExists) {
 		res.status(400);
-		throw new Error("This username is unavailable.");
+		throw new Error("This username is taken. Try another.");
 	}
 
 	// Hash(encrypt) password
@@ -86,7 +85,7 @@ const loginUser = asyncHandler(async (req, res) => {
 		});
 	} else {
 		res.status(400);
-		throw new Error("Could not find account, try again.");
+		throw new Error("Your email and/or password do not match.");
 	}
 });
 
@@ -105,12 +104,12 @@ const updateAccount = asyncHandler(async (req, res) => {
 		!(await bcrypt.compare(currentPassword, currentUser.password))
 	) {
 		res.status(400);
-		throw new Error("Current password is incorrect, try again.");
+		throw new Error("Current password is incorrect. Try again.");
 	}
 
 	if (currentPassword && newPassword && currentPassword === newPassword) {
 		res.status(400);
-		throw new Error("New password cannot be the same as your old password.");
+		throw new Error("New password cannot be the same as your last password.");
 	}
 
 	if (
@@ -136,9 +135,22 @@ const updateAccount = asyncHandler(async (req, res) => {
 		}
 	);
 
-	// Find messages in Message schema with user id then update username
 	if (username !== currentUser.username) {
+		// Find messages in Message schema with user id then update username
 		await Messages.updateMany({ user: currentUser.id }, { username: username });
+
+		// Update member list in Group Schema with new username
+		await Conversation.updateMany(
+			{
+				members: {
+					$elemMatch: {
+						_id: currentUser.id,
+						username: currentUser.username,
+					},
+				},
+			},
+			{ $set: { "members.$.username": username } }
+		);
 	}
 
 	return res.status(200).json({
@@ -151,11 +163,136 @@ const updateAccount = asyncHandler(async (req, res) => {
 	});
 });
 
+const updateUsername = asyncHandler(async (req, res) => {
+	const currentUser = await User.findById(req.user._id);
+
+	const { username } = req.body;
+
+	if (!username) return;
+
+	if (currentUser.username === username) {
+		res.status(400);
+		throw new Error("Your new username cannot be the same as the original.");
+	}
+
+	// Update user information
+	await User.findByIdAndUpdate(
+		req.user._id,
+		{
+			username,
+		},
+		{
+			new: true,
+		}
+	);
+
+	// Find messages in Message schema with user id then update username
+	await Messages.updateMany({ user: currentUser.id }, { username: username });
+
+	// Update member list in Group Schema with new username
+	await Conversation.updateMany(
+		{
+			members: {
+				$elemMatch: {
+					_id: currentUser.id,
+					username: currentUser.username,
+				},
+			},
+		},
+		{ $set: { "members.$.username": username } }
+	);
+
+	return res.status(200).json({
+		_id: currentUser.id,
+		name: currentUser.name,
+		username: username ? username : currentUser.username,
+		email: currentUser.email,
+		userAvatar: currentUser.userAvatar,
+		token: generateToken(currentUser._id),
+	});
+});
+
+const updateEmail = asyncHandler(async (req, res) => {
+	const currentUser = await User.findById(req.user._id);
+
+	const { email } = req.body;
+
+	if (currentUser.email === email) {
+		res.status(400);
+		throw new Error("Your new email cannot be the same as the original.");
+	}
+
+	// Update user information
+	await User.findByIdAndUpdate(
+		req.user._id,
+		{
+			email,
+		},
+		{
+			new: true,
+		}
+	);
+
+	return res.status(200).json({
+		_id: currentUser.id,
+		name: currentUser.name,
+		username: currentUser.username,
+		email: email ? email : currentUser.email,
+		userAvatar: currentUser.userAvatar,
+		token: generateToken(currentUser._id),
+	});
+});
+
+const updatePassword = asyncHandler(async (req, res) => {
+	const currentUser = await User.findById(req.user._id);
+
+	const { currentPassword, newPassword } = req.body;
+
+	let hashedPassword;
+	if (
+		currentPassword &&
+		!(await bcrypt.compare(currentPassword, currentUser.password))
+	) {
+		res.status(400);
+		throw new Error("Current password is incorrect. Try again.");
+	}
+
+	if (currentPassword && newPassword && currentPassword === newPassword) {
+		res.status(400);
+		throw new Error("Your new password cannot be the same as the original.");
+	}
+
+	if (
+		currentPassword &&
+		newPassword &&
+		(await bcrypt.compare(currentPassword, currentUser.password))
+	) {
+		const salt = await bcrypt.genSalt(10);
+		hashedPassword = await bcrypt.hash(newPassword, salt);
+	}
+
+	// Update user information
+	await User.findByIdAndUpdate(
+		req.user._id,
+		{
+			password: hashedPassword ? hashedPassword : currentUser.password,
+		},
+		{
+			new: true,
+		}
+	);
+
+	return res.status(200).json({
+		_id: currentUser.id,
+		name: currentUser.name,
+		username: currentUser.username,
+		email: currentUser.email,
+		userAvatar: currentUser.userAvatar,
+		token: generateToken(currentUser._id),
+	});
+});
+
 const updateAvatar = asyncHandler(async (req, res) => {
-	// if (!req.file) {
-	// 	res.status(400);
-	// 	throw new Error("File is unable to be found.");
-	// }
 	const currentUser = await User.findById(req.user._id);
 
 	await User.findByIdAndUpdate(
@@ -168,11 +305,24 @@ const updateAvatar = asyncHandler(async (req, res) => {
 		}
 	);
 
-	// Find messages in Message schema with user id then update avatar
 	if (req.file !== currentUser.userAvatar) {
+		// Find messages in Message schema with user id then update avatar
 		await Messages.updateMany(
 			{ user: currentUser.id },
 			{ userAvatar: req.file.filename }
+		);
+
+		// Update member list in Group Schema with new avatar
+		await Conversation.updateMany(
+			{
+				members: {
+					$elemMatch: {
+						_id: currentUser.id,
+						userAvatar: currentUser.userAvatar,
+					},
+				},
+			},
+			{ $set: { "members.$.userAvatar": req.file.filename } }
 		);
 	}
 
@@ -202,7 +352,6 @@ const updateAvatar = asyncHandler(async (req, res) => {
 // @access Private
 const getAllUsers = asyncHandler(async (req, res) => {
 	const users = await User.find({}).select("username");
-	const allUsers = await User.find({});
 
 	const returnedUsers = users.filter((user) => {
 		return user.username !== req.user.username;
@@ -215,6 +364,9 @@ module.exports = {
 	registerUser,
 	loginUser,
 	updateAccount,
+	updateUsername,
+	updateEmail,
+	updatePassword,
 	getAllUsers,
 	updateAvatar,
 };
