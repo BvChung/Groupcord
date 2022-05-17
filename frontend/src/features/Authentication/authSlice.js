@@ -52,8 +52,42 @@ export const updateUser = createAsyncThunk(
 	"auth/update",
 	async (userData, thunkAPI) => {
 		try {
+			console.log(userData);
 			const token = thunkAPI.getState().auth.user.token;
 			return await authService.update(userData, token);
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+export const updateAccountUsername = createAsyncThunk(
+	"auth/updateUsername",
+	async (userData, thunkAPI) => {
+		try {
+			const token = thunkAPI.getState().auth.user.token;
+			return await authService.updateUsername(userData, token);
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+export const updateAccountEmail = createAsyncThunk(
+	"auth/updateEmail",
+	async (userData, thunkAPI) => {
+		try {
+			const token = thunkAPI.getState().auth.user.token;
+			return await authService.updateEmail(userData, token);
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+export const updateAccountPassword = createAsyncThunk(
+	"auth/updatePassword",
+	async (userData, thunkAPI) => {
+		try {
+			const token = thunkAPI.getState().auth.user.token;
+			return await authService.updatePassword(userData, token);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}

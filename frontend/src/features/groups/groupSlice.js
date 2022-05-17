@@ -225,7 +225,6 @@ export const groupSlice = createSlice({
 		});
 		builder.addCase(addGroupMembers.fulfilled, (state, action) => {
 			state.isLoading = false;
-			console.log(action.payload);
 			// Update current group info
 			state.activeGroupInfo.members = action.payload.updatedMembers.members;
 

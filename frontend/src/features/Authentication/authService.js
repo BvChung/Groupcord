@@ -48,6 +48,44 @@ const update = async (userData, token) => {
 	return response.data;
 };
 
+const updateUsername = async (userData, token) => {
+	const response = await axios.put(
+		`${API_URL}/account/username`,
+		userData,
+		configuration(token)
+	);
+
+	if (response.data) {
+		localStorage.setItem("user", JSON.stringify(response.data));
+	}
+
+	return response.data;
+};
+
+const updateEmail = async (userData, token) => {
+	const response = await axios.put(
+		`${API_URL}/account/email`,
+		userData,
+		configuration(token)
+	);
+
+	if (response.data) {
+		localStorage.setItem("user", JSON.stringify(response.data));
+	}
+
+	return response.data;
+};
+
+const updatePassword = async (userData, token) => {
+	const response = await axios.put(
+		`${API_URL}/account/password`,
+		userData,
+		configuration(token)
+	);
+
+	return response.data;
+};
+
 const updateAvatar = async (file, token) => {
 	const response = await axios.put(
 		`${API_URL}/account/profile`,
@@ -72,6 +110,9 @@ const authService = {
 	logout,
 	login,
 	update,
+	updateUsername,
+	updateEmail,
+	updatePassword,
 	updateAvatar,
 };
 
