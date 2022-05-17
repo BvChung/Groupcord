@@ -33,7 +33,7 @@ export default function ChatNav() {
 	return (
 		<nav
 			className="flex items-center justify-between w-full px-4 py-2 h-14 bg-offwhite
-		border-b-[1px] border-b-gray-300 border-transparent shadow-md dark:border-dark5 dark:bg-dark1"
+		border-b-[1px] border-b-gray-300 border-transparent shadow-lg dark:border-dark6 dark:bg-dark3"
 		>
 			<div>
 				{activeGroupMenu ? (

@@ -31,19 +31,14 @@ function Chat() {
 		},
 		[socket]
 	);
-
 	const dispatchGetGroups = useCallback(() => {
 		dispatch(getChatGroups());
 	}, [dispatch]);
 
 	useEffect(() => {
-		// console.log("initial");
 		dispatchGetGroups();
 	}, [dispatchGetGroups]);
-	// useEffect(() => {
-	// 	console.log("initial");
-	// 	dispatch(getChatGroups());
-	// }, [dispatch]);
+
 	useEffect(() => {
 		createUser(user);
 	}, [user, createUser]);
@@ -70,7 +65,7 @@ function Chat() {
 				toggleGroupMenu,
 			}}
 		>
-			<div className="flex flex-col dark:bg-slate-900 w-screen h-screen ">
+			<div className="flex flex-col w-screen h-screen ">
 				<Nav />
 				<ChatBody />
 				{openGroupModal && <GroupModal />}

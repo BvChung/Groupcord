@@ -93,9 +93,9 @@ function Login() {
 			sm:items-center bg-white dark:bg-dark2"
 		>
 			<section
-				className="h-max w-full mt-14
+				className="h-max w-full mt-14 dark:bg-dark3
 				sm:w-fit sm:px-4 sm:py-8 sm:border-[1px] border-gray-300 rounded-md 
-				dark:border-dark5"
+				dark:border-dark6"
 			>
 				<div className="flex items-center justify-center gap-2 mb-2 sm:mb-4">
 					<AnnotationIcon className="h-10 w-10 text-sky-600" />
