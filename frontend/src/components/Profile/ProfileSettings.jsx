@@ -1,35 +1,20 @@
-import { useState, useEffect, useCallback, useRef, useContext } from "react";
-import TextField from "@mui/material/TextField";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
 	updateUser,
 	resetState,
-	updateAccountAvatar,
 	resetSuccessNotifications,
 } from "../../features/authentication/authSlice";
-import {
-	PencilAltIcon,
-	PencilIcon,
-	ArrowLeftIcon,
-	MailIcon,
-	MailOpenIcon,
-	LockClosedIcon,
-	LockOpenIcon,
-} from "@heroicons/react/outline";
-import { PhotographIcon } from "@heroicons/react/solid";
 import { toast } from "react-toastify";
-import { SocketContext } from "../../appContext/socketContext";
+import EditEmail from "./EditEmail/EditEmail";
 import EditAvatar from "./EditAvatar/EditAvatar";
-import { Tooltip, Checkbox, FormControlLabel } from "@mui/material";
-import DefaultAvatar from "../../assets/images/avatar.jpg";
+import EditUsername from "./EditUsername/EditUsername";
+import EditPassword from "./EditPassword/EditPassword";
 
 export default function ProfileSettings() {
 	const dispatch = useDispatch();
-	const ref = useRef();
 	const toastId = useRef(null);
-	const imageEnvPath = process.env.REACT_APP_PUBLIC_FOLDER;
 
-	const { darkMode } = useSelector((state) => state.theme);
 	const { user, updateError, message, isSuccess, changedAvatar } = useSelector(
 		(state) => state.auth
 	);
@@ -41,12 +26,10 @@ export default function ProfileSettings() {
 		newPassword: "",
 		confirmNewPassword: "",
 	});
-	const [imageUpload, setImageUpload] = useState(null);
-	const [showChangeAvatar, setShowChangeAvatar] = useState(false);
+
 	const [editUsername, setEditUsername] = useState(false);
 	const [editEmail, setEditEmail] = useState(false);
 	const [editPassword, setEditPassword] = useState(false);
-	const [showPassword, setShowPassword] = useState(false);
 
 	function toggleEditUsername() {
 		setEditUsername((prev) => !prev);
@@ -56,9 +39,6 @@ export default function ProfileSettings() {
 	}
 	function toggleEditPassword() {
 		setEditPassword((prev) => !prev);
-	}
-	function toggleShowPasswords() {
-		setShowPassword((prev) => !prev);
 	}
 
 	const resetFormData = useCallback(() => {
@@ -70,6 +50,7 @@ export default function ProfileSettings() {
 			confirmNewPassword: "",
 		});
 	}, [setFormData, user.username, user.email]);
+
 	function resetUsernameForm() {
 		setFormData((prevData) => {
 			return {
@@ -155,19 +136,6 @@ export default function ProfileSettings() {
 		dispatch(updateUser(sentData));
 	}
 
-	function uploadAvatarImage(e) {
-		e.preventDefault();
-
-		if (imageUpload) {
-			const file = new FormData();
-			file.append("image", imageUpload);
-
-			dispatch(updateAccountAvatar(file));
-			ref.current.value = "";
-			setImageUpload(null);
-		}
-	}
-
 	const displayError = useCallback(() => {
 		if (
 			updateError &&
@@ -190,7 +158,7 @@ export default function ProfileSettings() {
 			dispatch(resetSuccessNotifications());
 		}
 	}, [isSuccess, changedAvatar, dispatch, resetFormData]);
-	// console.log(updatedUserDataToSocket);
+	console.log(formData);
 
 	const resetAfterUpdate = useCallback(() => {
 		dispatch(resetState());
@@ -205,17 +173,16 @@ export default function ProfileSettings() {
 		};
 	}, [displaySuccess, displayError, resetAfterUpdate]);
 
-	const iconStyle = darkMode ? "text-gray-200" : "text-gray-700";
+	const iconStyle = "dark:text-gray-200 text-gray-700";
 	const accountInfoStyle =
 		"text-gray1 dark:text-white border-b-[1px] border-t-[1px] border-gray-300 hover:bg-gray-100 dark:border-gray-500 dark:hover:bg-slate-800 ";
-	const formStyle =
-		"border-[1px] rounded-md border-gray-300 dark:border-gray-500 ";
+	const formStyle = "border-[1px] border-gray-300 dark:border-gray-500 ";
 	const returnStyle = "hover:bg-gray-200 dark:hover:bg-dark4";
 
 	return (
-		<div className="flex justify-center dark:bg-menu bg-white h-full">
-			<div className="w-full sm:max-w-4xl px-4 py-6 sm:py-6 sm:px-8 ">
-				<div className="dark:text-white text-gray1 mb-6 py-2 ">
+		<div className="flex justify-center overflow-auto dark:bg-dark2 bg-white h-screen">
+			<div className="w-full relative sm:max-w-4xl px-4 py-6 sm:py-6 sm:px-8 ">
+				<div className="dark:text-white text-gray1 mb-4 py-2 ">
 					<h1
 						className="text-gray1 dark:text-white border-b-[1px] border-gray-300 dark:border-gray-500 
 						text-3xl text-center font-medium pb-2 font-sans"
@@ -226,248 +193,83 @@ export default function ProfileSettings() {
 
 				<EditAvatar user={user} />
 
-				<div className="">
-					<div>
-						{!editUsername ? (
-							<Tooltip arrow describeChild title="Edit Username">
-								<div
-									className={`grid grid-cols-3 items-center py-2 sm:py-[.84rem] px-2 sm:px-4 w-full mb-6 cursor-pointer
-											${accountInfoStyle}`}
-									onClick={() => {
-										toggleEditUsername();
-										if (editEmail) {
-											setEditEmail(false);
-											resetEmailForm();
-										}
-										if (editPassword) {
-											setEditPassword(false);
-											resetPasswordForm();
-										}
-									}}
-								>
-									<div className="flex basis-24 sm:basis-32 items-center">
-										<p className="text-xs leading-6 uppercase font-medium">
-											Username
-										</p>
-									</div>
-									<div className="flex basis-72 sm:basis-96">
-										<p className="text-sm sm:text-base">{user.username}</p>
-									</div>
-									<div className="flex justify-end">
-										<PencilIcon
-											className={`h-6 w-6 sm:h-7 sm:w-7 ${iconStyle}`}
-										/>
-									</div>
-								</div>
-							</Tooltip>
-						) : (
-							<div
-								className={`flex flex-col mb-6 px-4 py-4 sm:px-6 ${formStyle}`}
-							>
-								<div className="flex items-center justify-between">
-									<Tooltip arrow describeChild title="Click to go back">
-										<button
-											onClick={() => {
-												resetUsernameForm();
-												toggleEditUsername();
-											}}
-										>
-											<ArrowLeftIcon
-												className={`h-9 w-9 rounded-full p-2 ${returnStyle}`}
-											/>
-										</button>
-									</Tooltip>
-									<PencilAltIcon className={`h-6 w-6 ${iconStyle}`} />
-								</div>
-								<TextField
-									name="username"
-									value={formData.username}
-									onChange={handleFormData}
-									margin="normal"
-									id="username"
-									label="Username"
-									type="text"
-									fullWidth
-									variant="outlined"
-								/>
-							</div>
-						)}
+				<div className="w-full">
+					<EditUsername
+						user={user}
+						formData={formData}
+						handleFormData={handleFormData}
+						resetUsernameForm={resetUsernameForm}
+						editUsername={editUsername}
+						toggleEditUsername={toggleEditUsername}
+						editEmail={editEmail}
+						setEditEmail={setEditEmail}
+						resetEmailForm={resetEmailForm}
+						editPassword={editPassword}
+						setEditPassword={setEditPassword}
+						resetPasswordForm={resetPasswordForm}
+						accountInfoStyle={accountInfoStyle}
+						iconStyle={iconStyle}
+						formStyle={formStyle}
+						returnStyle={returnStyle}
+					/>
 
-						{!editEmail ? (
-							<Tooltip arrow describeChild title="Edit Email">
-								<div
-									className={`grid grid-cols-3 mb-6 items-center px-2 py-2 sm:py-[.81rem] sm:px-4 w-full cursor-pointer
-											${accountInfoStyle}`}
-									onClick={() => {
-										toggleEditEmail();
-										if (editUsername) {
-											setEditUsername(false);
-											resetUsernameForm();
-										}
-										if (editPassword) {
-											setEditPassword(false);
-											resetPasswordForm();
-										}
-									}}
-								>
-									<div className="flex basis-24 sm:basis-32 items-center">
-										<p className="text-xs leading-6 uppercase font-medium">
-											Email
-										</p>
-									</div>
-									<div className="flex basis-64 sm:basis-96">
-										<p className="text-sm sm:text-base">{user.email}</p>
-									</div>
-									<div className="flex justify-end">
-										<MailIcon
-											className={`h-6 w-6 sm:h-7 sm:w-7 ${iconStyle}`}
-										/>
-									</div>
-								</div>
-							</Tooltip>
-						) : (
-							<div
-								className={`flex flex-col mb-6 px-4 py-4 sm:px-6 ${formStyle}`}
-							>
-								<div className="flex items-center justify-between">
-									<Tooltip arrow describeChild title="Click to go back">
-										<button
-											onClick={() => {
-												resetEmailForm();
-												toggleEditEmail();
-											}}
-										>
-											<ArrowLeftIcon
-												className={`h-9 w-9 rounded-full p-2 ${returnStyle}`}
-											/>
-										</button>
-									</Tooltip>
-									<MailOpenIcon className={`h-6 w-6 ${iconStyle}`} />
-								</div>
-								<TextField
-									name="email"
-									value={formData.email}
-									onChange={handleFormData}
-									margin="normal"
-									id="email"
-									label="Email"
-									type="text"
-									fullWidth
-									variant="outlined"
-								/>
-							</div>
-						)}
-					</div>
+					<EditEmail
+						user={user}
+						formData={formData}
+						handleFormData={handleFormData}
+						resetUsernameForm={resetUsernameForm}
+						editUsername={editUsername}
+						setEditUsername={setEditUsername}
+						editEmail={editEmail}
+						toggleEditEmail={toggleEditEmail}
+						resetEmailForm={resetEmailForm}
+						editPassword={editPassword}
+						setEditPassword={setEditPassword}
+						resetPasswordForm={resetPasswordForm}
+						accountInfoStyle={accountInfoStyle}
+						iconStyle={iconStyle}
+						formStyle={formStyle}
+						returnStyle={returnStyle}
+					/>
 
-					<div>
-						{!editPassword ? (
-							<Tooltip arrow describeChild title="Edit Password">
-								<div
-									className={`grid grid-cols-3 items-center px-2 py-2 sm:px-4 sm:py-[.81rem] w-full cursor-pointer
-											${accountInfoStyle}`}
-									onClick={() => {
-										toggleEditPassword();
-										if (editUsername) {
-											setEditUsername(false);
-											resetUsernameForm();
-										}
-										if (editEmail) {
-											setEditEmail(false);
-											resetEmailForm();
-										}
-									}}
-								>
-									<div className="flex items-center">
-										<p className="text-xs leading-6 uppercase font-medium">
-											Password
-										</p>
-									</div>
-									<div className="flex basis-96">
-										<p className="text-base">******</p>
-									</div>
-									<div className="flex justify-end">
-										<LockClosedIcon
-											className={`h-6 w-6 sm:h-7 sm:w-7 ${iconStyle}`}
-										/>
-									</div>
-								</div>
-							</Tooltip>
-						) : (
-							<div className={`flex flex-col px-4 py-4 sm:px-6 ${formStyle}`}>
-								<div className="flex items-center justify-between">
-									<Tooltip arrow describeChild title="Click to go back">
-										<button
-											onClick={() => {
-												resetPasswordForm();
-												toggleEditPassword();
-											}}
-											className=""
-										>
-											<ArrowLeftIcon
-												className={`h-9 w-9 rounded-full p-2 ${returnStyle}`}
-											/>
-										</button>
-									</Tooltip>
-									<LockOpenIcon className={`h-6 w-6 ${iconStyle}`} />
-								</div>
-								<fieldset className="flex-col">
-									<TextField
-										name="currentPassword"
-										value={formData.currentPassword}
-										onChange={handleFormData}
-										margin="normal"
-										id="currentPassword"
-										label="Verify Current Password"
-										type={showPassword ? "text" : "password"}
-										fullWidth
-										variant="outlined"
-										className="bg-transparent"
-									/>
-									<TextField
-										name="newPassword"
-										value={formData.newPassword}
-										onChange={handleFormData}
-										margin="normal"
-										id="newPassword"
-										label="New Password"
-										type={showPassword ? "text" : "password"}
-										fullWidth
-										variant="outlined"
-									/>
-									<TextField
-										name="confirmNewPassword"
-										value={formData.confirmNewPassword}
-										onChange={handleFormData}
-										margin="normal"
-										id="confirmNewPassword"
-										label="Confirm New Password"
-										type={showPassword ? "text" : "password"}
-										fullWidth
-										variant="outlined"
-									/>
-									<div className="pl-[.1rem] mt-1">
-										<FormControlLabel
-											control={<Checkbox onClick={toggleShowPasswords} />}
-											label="Show password"
-										/>
-									</div>
-								</fieldset>
-							</div>
-						)}
-					</div>
+					<EditPassword
+						formData={formData}
+						handleFormData={handleFormData}
+						resetUsernameForm={resetUsernameForm}
+						editUsername={editUsername}
+						setEditUsername={setEditUsername}
+						editEmail={editEmail}
+						resetEmailForm={resetEmailForm}
+						editPassword={editPassword}
+						setEditEmail={setEditEmail}
+						toggleEditPassword={toggleEditPassword}
+						resetPasswordForm={resetPasswordForm}
+						accountInfoStyle={accountInfoStyle}
+						iconStyle={iconStyle}
+						formStyle={formStyle}
+						returnStyle={returnStyle}
+					/>
 				</div>
 
 				{(editEmail || editPassword || editUsername) && (
-					<div className="md:col-start-2 flex justify-end items-center mt-4 md:mt-5 gap-4">
+					<div className="flex justify-end items-center mt-4 md:mt-5 gap-4">
 						<button
 							onClick={(e) => {
 								handleSubmit(e);
 							}}
-							className={`${
-								darkMode
-									? "bg-sky-800 text-white hover:bg-sky-900 active:bg-sky-800"
-									: "bg-sky-600 text-gray-100 hover:bg-sky-700 active:bg-sky-600"
-							}  w-20 px-1 py-[.65rem] text-sm font-bold rounded-md`}
+							className="dark:bg-sky-800 dark:text-white dark:hover:bg-sky-900 dark:active:bg-sky-800 
+								bg-sky-600 text-gray-100 hover:bg-sky-700 active:bg-sky-600
+							  	w-20 px-1 py-[.65rem] text-sm font-bold rounded-md transition-all"
+						>
+							Cancel
+						</button>
+						<button
+							onClick={(e) => {
+								handleSubmit(e);
+							}}
+							className="dark:bg-sky-800 dark:text-white dark:hover:bg-sky-900 dark:active:bg-sky-800 
+								bg-sky-600 text-gray-100 hover:bg-sky-700 active:bg-sky-600
+							  	w-20 px-1 py-[.65rem] text-sm font-bold rounded-md transition-all"
 						>
 							Save
 						</button>

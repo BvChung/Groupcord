@@ -196,9 +196,9 @@ export default function Groups() {
 	return (
 		<div
 			className={`${showGroupsStyle} absolute height lg:static transition-all z-[50] border-r-[1px] 
-				border-r-gray-300 dark:border-r-dark5 w-full sm:max-w-[400px] bg-offwhite sm:shadow-xl lg:shadow-md dark:bg-dark2 `}
+				border-r-gray-300 dark:border-r-dark6 w-full sm:max-w-[400px] bg-white sm:shadow-xl lg:shadow-md dark:bg-dark3`}
 		>
-			<div className="flex items-center justify-between mb-4 mx-4 px-2 py-4 pb-4 h-16 border-b-[1px] border-b-gray-300 dark:border-b-dark5 ">
+			<div className="flex items-center justify-between mb-4 mx-4 px-2 py-4 pb-4 h-16 border-b-[1px] border-b-gray-300 dark:border-b-dark6 ">
 				<p className="text-gray1 text-2xl font-bold dark:text-white">
 					Group Messages
 				</p>
@@ -219,7 +219,7 @@ export default function Groups() {
 
 				<div
 					className="flex items-center justify-center border-[1px] border-gray-300 dark:border-gray-600 dark:bg-gray-800 
-								bg-white focus-within:border-sky-500 dark:focus-within:border-sky-700 w-full p-[6px] rounded-3xl shadow-sm"
+								bg-offwhite focus-within:border-sky-500 dark:focus-within:border-sky-700 w-full p-[6px] rounded-3xl shadow-sm"
 				>
 					<input
 						name="searchText"
@@ -233,7 +233,7 @@ export default function Groups() {
 				</div>
 			</div>
 
-			<section className="mx-6 h-auto py-4 px-5 bg-white dark:bg-dark3 rounded-md shadow-md">
+			<section className="mx-6 h-auto py-4 px-5 bg-offwhite dark:bg-dark5 rounded-md shadow-md">
 				<div
 					className="h-auto max-height bg-transparent py-1 pr-2
 						rounded-lg overflow-y-auto"
