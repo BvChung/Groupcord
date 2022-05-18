@@ -14,6 +14,11 @@ const Conversation = require("../models/conversationModel");
 // Generate a JWT: used to validate user
 const generateToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_SECRET, {
+		expiresIn: "15s",
+	});
+};
+const generateRefreshToken = (id) => {
+	return jwt.sign({ id }, process.env.REFRESH_JWT_SECRET, {
 		expiresIn: "1d",
 	});
 };
@@ -35,6 +40,10 @@ const registerUser = asyncHandler(async (req, res) => {
 	if (usernameExists) {
 		res.status(400);
 		throw new Error("This username is taken. Try another.");
+	}
+	if (password.slice(0, 1) === " " || password.slice(-1) === " ") {
+		res.status(400);
+		throw new Error("Your password cannot begin or end with a blank space.");
 	}
 
 	// Hash(encrypt) password
@@ -84,91 +93,19 @@ const loginUser = asyncHandler(async (req, res) => {
 			token: generateToken(user._id),
 		});
 	} else {
-		res.status(400);
-		throw new Error("Your email and/or password do not match.");
+		res.status(401);
+		throw new Error("Email and/or password do not match.");
 	}
 });
 
 // @desc Update user data
 // @route PUT /api/users/me
 // @access Private
-const updateAccount = asyncHandler(async (req, res) => {
-	const currentUser = await User.findById(req.user._id);
-
-	const { username, email, currentPassword, newPassword } = req.body;
-
-	// If user updates password then hash it
-	let hashedPassword;
-	if (
-		currentPassword &&
-		!(await bcrypt.compare(currentPassword, currentUser.password))
-	) {
-		res.status(400);
-		throw new Error("Current password is incorrect. Try again.");
-	}
-
-	if (currentPassword && newPassword && currentPassword === newPassword) {
-		res.status(400);
-		throw new Error("New password cannot be the same as your last password.");
-	}
-
-	if (
-		currentPassword &&
-		newPassword &&
-		(await bcrypt.compare(currentPassword, currentUser.password))
-	) {
-		const salt = await bcrypt.genSalt(10);
-		hashedPassword = await bcrypt.hash(newPassword, salt);
-	}
-
-	// Update user information
-	await User.findByIdAndUpdate(
-		req.user._id,
-		{
-			username,
-			email,
-			password: hashedPassword ? hashedPassword : currentUser.password,
-			// userAvatar: req.file ? req.file : currentUser.userAvatar,
-		},
-		{
-			new: true,
-		}
-	);
-
-	if (username !== currentUser.username) {
-		// Find messages in Message schema with user id then update username
-		await Messages.updateMany({ user: currentUser.id }, { username: username });
-
-		// Update member list in Group Schema with new username
-		await Conversation.updateMany(
-			{
-				members: {
-					$elemMatch: {
-						_id: currentUser.id,
-						username: currentUser.username,
-					},
-				},
-			},
-			{ $set: { "members.$.username": username } }
-		);
-	}
-
-	return res.status(200).json({
-		_id: currentUser.id,
-		name: currentUser.name,
-		username: username ? username : currentUser.username,
-		email: email ? email : currentUser.email,
-		userAvatar: currentUser.userAvatar,
-		token: generateToken(currentUser._id),
-	});
-});
 
 const updateUsername = asyncHandler(async (req, res) => {
 	const currentUser = await User.findById(req.user._id);
 
 	const { username } = req.body;
-
-	if (!username) return;
 
 	if (currentUser.username === username) {
 		res.status(400);
@@ -208,7 +145,6 @@ const updateUsername = asyncHandler(async (req, res) => {
 		username: username ? username : currentUser.username,
 		email: currentUser.email,
 		userAvatar: currentUser.userAvatar,
-		token: generateToken(currentUser._id),
 	});
 });
 
@@ -239,7 +175,6 @@ const updateEmail = asyncHandler(async (req, res) => {
 		username: currentUser.username,
 		email: email ? email : currentUser.email,
 		userAvatar: currentUser.userAvatar,
-		token: generateToken(currentUser._id),
 	});
 });
 
@@ -248,7 +183,6 @@ const updatePassword = asyncHandler(async (req, res) => {
 
 	const { currentPassword, newPassword } = req.body;
 
-	let hashedPassword;
 	if (
 		currentPassword &&
 		!(await bcrypt.compare(currentPassword, currentUser.password))
@@ -257,19 +191,20 @@ const updatePassword = asyncHandler(async (req, res) => {
 		throw new Error("Current password is incorrect. Try again.");
 	}
 
-	if (currentPassword && newPassword && currentPassword === newPassword) {
+	if (currentPassword === newPassword) {
 		res.status(400);
 		throw new Error("Your new password cannot be the same as the original.");
 	}
 
-	if (
-		currentPassword &&
-		newPassword &&
-		(await bcrypt.compare(currentPassword, currentUser.password))
-	) {
-		const salt = await bcrypt.genSalt(10);
-		hashedPassword = await bcrypt.hash(newPassword, salt);
+	if (newPassword.slice(0, 1) === " " || newPassword.slice(-1) === " ") {
+		res.status(400);
+		throw new Error(
+			"Your new password cannot begin or end with a blank space."
+		);
 	}
+
+	const salt = await bcrypt.genSalt(10);
+	const hashedPassword = await bcrypt.hash(newPassword, salt);
 
 	// Update user information
 	await User.findByIdAndUpdate(
@@ -288,7 +223,6 @@ const updatePassword = asyncHandler(async (req, res) => {
 		username: currentUser.username,
 		email: currentUser.email,
 		userAvatar: currentUser.userAvatar,
-		token: generateToken(currentUser._id),
 	});
 });
 
@@ -343,30 +277,14 @@ const updateAvatar = asyncHandler(async (req, res) => {
 		username: currentUser.username,
 		email: currentUser.email,
 		userAvatar: req.file.filename,
-		token: generateToken(currentUser._id),
 	});
-});
-
-// @desc Get all registered user's username/id except for current user
-// @route GET /api/users/all
-// @access Private
-const getAllUsers = asyncHandler(async (req, res) => {
-	const users = await User.find({}).select("username");
-
-	const returnedUsers = users.filter((user) => {
-		return user.username !== req.user.username;
-	});
-
-	return res.status(200).json(returnedUsers);
 });
 
 module.exports = {
 	registerUser,
 	loginUser,
-	updateAccount,
 	updateUsername,
 	updateEmail,
 	updatePassword,
-	getAllUsers,
 	updateAvatar,
 };

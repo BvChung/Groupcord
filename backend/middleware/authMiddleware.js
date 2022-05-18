@@ -19,7 +19,6 @@ const authWithToken = asyncHandler(async (req, res, next) => {
 			// console.log(req.headers);
 			// Get token from header
 			token = req.headers.authorization.split(" ")[1];
-			// console.log(token);
 
 			// Verify token
 			const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
@@ -31,15 +30,10 @@ const authWithToken = asyncHandler(async (req, res, next) => {
 
 			next();
 		} catch (err) {
-			console.error(err);
-			res.status(401);
-			throw new Error("Unauthorized.");
+			// console.error(err);
+			res.status(403);
+			throw new Error("Unauthorized, invalid token.");
 		}
-	}
-
-	if (!token) {
-		res.status(401);
-		throw new Error("Unauthorized, no JSON Web Token.");
 	}
 });
 

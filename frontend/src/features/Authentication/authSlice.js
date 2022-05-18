@@ -47,19 +47,7 @@ export const loginUser = createAsyncThunk(
 	}
 );
 
-// Update User
-export const updateUser = createAsyncThunk(
-	"auth/update",
-	async (userData, thunkAPI) => {
-		try {
-			console.log(userData);
-			const token = thunkAPI.getState().auth.user.token;
-			return await authService.update(userData, token);
-		} catch (error) {
-			return thunkAPI.rejectWithValue(errorMessage(error));
-		}
-	}
-);
+// Update Personal Info
 export const updateAccountUsername = createAsyncThunk(
 	"auth/updateUsername",
 	async (userData, thunkAPI) => {
@@ -161,25 +149,6 @@ export const authSlice = createSlice({
 				state.message = action.payload;
 				state.user = null;
 			})
-			.addCase(updateUser.pending, (state) => {
-				state.isLoading = true;
-				state.isSuccess = false;
-			})
-			.addCase(updateUser.fulfilled, (state, action) => {
-				state.isLoading = false;
-				state.isSuccess = true;
-				state.user = action.payload;
-				state.updatedUsernameToSocket = {
-					_id: action.payload._id,
-					username: action.payload.username,
-					userAvatar: action.payload.userAvatar,
-				};
-			})
-			.addCase(updateUser.rejected, (state, action) => {
-				state.isLoading = false;
-				state.updateError = true;
-				state.message = action.payload;
-			})
 			.addCase(updateAccountAvatar.pending, (state) => {
 				state.isLoading = true;
 				state.isSuccess = false;
@@ -195,6 +164,55 @@ export const authSlice = createSlice({
 				};
 			})
 			.addCase(updateAccountAvatar.rejected, (state, action) => {
+				state.isLoading = false;
+				state.updateError = true;
+				state.message = action.payload;
+			})
+			.addCase(updateAccountUsername.pending, (state) => {
+				state.isLoading = true;
+				state.isSuccess = false;
+			})
+			.addCase(updateAccountUsername.fulfilled, (state, action) => {
+				console.log(action.payload);
+				state.isLoading = false;
+				state.isSuccess = true;
+				state.user = action.payload;
+				state.updatedUsernameToSocket = {
+					_id: action.payload._id,
+					username: action.payload.username,
+					userAvatar: action.payload.userAvatar,
+				};
+			})
+			.addCase(updateAccountUsername.rejected, (state, action) => {
+				state.isLoading = false;
+				state.updateError = true;
+				state.message = action.payload;
+				console.log(action.payload);
+			})
+			.addCase(updateAccountEmail.pending, (state) => {
+				state.isLoading = true;
+				state.isSuccess = false;
+			})
+			.addCase(updateAccountEmail.fulfilled, (state, action) => {
+				console.log(action.payload);
+				state.isLoading = false;
+				state.isSuccess = true;
+				state.user = action.payload;
+			})
+			.addCase(updateAccountEmail.rejected, (state, action) => {
+				state.isLoading = false;
+				state.updateError = true;
+				state.message = action.payload;
+			})
+			.addCase(updateAccountPassword.pending, (state) => {
+				state.isLoading = true;
+				state.isSuccess = false;
+			})
+			.addCase(updateAccountPassword.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.isSuccess = true;
+			})
+			.addCase(updateAccountPassword.rejected, (state, action) => {
 				state.isLoading = false;
 				state.updateError = true;
 				state.message = action.payload;

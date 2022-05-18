@@ -22,10 +22,6 @@ const register = async (userData) => {
 const login = async (userData) => {
 	const response = await axios.post(`${API_URL}`, userData);
 
-	// const token = {
-	// 	token: response.data.token,
-	// };
-
 	if (response.data) {
 		localStorage.setItem("user", JSON.stringify(response.data));
 	}
@@ -34,20 +30,6 @@ const login = async (userData) => {
 };
 
 // Update user
-const update = async (userData, token) => {
-	const response = await axios.put(
-		`${API_URL}/account`,
-		userData,
-		configuration(token)
-	);
-
-	if (response.data) {
-		localStorage.setItem("user", JSON.stringify(response.data));
-	}
-
-	return response.data;
-};
-
 const updateUsername = async (userData, token) => {
 	const response = await axios.put(
 		`${API_URL}/account/username`,
@@ -56,10 +38,17 @@ const updateUsername = async (userData, token) => {
 	);
 
 	if (response.data) {
-		localStorage.setItem("user", JSON.stringify(response.data));
-	}
+		const user = JSON.parse(localStorage.getItem("user"));
 
-	return response.data;
+		const storeUserData = {
+			...response.data,
+			token: user.token,
+		};
+
+		localStorage.setItem("user", JSON.stringify(storeUserData));
+
+		return storeUserData;
+	}
 };
 
 const updateEmail = async (userData, token) => {
@@ -70,10 +59,17 @@ const updateEmail = async (userData, token) => {
 	);
 
 	if (response.data) {
-		localStorage.setItem("user", JSON.stringify(response.data));
-	}
+		const user = JSON.parse(localStorage.getItem("user"));
 
-	return response.data;
+		const storeUserData = {
+			...response.data,
+			token: user.token,
+		};
+
+		localStorage.setItem("user", JSON.stringify(storeUserData));
+
+		return storeUserData;
+	}
 };
 
 const updatePassword = async (userData, token) => {
@@ -94,10 +90,17 @@ const updateAvatar = async (file, token) => {
 	);
 
 	if (response.data) {
-		localStorage.setItem("user", JSON.stringify(response.data));
-	}
+		const user = JSON.parse(localStorage.getItem("user"));
 
-	return response.data;
+		const storeUserData = {
+			...response.data,
+			token: user.token,
+		};
+
+		localStorage.setItem("user", JSON.stringify(storeUserData));
+
+		return storeUserData;
+	}
 };
 
 // Logout user
@@ -109,7 +112,6 @@ const authService = {
 	register,
 	logout,
 	login,
-	update,
 	updateUsername,
 	updateEmail,
 	updatePassword,
