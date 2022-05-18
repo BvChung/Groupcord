@@ -34,10 +34,6 @@ function Register() {
 	function handleSubmit(e) {
 		e.preventDefault();
 
-		if (form.password.slice(0, 1) === " " || form.password.slice(-1) === " ") {
-			return toast.error("Password cannot begin or end with a blank space.");
-		}
-
 		const userData = {
 			name: form.name,
 			username: form.username,
@@ -167,7 +163,11 @@ function Register() {
 						<div className="flex items-center text-gray1 dark:text-offwhite">
 							<FormControlLabel
 								control={<Checkbox onClick={toggleShowPassword} />}
-								label="Show password"
+								label={
+									<span className="text-gray1 dark:text-white text-sm font-medium font-sans">
+										Show Password
+									</span>
+								}
 							/>
 						</div>
 					</div>

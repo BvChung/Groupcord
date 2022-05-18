@@ -139,10 +139,14 @@ function Login() {
 						border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
 						></input>
 
-						<div className="flex items-center text-gray1 dark:text-offwhite">
+						<div className="flex items-center mt-[2px] text-gray1 dark:text-offwhite">
 							<FormControlLabel
 								control={<Checkbox onClick={toggleShowPassword} />}
-								label="Show password"
+								label={
+									<span className="text-gray1 dark:text-white text-sm font-medium font-sans">
+										Show Password
+									</span>
+								}
 							/>
 						</div>
 					</div>
