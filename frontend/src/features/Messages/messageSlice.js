@@ -90,7 +90,6 @@ export const messageSlice = createSlice({
 			);
 		},
 		socketDataAddMessage: (state, action) => {
-			console.log("new message");
 			state.userMessages.groupMessages = addDateLabelToNewMessages(
 				state.userMessages.groupMessages,
 				action.payload

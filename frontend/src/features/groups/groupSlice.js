@@ -158,9 +158,8 @@ export const groupSlice = createSlice({
 			}
 		},
 		socketDataUpdateMembers: (state, action) => {
+			console.log(action.payload);
 			state.activeGroupInfo.members = action.payload.groupData.members;
-			state.membersAvailableToAddToGroup =
-				action.payload.membersAvailableToAddToGroup;
 		},
 		socketDataUpdateMembersPeronalInfo: (state, action) => {
 			state.activeGroupInfo.members = updateData(
@@ -252,19 +251,10 @@ export const groupSlice = createSlice({
 
 			state.groups = updateData(state.groups, action.payload.updatedMembers);
 
-			state.membersAvailableToAddToGroup = filterUsers(
-				state.registeredMembers,
-				state.activeGroupInfo.members
-			);
-
 			state.removedMemberToSocket = {
 				id: nanoid(),
 				groupData: action.payload.updatedMembers,
 				memberChanged: action.payload.memberChanged,
-				membersAvailableToAddToGroup: [
-					...state.membersAvailableToAddToGroup,
-					action.payload.memberChanged,
-				],
 			};
 		});
 		builder.addCase(getRegisteredMembers.pending, (state) => {

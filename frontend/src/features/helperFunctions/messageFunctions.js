@@ -137,7 +137,7 @@ export const deleteMessageData = (state, payload) => {
 			return data.fullDate !== payload.fullDate && data.type === "newDateLabel";
 		}
 
-		// Removes deleted message from payload
+		// Removes deleted message
 		return data._id !== payload._id;
 	});
 };
