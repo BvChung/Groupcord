@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-	updateUser,
+	updateAccountUsername,
+	updateAccountEmail,
+	updateAccountPassword,
 	resetState,
 	resetSuccessNotifications,
 } from "../../features/authentication/authSlice";
@@ -89,51 +91,54 @@ export default function ProfileSettings() {
 		});
 	}
 
-	function handleSubmit(e) {
+	function handleUsernameSubmission(e) {
 		e.preventDefault();
+
+		if (formData.username === "") return toast.error(`Enter a username.`);
 
 		if (user.username === "GuestAccount") {
 			return toast.error(`GuestAccount's information cannot be edited.`);
 		}
+
+		dispatch(updateAccountUsername({ username: formData.username }));
+	}
+	function handleEmailSubmission(e) {
+		e.preventDefault();
+
+		if (formData.email === "") return toast.error(`Enter an email address.`);
+
+		if (user.username === "GuestAccount") {
+			return toast.error(`GuestAccount's information cannot be edited.`);
+		}
+
+		dispatch(updateAccountEmail({ email: formData.email }));
+	}
+	function handlePasswordSubmission(e) {
+		e.preventDefault();
+
 		if (
-			user.username === formData.username &&
-			user.email === formData.email.toLowerCase() &&
-			formData.currentPassword === "" &&
-			formData.newPassword === ""
+			formData.currentPassword === "" ||
+			formData.currentPassword === "" ||
+			formData.confirmNewPassword === ""
 		)
-			return;
+			return toast.error(`All forms must be filled out.`);
 
-		if (
-			formData.newPassword.slice(0, 1) === " " ||
-			formData.newPassword.slice(-1) === " "
-		) {
-			return toast.error("Password cannot begin or end with a blank space.");
+		if (user.username === "GuestAccount") {
+			return toast.error(`GuestAccount's information cannot be edited.`);
 		}
 
-		if (formData.currentPassword === "" && formData.newPassword !== "") {
-			return toast.info("Please enter current password.");
-		}
-		if (formData.currentPassword !== "" && formData.newPassword === "") {
-			return toast.info("Please enter new password.");
-		}
-		if (
-			formData.confirmNewPassword !== formData.newPassword &&
-			formData.confirmNewPassword !== "" &&
-			formData.newPassword !== ""
-		) {
-			return toast.warn("Confirmed and new passwords do not match, try again.");
+		if (formData.confirmNewPassword !== formData.newPassword) {
+			return toast.error(
+				"New and confirmation password do not match. Try again."
+			);
 		}
 
-		const sentData = {
-			username: formData.username,
-			email: formData.email.toLowerCase(),
-			currentPassword:
-				formData.currentPassword === "" ? undefined : formData.currentPassword,
-			newPassword:
-				formData.newPassword === "" ? undefined : formData.newPassword,
-		};
-
-		dispatch(updateUser(sentData));
+		dispatch(
+			updateAccountPassword({
+				currentPassword: formData.currentPassword,
+				newPassword: formData.newPassword,
+			})
+		);
 	}
 
 	const displayError = useCallback(() => {
@@ -158,7 +163,7 @@ export default function ProfileSettings() {
 			dispatch(resetSuccessNotifications());
 		}
 	}, [isSuccess, changedAvatar, dispatch, resetFormData]);
-	console.log(formData);
+	// console.log(formData);
 
 	const resetAfterUpdate = useCallback(() => {
 		dispatch(resetState());
@@ -254,9 +259,7 @@ export default function ProfileSettings() {
 				{(editEmail || editPassword || editUsername) && (
 					<div className="flex justify-end items-center mt-4 md:mt-5 gap-4">
 						<button
-							onClick={(e) => {
-								handleSubmit(e);
-							}}
+							onClick={(e) => {}}
 							className="dark:bg-sky-800 dark:text-white dark:hover:bg-sky-900 dark:active:bg-sky-800 
 								bg-sky-600 text-gray-100 hover:bg-sky-700 active:bg-sky-600
 							  	w-20 px-1 py-[.65rem] text-sm font-bold rounded-md transition-all"
@@ -265,7 +268,16 @@ export default function ProfileSettings() {
 						</button>
 						<button
 							onClick={(e) => {
-								handleSubmit(e);
+								// handleSubmit(e);
+								if (editUsername) {
+									handleUsernameSubmission(e);
+								}
+								if (editEmail) {
+									handleEmailSubmission(e);
+								}
+								if (editPassword) {
+									handlePasswordSubmission(e);
+								}
 							}}
 							className="dark:bg-sky-800 dark:text-white dark:hover:bg-sky-900 dark:active:bg-sky-800 
 								bg-sky-600 text-gray-100 hover:bg-sky-700 active:bg-sky-600

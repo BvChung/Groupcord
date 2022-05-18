@@ -114,10 +114,14 @@ export default function EditPassword({
 							fullWidth
 							variant="outlined"
 						/>
-						<div className="pl-[.1rem] mt-1">
+						<div className="flex items-center">
 							<FormControlLabel
 								control={<Checkbox onClick={toggleShowPasswords} />}
-								label="Show password"
+								label={
+									<span className="text-gray1 dark:text-white text-sm font-medium font-sans">
+										Show Password
+									</span>
+								}
 							/>
 						</div>
 					</fieldset>
