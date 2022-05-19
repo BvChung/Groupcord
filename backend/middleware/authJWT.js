@@ -5,7 +5,7 @@ const User = require("../models/userModel");
 // JWT token is => Bearer token
 // authMiddleware returns the user(object) based on the token of the request to server
 
-const authWithToken = asyncHandler(async (req, res, next) => {
+const verifyJWT = asyncHandler(async (req, res, next) => {
 	// Initialize the token
 	let token;
 
@@ -16,12 +16,11 @@ const authWithToken = asyncHandler(async (req, res, next) => {
 		req.headers.authorization.startsWith("Bearer")
 	) {
 		try {
-			// console.log(req.headers);
 			// Get token from header
 			token = req.headers.authorization.split(" ")[1];
 
 			// Verify token
-			const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+			const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
 			// Get user from the token
 			// .select("-password") removes the password from req.user
@@ -35,6 +34,10 @@ const authWithToken = asyncHandler(async (req, res, next) => {
 			throw new Error("Unauthorized, invalid token.");
 		}
 	}
+	if (!token) {
+		res.status(401);
+		throw new Error("Unauthorized, no JSON Web Token.");
+	}
 });
 
-module.exports = { authWithToken };
+module.exports = { verifyJWT };

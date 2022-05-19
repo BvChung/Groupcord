@@ -9,15 +9,15 @@ const {
 	updateAvatar,
 } = require("../controller/userController");
 
-const { authWithToken } = require("../middleware/authMiddleware");
-const { uploadFile } = require("../middleware/multerMiddleware");
+const { verifyJWT } = require("../middleware/authJWT");
+const { uploadFile } = require("../middleware/uploadFile");
 
 router.post("/register", registerUser);
 router.post("/", loginUser);
 
-router.put("/account/username", authWithToken, updateUsername);
-router.put("/account/email", authWithToken, updateEmail);
-router.put("/account/password", authWithToken, updatePassword);
-router.put("/account/profile", [authWithToken, uploadFile], updateAvatar);
+router.put("/account/username", verifyJWT, updateUsername);
+router.put("/account/email", verifyJWT, updateEmail);
+router.put("/account/password", verifyJWT, updatePassword);
+router.put("/account/profile", [verifyJWT, uploadFile], updateAvatar);
 
 module.exports = router;

@@ -22,11 +22,17 @@ const register = async (userData) => {
 const login = async (userData) => {
 	const response = await axios.post(`${API_URL}`, userData);
 
+	console.log(response);
+
 	if (response.data) {
 		localStorage.setItem("user", JSON.stringify(response.data));
 	}
 
 	return response.data;
+};
+
+const refreshToken = async (data) => {
+	const response = await axios.get("/refresh", { withCredentials: true });
 };
 
 // Update user

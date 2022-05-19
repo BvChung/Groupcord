@@ -12,13 +12,13 @@ const Conversation = require("../models/conversationModel");
 // ._id => new ObjectId("6278dd9dadc7cdbc6f7ec28c")
 
 // Generate a JWT: used to validate user
-const generateToken = (id) => {
-	return jwt.sign({ id }, process.env.JWT_SECRET, {
-		expiresIn: "15s",
+const generateAccessToken = (id) => {
+	return jwt.sign({ id }, process.env.JWT_ACCESS_SECRET, {
+		expiresIn: "1d",
 	});
 };
 const generateRefreshToken = (id) => {
-	return jwt.sign({ id }, process.env.REFRESH_JWT_SECRET, {
+	return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, {
 		expiresIn: "1d",
 	});
 };
@@ -58,14 +58,32 @@ const registerUser = asyncHandler(async (req, res) => {
 		password: hashedPassword,
 	});
 
+	// Create JWT refresh token
+	const refreshToken = generateRefreshToken(user._id);
+
+	await User.findByIdAndUpdate(
+		user._id,
+		{
+			refreshToken,
+		},
+		{
+			new: true,
+		}
+	);
+
 	// If user is succesfully created
 	if (user) {
+		res.cookie("jwt", refreshToken, {
+			httpOnly: true,
+			maxAge: 24 * 60 * 60 * 1000,
+		});
+
 		return res.status(201).json({
 			_id: user.id,
 			name: user.name,
 			username: user.username,
 			email: user.email,
-			token: generateToken(user._id),
+			token: generateAccessToken(user._id),
 		});
 	} else {
 		res.status(400);
@@ -84,13 +102,30 @@ const loginUser = asyncHandler(async (req, res) => {
 
 	// bcrypt.compare() compares password from request and hashed password from database schema
 	if (user && (await bcrypt.compare(password, user.password))) {
+		// Create JWT refresh token
+		const refreshToken = generateRefreshToken(user._id);
+		await User.findByIdAndUpdate(
+			user._id,
+			{
+				refreshToken,
+			},
+			{
+				new: true,
+			}
+		);
+
+		res.cookie("jwt", refreshToken, {
+			httpOnly: true,
+			maxAge: 24 * 60 * 60 * 1000,
+		});
+
 		return res.status(201).json({
 			_id: user.id,
 			name: user.name,
 			username: user.username,
 			email: user.email,
 			userAvatar: user.userAvatar,
-			token: generateToken(user._id),
+			token: generateAccessToken(user._id),
 		});
 	} else {
 		res.status(401);

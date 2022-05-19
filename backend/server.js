@@ -6,7 +6,7 @@ const port = process.env.PORT || 3001;
 const path = require("path");
 const { Server } = require("socket.io");
 const colors = require("colors");
-const { errorHandler } = require("./middleware/errorMiddleware");
+const { backendErrorHandler } = require("./middleware/errorMessage");
 const connectDatabase = require("./config/database");
 const jwt = require("jsonwebtoken");
 const { getPreviousRoom, createUser } = require("./helper/helperfunctions");
@@ -30,10 +30,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Error handler that converts standard Express error html to a JSON error message using custom middleware
+app.use(backendErrorHandler);
+
 // When front end reaches /api/chatlogs app looks into route folder to establish route
 app.use("/api/messages", require("./routes/messageRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
-app.use("/api/chatgroups", require("./routes/conversationRoutes"));
+app.use("/api/chatGroups", require("./routes/chatGroupsRoutes"));
+app.use("/api/refresh", require("./routes/refreshTokenRoutes"));
 
 // Frontend
 // if (process.env.NODE_ENV === "production") {
@@ -47,9 +51,6 @@ app.use("/api/chatgroups", require("./routes/conversationRoutes"));
 // } else {
 // 	app.get("/", (req, res) => res.send("Please set to production"));
 // }
-
-// Error handler that converts standard Express error html to a JSON error message using custom middleware
-app.use(errorHandler);
 
 // Socket.io data emission
 let connectedUsers = [];
