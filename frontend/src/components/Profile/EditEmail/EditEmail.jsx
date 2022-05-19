@@ -1,9 +1,5 @@
 import React from "react";
-import {
-	ArrowLeftIcon,
-	MailIcon,
-	MailOpenIcon,
-} from "@heroicons/react/outline";
+import { MailIcon, MailOpenIcon } from "@heroicons/react/solid";
 import { Tooltip, TextField } from "@mui/material";
 
 export default function EditEmail({
@@ -15,14 +11,12 @@ export default function EditEmail({
 	setEditUsername,
 	editEmail,
 	toggleEditEmail,
-	resetEmailForm,
 	editPassword,
 	setEditPassword,
 	resetPasswordForm,
 	accountInfoStyle,
 	iconStyle,
 	formStyle,
-	returnStyle,
 }) {
 	return (
 		<div>
@@ -56,20 +50,8 @@ export default function EditEmail({
 				</Tooltip>
 			) : (
 				<div className={`flex flex-col mb-6 px-4 py-4 sm:px-6 ${formStyle}`}>
-					<div className="flex items-center justify-between">
-						<Tooltip arrow describeChild title="Click to go back">
-							<button
-								onClick={() => {
-									resetEmailForm();
-									toggleEditEmail();
-								}}
-							>
-								<ArrowLeftIcon
-									className={`h-9 w-9 rounded-full p-2 ${returnStyle}`}
-								/>
-							</button>
-						</Tooltip>
-						<MailOpenIcon className={`h-6 w-6 ${iconStyle}`} />
+					<div className="flex items-center justify-end">
+						<MailOpenIcon className={`h-6 w-6 sm:h-7 sm:w-7 ${iconStyle}`} />
 					</div>
 					<TextField
 						name="email"

@@ -1,17 +1,10 @@
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-	PencilAltIcon,
-	PencilIcon,
-	ArrowLeftIcon,
-} from "@heroicons/react/outline";
+import { PencilAltIcon, PencilIcon } from "@heroicons/react/solid";
 import { Tooltip, TextField } from "@mui/material";
 
 export default function EditUsername({
 	user,
 	formData,
 	handleFormData,
-	resetUsernameForm,
 	editUsername,
 	toggleEditUsername,
 	editEmail,
@@ -23,7 +16,6 @@ export default function EditUsername({
 	accountInfoStyle,
 	iconStyle,
 	formStyle,
-	returnStyle,
 }) {
 	return (
 		<>
@@ -59,20 +51,8 @@ export default function EditUsername({
 				</Tooltip>
 			) : (
 				<div className={`flex flex-col mb-6 px-4 py-4 sm:px-6 ${formStyle}`}>
-					<div className="flex items-center justify-between">
-						<Tooltip arrow describeChild title="Click to go back">
-							<button
-								onClick={() => {
-									resetUsernameForm();
-									toggleEditUsername();
-								}}
-							>
-								<ArrowLeftIcon
-									className={`h-9 w-9 rounded-full p-2 ${returnStyle}`}
-								/>
-							</button>
-						</Tooltip>
-						<PencilAltIcon className={`h-6 w-6 ${iconStyle}`} />
+					<div className="flex items-center justify-end">
+						<PencilAltIcon className={`h-6 w-6 sm:h-7 sm:w-7 ${iconStyle}`} />
 					</div>
 					<TextField
 						name="username"

@@ -182,21 +182,20 @@ export default function ProfileSettings() {
 	const accountInfoStyle =
 		"text-gray1 dark:text-white border-b-[1px] border-t-[1px] border-gray-300 hover:bg-gray-100 dark:border-gray-500 dark:hover:bg-slate-800 ";
 	const formStyle = "border-[1px] border-gray-300 dark:border-gray-500 ";
-	const returnStyle = "hover:bg-gray-200 dark:hover:bg-dark4";
 
 	return (
 		<div className="flex justify-center overflow-auto dark:bg-dark2 bg-white h-screen">
 			<div className="w-full relative sm:max-w-4xl px-4 py-6 sm:py-6 sm:px-8 ">
-				<div className="dark:text-white text-gray1 mb-4 py-2 ">
+				<div className="dark:text-white text-gray1 mb-6 ">
 					<h1
 						className="text-gray1 dark:text-white border-b-[1px] border-gray-300 dark:border-gray-500 
-						text-3xl text-center font-medium pb-2 font-sans"
+						text-2xl sm:text-3xl font-semibold pb-6 font-sans"
 					>
 						Manage Account
 					</h1>
 				</div>
 
-				<EditAvatar user={user} />
+				<EditAvatar user={user} iconStyle={iconStyle} />
 
 				<div className="w-full">
 					<EditUsername
@@ -215,7 +214,6 @@ export default function ProfileSettings() {
 						accountInfoStyle={accountInfoStyle}
 						iconStyle={iconStyle}
 						formStyle={formStyle}
-						returnStyle={returnStyle}
 					/>
 
 					<EditEmail
@@ -234,7 +232,6 @@ export default function ProfileSettings() {
 						accountInfoStyle={accountInfoStyle}
 						iconStyle={iconStyle}
 						formStyle={formStyle}
-						returnStyle={returnStyle}
 					/>
 
 					<EditPassword
@@ -252,17 +249,28 @@ export default function ProfileSettings() {
 						accountInfoStyle={accountInfoStyle}
 						iconStyle={iconStyle}
 						formStyle={formStyle}
-						returnStyle={returnStyle}
 					/>
 				</div>
 
 				{(editEmail || editPassword || editUsername) && (
 					<div className="flex justify-end items-center mt-4 md:mt-5 gap-4">
 						<button
-							onClick={(e) => {}}
-							className="dark:bg-sky-800 dark:text-white dark:hover:bg-sky-900 dark:active:bg-sky-800 
-								bg-sky-600 text-gray-100 hover:bg-sky-700 active:bg-sky-600
-							  	w-20 px-1 py-[.65rem] text-sm font-bold rounded-md transition-all"
+							onClick={() => {
+								if (editUsername) {
+									resetUsernameForm();
+									toggleEditUsername();
+								}
+								if (editEmail) {
+									resetEmailForm();
+									toggleEditEmail();
+								}
+								if (editPassword) {
+									resetPasswordForm();
+									toggleEditPassword();
+								}
+							}}
+							className="bg-transparent text-gray1 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800 
+							  	w-20 px-1 py-[.65rem] text-sm font-bold rounded-sm transition-all"
 						>
 							Cancel
 						</button>
@@ -281,7 +289,7 @@ export default function ProfileSettings() {
 							}}
 							className="dark:bg-sky-800 dark:text-white dark:hover:bg-sky-900 dark:active:bg-sky-800 
 								bg-sky-600 text-gray-100 hover:bg-sky-700 active:bg-sky-600
-							  	w-20 px-1 py-[.65rem] text-sm font-bold rounded-md transition-all"
+							  	w-20 px-1 py-[.65rem] text-sm font-bold rounded-sm transition-all"
 						>
 							Save
 						</button>

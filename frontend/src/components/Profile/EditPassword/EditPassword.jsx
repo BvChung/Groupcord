@@ -1,9 +1,5 @@
 import { useState } from "react";
-import {
-	ArrowLeftIcon,
-	LockClosedIcon,
-	LockOpenIcon,
-} from "@heroicons/react/outline";
+import { LockClosedIcon, LockOpenIcon } from "@heroicons/react/solid";
 import { Tooltip, TextField, Checkbox, FormControlLabel } from "@mui/material";
 
 export default function EditPassword({
@@ -17,11 +13,9 @@ export default function EditPassword({
 	editPassword,
 	setEditEmail,
 	toggleEditPassword,
-	resetPasswordForm,
 	accountInfoStyle,
 	iconStyle,
 	formStyle,
-	returnStyle,
 }) {
 	const [showPassword, setShowPassword] = useState(false);
 	function toggleShowPasswords() {
@@ -63,21 +57,8 @@ export default function EditPassword({
 				</Tooltip>
 			) : (
 				<div className={`flex flex-col px-4 py-4 sm:px-6 ${formStyle}`}>
-					<div className="flex items-center justify-between">
-						<Tooltip arrow describeChild title="Click to go back">
-							<button
-								onClick={() => {
-									resetPasswordForm();
-									toggleEditPassword();
-								}}
-								className=""
-							>
-								<ArrowLeftIcon
-									className={`h-9 w-9 rounded-full p-2 ${returnStyle}`}
-								/>
-							</button>
-						</Tooltip>
-						<LockOpenIcon className={`h-6 w-6 ${iconStyle}`} />
+					<div className="flex items-center justify-end">
+						<LockOpenIcon className={`h-6 w-6 sm:h-7 sm:w-7 ${iconStyle}`} />
 					</div>
 					<fieldset className="flex-col">
 						<TextField
