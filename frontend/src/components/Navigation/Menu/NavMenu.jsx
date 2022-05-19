@@ -68,7 +68,13 @@ export default function NavMenu() {
 				aria-label="Open account menu"
 			>
 				<Tooltip arrow describeChild title="My Account">
-					<UserCircleIcon className="h-9 w-9 text-gray2 dark:text-gray-400" />
+					<UserCircleIcon
+						className="h-9 w-9 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 
+										 rounded-full 
+									border-[1px] border-transparent 
+									hover:bg-gray-200 dark:hover:bg-dark4
+									transition-all"
+					/>
 				</Tooltip>
 			</TriggerButton>
 			<MenuUnstyled
@@ -129,7 +135,7 @@ const StyledListbox = styled("ul")(
   margin: 10px 0;
   min-width: 200px;
   max-height: 400px;
-  background: ${theme.palette.mode === "dark" ? "#18181b" : "#fff"};
+  background: ${theme.palette.mode === "dark" ? "#141414" : "#fff"};
   border: 1px solid ${theme.palette.mode === "dark" ? "#343434" : grey[300]};
   border-radius: 0.4em;
   color: ${theme.palette.mode === "dark" ? "#fff" : grey[900]};
@@ -154,7 +160,7 @@ const StyledMenuItem = styled(MenuItemUnstyled)(
   }
 
   &.${menuItemUnstyledClasses.focusVisible} {
-    background-color: ${theme.palette.mode === "dark" ? grey[800] : grey[100]};
+    background-color: ${theme.palette.mode === "dark" ? "#1f2937" : grey[100]};
     color: ${theme.palette.mode === "dark" ? grey[300] : grey[900]};
     outline: 0;
   }

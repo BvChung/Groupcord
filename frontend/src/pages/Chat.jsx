@@ -45,13 +45,14 @@ function Chat() {
 
 	// Logout user if invalid token is present
 	const { expiredJSONWebToken } = useSelector((state) => state.messages);
+
 	useEffect(() => {
 		if (expiredJSONWebToken) {
+			navigate("/");
 			dispatch(logoutUser());
-			dispatch(resetState());
 			dispatch(resetMessageState());
 			dispatch(resetGroupState());
-			navigate("/");
+			dispatch(resetState());
 		}
 	}, [expiredJSONWebToken, dispatch, navigate]);
 

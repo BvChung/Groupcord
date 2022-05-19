@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { MoonIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
-import { SunIcon, UserAddIcon } from "@heroicons/react/solid";
+import { SunIcon, UsersIcon } from "@heroicons/react/solid";
 import { useSelector, useDispatch } from "react-redux";
 import { changeTheme } from "../../../features/theme/themeSlice";
 import MemberList from "../DisplayMembers/DisplayMembers";
@@ -71,11 +71,11 @@ export default function ChatNav() {
 									}}
 									aria-label="Open Member List"
 								>
-									<UserAddIcon
+									<UsersIcon
 										className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 
-									p-1 rounded-full 
+										p-[6px] rounded-full 
 									border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-									hover:bg-gray-200 dark:hover:bg-dark3
+									hover:bg-gray-200 dark:hover:bg-dark4
 									transition-all"
 									/>
 								</button>
@@ -98,7 +98,7 @@ export default function ChatNav() {
 									onClick={toggleTheme}
 									className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 p-[6px] rounded-full 
 									border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-									hover:bg-gray-200 dark:hover:bg-dark3
+									hover:bg-gray-200 dark:hover:bg-dark4 cursor-pointer
 									transition-all "
 								/>
 							) : (
@@ -107,7 +107,7 @@ export default function ChatNav() {
 									onClick={toggleTheme}
 									className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-200 hover:dark:text-gray-400 p-[6px] rounded-full
 									border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-									hover:bg-gray-200 dark:hover:bg-dark3
+									hover:bg-gray-200 dark:hover:bg-dark3 cursor-pointer
 									transition-all "
 								/>
 							)}
@@ -123,7 +123,7 @@ export default function ChatNav() {
 						>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="w-8 h-8 fill-gray-700 hover:fill-gray-500 dark:fill-gray-200 hover:dark:fill-gray-400
+								className="w-7 h-7 fill-gray-700 hover:fill-gray-500 dark:fill-gray-200 hover:dark:fill-gray-400
 								transition-all"
 								viewBox="0 0 512 512"
 							>

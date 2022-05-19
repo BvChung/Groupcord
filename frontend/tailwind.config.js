@@ -1,12 +1,6 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
 
 /* 
-#3D3E66
-#494B83
-#6264A7
-#B2b5ff
-#E9EAF6
-
 #242424
 #424242
 #616161
@@ -41,10 +35,6 @@ module.exports = {
 				dark4: "#181818",
 				dark5: "#1c1c1c",
 				dark6: "#343434",
-				secondary1: "#D1CCE1",
-				secondary2: "#DEDAE9",
-				secondary3: "#E4E2EE",
-				secondary4: "#8679B0",
 				blue1: "#325C97",
 				blue2: "#ABC7E3",
 				blue3: "#88B0D7",

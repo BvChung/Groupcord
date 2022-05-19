@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { createChatGroups } from "../../features/groups/groupSlice";
 import { toast } from "react-toastify";
 import { MenuContext } from "../../appContext/menuContext";
-import { UserGroupIcon } from "@heroicons/react/outline";
+import { UserGroupIcon } from "@heroicons/react/solid";
 
 export default function ContactMenu() {
 	const dispatch = useDispatch();
@@ -73,17 +73,21 @@ export default function ContactMenu() {
 			>
 				<div
 					className={`md:w-full py-6 px-8  ${
-						darkMode ? "bg-menu" : "bg-offwhite"
+						darkMode ? "bg-dark3" : "bg-offwhite"
 					} `}
 				>
-					<div className={`flex justify-between items-center ${headerStyle}`}>
-						<h1 className={`text-xl font-semibold pb-2 font-sans ${textStyle}`}>
+					<div
+						className={`flex justify-between items-center pb-2  ${headerStyle}`}
+					>
+						<h1
+							className={`text-xl sm:text-2xl font-semibold font-sans ${textStyle}`}
+						>
 							Create Group
 						</h1>
-						<UserGroupIcon className="h-7 w-7" />
+						<UserGroupIcon className="h-7 w-7 sm:h-8 sm:w-8" />
 					</div>
 
-					<div className={`flex mb-4 pb-4 pt-2  ${formStyle}`}>
+					<div className={`flex mb-4 pb-6 pt-4  ${formStyle}`}>
 						<TextField
 							name="groupName"
 							value={formData.groupName}
@@ -104,7 +108,7 @@ export default function ContactMenu() {
 								resetFormData();
 							}}
 							className={`transition-colors ${buttonStyle}   
-							px-1 py-[.65rem] text-sm w-20 font-bold rounded-md`}
+							px-1 py-[.65rem] text-sm w-20 font-bold rounded-sm`}
 						>
 							Cancel
 						</button>
@@ -117,7 +121,7 @@ export default function ContactMenu() {
 								formData.groupName !== ""
 									? createButtonActive
 									: createButtonInactive
-							}  w-20 px-1 py-[.65rem] text-sm font-bold rounded-md`}
+							}  w-20 px-1 py-[.65rem] text-sm font-bold rounded-sm`}
 						>
 							Create
 						</button>
