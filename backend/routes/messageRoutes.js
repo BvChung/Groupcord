@@ -7,12 +7,9 @@ const {
 	deleteMessages,
 } = require("../controller/messageController");
 
-const { authWithToken } = require("../middleware/authMiddleware");
+const { verifyJWT } = require("../middleware/authJWT");
 
-router
-	.route("/")
-	.get(authWithToken, getMessages)
-	.post(authWithToken, setMessages);
-router.route("/:messageId").delete(authWithToken, deleteMessages);
+router.route("/").get(verifyJWT, getMessages).post(verifyJWT, setMessages);
+router.route("/:messageId").delete(verifyJWT, deleteMessages);
 
 module.exports = router;
