@@ -65,7 +65,19 @@ export const messageSlice = createSlice({
 	name: "message",
 	initialState,
 	reducers: {
-		resetMessageState: (state) => initialState,
+		resetMessageState: (state) => {
+			// console.log("reset messages");
+			state.userMessages = {};
+			state.newMessageToSocket = {};
+			state.deletedMessageToSocket = {};
+			state.hideTextInput = false;
+			state.isLoading = false;
+			state.loadInitialMessages = false;
+			state.isSuccess = false;
+			state.isError = false;
+			state.expiredJSONWebToken = false;
+			state.errorMessage = "";
+		},
 		hideTextInput: (state) => {
 			state.hideTextInput = true;
 		},
@@ -120,6 +132,9 @@ export const messageSlice = createSlice({
 			state.isLoading = false;
 			state.isError = true;
 			state.errorMessage = action.payload;
+
+			// if (action.payload)
+			console.log(action.payload);
 		});
 		builder.addCase(getChatMessage.pending, (state) => {
 			state.isLoading = true;
@@ -133,9 +148,13 @@ export const messageSlice = createSlice({
 			);
 		});
 		builder.addCase(getChatMessage.rejected, (state, action) => {
+			// console.log(action.payload);
 			state.isLoading = false;
-			state.expiredJSONWebToken = true;
 			state.errorMessage = action.payload;
+
+			// if (action.payload.includes("403")) {
+			// 	state.expiredJSONWebToken = true;
+			// }
 		});
 		builder.addCase(deleteChatMessage.fulfilled, (state, action) => {
 			state.userMessages.groupMessages = deleteMessageData(

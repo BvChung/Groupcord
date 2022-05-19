@@ -1,7 +1,7 @@
 import axios from "axios";
 import { configuration } from "../helperFunctions/helperFunctions";
 
-const API_URL = "/api/chatgroups";
+const API_URL = "/api/chatGroups";
 
 const getGroup = async (token) => {
 	const response = await axios.get(API_URL, configuration(token));
