@@ -7,6 +7,7 @@ import MemberList from "../DisplayMembers/DisplayMembers";
 import NavMenu from "../Menu/NavMenu";
 import { MenuContext } from "../../../appContext/menuContext";
 import { Tooltip } from "@mui/material";
+import { refreshAccessToken } from "../../../features/authentication/authSlice";
 
 export default function ChatNav() {
 	const dispatch = useDispatch();
@@ -30,6 +31,7 @@ export default function ChatNav() {
 	function toggleTheme() {
 		dispatch(changeTheme());
 	}
+
 	return (
 		<nav
 			className="flex items-center justify-between w-full px-4 py-2 h-14 bg-offwhite
@@ -85,6 +87,15 @@ export default function ChatNav() {
 					</li>
 					<li>
 						<NavMenu />
+					</li>
+					<li>
+						<button
+							onClick={() => {
+								dispatch(refreshAccessToken());
+							}}
+						>
+							Refresh
+						</button>
 					</li>
 					<Tooltip
 						arrow
