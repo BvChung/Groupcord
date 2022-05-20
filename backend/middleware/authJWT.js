@@ -35,7 +35,7 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
 		}
 	}
 	if (!token) {
-		res.status(401);
+		res.status(403);
 		throw new Error("Unauthorized, no JSON Web Token.");
 	}
 });

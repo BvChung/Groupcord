@@ -6,9 +6,9 @@ const port = process.env.PORT || 3001;
 const path = require("path");
 const { Server } = require("socket.io");
 const colors = require("colors");
+const cookieParser = require("cookie-parser");
 const { backendErrorHandler } = require("./middleware/errorMessage");
 const connectDatabase = require("./config/database");
-const jwt = require("jsonwebtoken");
 const { getPreviousRoom, createUser } = require("./helper/helperfunctions");
 
 connectDatabase();
@@ -26,18 +26,26 @@ const io = new Server(server, {
 app.use("/images", express.static(path.join(__dirname, "uploads/images")));
 
 // middleware
-app.use(cors());
+app.use(
+	cors({
+		origin: ["http://localhost:3000"],
+		credentials: true,
+	})
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Error handler that converts standard Express error html to a JSON error message using custom middleware
-app.use(backendErrorHandler);
+// Middleware for cookies
+app.use(cookieParser());
 
 // When front end reaches /api/chatlogs app looks into route folder to establish route
-app.use("/api/messages", require("./routes/messageRoutes"));
-app.use("/api/users", require("./routes/userRoutes"));
-app.use("/api/chatGroups", require("./routes/chatGroupsRoutes"));
+app.use("/api/users", require("./routes/usersRoutes"));
 app.use("/api/refresh", require("./routes/refreshTokenRoutes"));
+app.use("/api/groups", require("./routes/groupsRoutes"));
+app.use("/api/messages", require("./routes/messagesRoutes"));
+
+// Error handler that converts standard Express error => thrown JSON error message
+app.use(backendErrorHandler);
 
 // Frontend
 // if (process.env.NODE_ENV === "production") {
@@ -96,7 +104,6 @@ io.on("connection", (socket) => {
 			userData.username,
 			userData._id
 		);
-		// console.log(connectedUsers);
 	});
 
 	let currentRoom;
