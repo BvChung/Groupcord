@@ -1,4 +1,22 @@
-// get last room from socket.rooms => a Set
+const jwt = require("jsonwebtoken");
+
+// JWT Token functions -------------------------------
+
+const generateAccessToken = (id) => {
+	return jwt.sign({ id }, process.env.JWT_ACCESS_SECRET, {
+		expiresIn: "1d",
+	});
+};
+
+const generateRefreshToken = (id) => {
+	return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, {
+		expiresIn: "1d",
+	});
+};
+
+// Socket Io functions -------------------------------
+
+// get last room from socket.rooms (socket.rooms = Set object)
 const getPreviousRoom = (rooms) => {
 	if (rooms.size > 1) {
 		let output;
@@ -21,27 +39,9 @@ const createUser = (connectedUsers, socketId, username, userId) => {
 	return [...connectedUsers, newUser];
 };
 
-// const removeUser = (socketId) => {
-// 	return (users = users.filter((user) => {
-// 		user.socketId !== socketId;
-// 	}));
-// };
-
-// const createUser = (socketId, username, userId) => {
-// 	const newUser = {
-// 		socketId: socketId,
-// 		username: username,
-// 		userId: userId,
-// 	};
-
-// 	users = users.filter((user) => {
-// 		return user.username !== newUser.username;
-// 	});
-
-// 	users.push(newUser);
-// };
-
 module.exports = {
+	generateAccessToken,
+	generateRefreshToken,
 	getPreviousRoom,
 	createUser,
 };

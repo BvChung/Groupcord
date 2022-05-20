@@ -19,21 +19,10 @@ const initialState = {
 	message: "",
 };
 
-// Register user
 // A function that accepts a Redux action type string and a callback function that should return a promise. It generates promise lifecycle action types based on the action type prefix that you pass in,
 // and returns a thunk action creator that will run the promise callback
 // and dispatch the lifecycle actions based on the returned promise.
 // params: createAsyncThunk('action', async(user data from register component, thunkAPI)=> {})
-export const registerUser = createAsyncThunk(
-	"auth/register",
-	async (user, thunkAPI) => {
-		try {
-			return await authService.register(user);
-		} catch (error) {
-			return thunkAPI.rejectWithValue(errorMessage(error));
-		}
-	}
-);
 
 // Login user
 export const loginUser = createAsyncThunk(
@@ -47,13 +36,35 @@ export const loginUser = createAsyncThunk(
 	}
 );
 
+export const registerUser = createAsyncThunk(
+	"auth/register",
+	async (user, thunkAPI) => {
+		try {
+			return await authService.register(user);
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+
+export const refreshAccessToken = createAsyncThunk(
+	"auth/refreshToken",
+	async (_, thunkAPI) => {
+		try {
+			return await authService.refreshToken();
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+
 // Update Personal Info
 export const updateAccountUsername = createAsyncThunk(
 	"auth/updateUsername",
 	async (userData, thunkAPI) => {
 		try {
-			const token = thunkAPI.getState().auth.user.token;
-			return await authService.updateUsername(userData, token);
+			const accessToken = thunkAPI.getState().auth.user.accessToken;
+			return await authService.updateUsername(userData, accessToken);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -63,8 +74,8 @@ export const updateAccountEmail = createAsyncThunk(
 	"auth/updateEmail",
 	async (userData, thunkAPI) => {
 		try {
-			const token = thunkAPI.getState().auth.user.token;
-			return await authService.updateEmail(userData, token);
+			const accessToken = thunkAPI.getState().auth.user.accessToken;
+			return await authService.updateEmail(userData, accessToken);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -74,8 +85,8 @@ export const updateAccountPassword = createAsyncThunk(
 	"auth/updatePassword",
 	async (userData, thunkAPI) => {
 		try {
-			const token = thunkAPI.getState().auth.user.token;
-			return await authService.updatePassword(userData, token);
+			const accessToken = thunkAPI.getState().auth.user.accessToken;
+			return await authService.updatePassword(userData, accessToken);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -86,8 +97,8 @@ export const updateAccountAvatar = createAsyncThunk(
 	"auth/avatar",
 	async (file, thunkAPI) => {
 		try {
-			const token = thunkAPI.getState().auth.user.token;
-			return await authService.updateAvatar(file, token);
+			const accessToken = thunkAPI.getState().auth.user.accessToken;
+			return await authService.updateAvatar(file, accessToken);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -216,6 +227,10 @@ export const authSlice = createSlice({
 				state.isLoading = false;
 				state.updateError = true;
 				state.message = action.payload;
+			})
+			.addCase(refreshAccessToken.fulfilled, (state, action) => {
+				console.log(action.payload);
+				state.user = action.payload;
 			});
 	},
 });
