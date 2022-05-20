@@ -1,142 +1,18 @@
-const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const path = "backend/uploads/images/";
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
-const User = require("../models/userModel");
-const Messages = require("../models/messageModel");
-const Conversation = require("../models/conversationModel");
+const User = require("../../models/userModel");
+const Messages = require("../../models/messageModel");
+const Conversation = require("../../models/conversationModel");
 
 // For schema data:
 // .id => 6278dd9dadc7cdbc6f7ec28c
 // ._id => new ObjectId("6278dd9dadc7cdbc6f7ec28c")
 
-// Generate a JWT: used to validate user
-const generateAccessToken = (id) => {
-	return jwt.sign({ id }, process.env.JWT_ACCESS_SECRET, {
-		expiresIn: "1d",
-	});
-};
-const generateRefreshToken = (id) => {
-	return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, {
-		expiresIn: "1d",
-	});
-};
-
-// @desc Register new user
-// @route POST /api/users
-// @access Public
-const registerUser = asyncHandler(async (req, res) => {
-	const { name, username, email, password } = req.body;
-
-	// Check if user exists in the database based on email
-	const emailExists = await User.findOne({ email });
-	const usernameExists = await User.findOne({ username });
-
-	if (emailExists) {
-		res.status(400);
-		throw new Error("This email address is already in use.");
-	}
-	if (usernameExists) {
-		res.status(400);
-		throw new Error("This username is taken. Try another.");
-	}
-	if (password.slice(0, 1) === " " || password.slice(-1) === " ") {
-		res.status(400);
-		throw new Error("Your password cannot begin or end with a blank space.");
-	}
-
-	// Hash(encrypt) password
-	const salt = await bcrypt.genSalt(10);
-	const hashedPassword = await bcrypt.hash(password, salt);
-
-	// Create User using mongoose schema
-	const user = await User.create({
-		name,
-		username,
-		email,
-		password: hashedPassword,
-	});
-
-	// Create JWT refresh token
-	const refreshToken = generateRefreshToken(user._id);
-
-	await User.findByIdAndUpdate(
-		user._id,
-		{
-			refreshToken,
-		},
-		{
-			new: true,
-		}
-	);
-
-	// If user is succesfully created
-	if (user) {
-		res.cookie("jwt", refreshToken, {
-			httpOnly: true,
-			maxAge: 24 * 60 * 60 * 1000,
-		});
-
-		return res.status(201).json({
-			_id: user.id,
-			name: user.name,
-			username: user.username,
-			email: user.email,
-			token: generateAccessToken(user._id),
-		});
-	} else {
-		res.status(400);
-		throw new Error("Invalid user data");
-	}
-});
-
-// @desc Login user
-// @route POST /api/
-// @access Public
-const loginUser = asyncHandler(async (req, res) => {
-	const { email, password } = req.body;
-
-	// Check for user based on email
-	const user = await User.findOne({ email });
-
-	// bcrypt.compare() compares password from request and hashed password from database schema
-	if (user && (await bcrypt.compare(password, user.password))) {
-		// Create JWT refresh token
-		const refreshToken = generateRefreshToken(user._id);
-		await User.findByIdAndUpdate(
-			user._id,
-			{
-				refreshToken,
-			},
-			{
-				new: true,
-			}
-		);
-
-		res.cookie("jwt", refreshToken, {
-			httpOnly: true,
-			maxAge: 24 * 60 * 60 * 1000,
-		});
-
-		return res.status(201).json({
-			_id: user.id,
-			name: user.name,
-			username: user.username,
-			email: user.email,
-			userAvatar: user.userAvatar,
-			token: generateAccessToken(user._id),
-		});
-	} else {
-		res.status(401);
-		throw new Error("Email and/or password do not match.");
-	}
-});
-
-// @desc Update user data
-// @route PUT /api/users/me
+// @desc Update username
+// @route PUT /api/account/username
 // @access Private
-
 const updateUsername = asyncHandler(async (req, res) => {
 	const currentUser = await User.findById(req.user._id);
 
@@ -183,6 +59,9 @@ const updateUsername = asyncHandler(async (req, res) => {
 	});
 });
 
+// @desc Update email
+// @route PUT /api/account/email
+// @access Private
 const updateEmail = asyncHandler(async (req, res) => {
 	const currentUser = await User.findById(req.user._id);
 
@@ -213,6 +92,9 @@ const updateEmail = asyncHandler(async (req, res) => {
 	});
 });
 
+// @desc Update password
+// @route PUT /api/account/password
+// @access Private
 const updatePassword = asyncHandler(async (req, res) => {
 	const currentUser = await User.findById(req.user._id);
 
@@ -261,6 +143,9 @@ const updatePassword = asyncHandler(async (req, res) => {
 	});
 });
 
+// @desc Update avatar
+// @route PUT /api/account/avatar
+// @access Private
 const updateAvatar = asyncHandler(async (req, res) => {
 	const currentUser = await User.findById(req.user._id);
 
@@ -316,8 +201,6 @@ const updateAvatar = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-	registerUser,
-	loginUser,
 	updateUsername,
 	updateEmail,
 	updatePassword,

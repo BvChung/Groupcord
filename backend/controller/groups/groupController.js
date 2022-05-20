@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
-const Conversation = require("../models/conversationModel");
-const User = require("../models/userModel");
-const Messages = require("../models/messageModel");
+const Conversation = require("../../models/conversationModel");
+const User = require("../../models/userModel");
+const Messages = require("../../models/messageModel");
 const fs = require("fs");
 const path = "backend/uploads/images/";
 

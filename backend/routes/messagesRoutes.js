@@ -5,7 +5,7 @@ const {
 	getMessages,
 	setMessages,
 	deleteMessages,
-} = require("../controller/messageController");
+} = require("../controller/messages/messageController");
 
 const { verifyJWT } = require("../middleware/authJWT");
 
