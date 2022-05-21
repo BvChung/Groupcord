@@ -42,8 +42,7 @@ export const createChatGroups = createAsyncThunk(
 	"group/create",
 	async (groupData, thunkAPI) => {
 		try {
-			const accessToken = thunkAPI.getState().auth.user.accessToken;
-			return await groupService.createGroup(groupData, accessToken);
+			return await groupService.createGroup(groupData);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -54,8 +53,7 @@ export const getChatGroups = createAsyncThunk(
 	"group/get",
 	async (_, thunkAPI) => {
 		try {
-			const accessToken = thunkAPI.getState().auth.user.accessToken;
-			return await groupService.getGroup(accessToken);
+			return await groupService.getGroup();
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -66,9 +64,8 @@ export const updateChatGroupName = createAsyncThunk(
 	"group/updateGroupName",
 	async (groupData, thunkAPI) => {
 		try {
-			const accessToken = thunkAPI.getState().auth.user.accessToken;
 			const { groupId, groupName } = groupData;
-			return await groupService.updateName(groupId, groupName, accessToken);
+			return await groupService.updateName(groupId, groupName);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -79,9 +76,8 @@ export const updateChatGroupIcon = createAsyncThunk(
 	"group/updateGroupIcon",
 	async (groupData, thunkAPI) => {
 		try {
-			const accessToken = thunkAPI.getState().auth.user.accessToken;
 			const { groupId, file } = groupData;
-			return await groupService.updateIcon(groupId, file, accessToken);
+			return await groupService.updateIcon(groupId, file);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -92,8 +88,7 @@ export const deleteChatGroup = createAsyncThunk(
 	"group/delete",
 	async (groupId, thunkAPI) => {
 		try {
-			const accessToken = thunkAPI.getState().auth.user.accessToken;
-			return await groupService.deleteGroup(groupId, accessToken);
+			return await groupService.deleteGroup(groupId);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -104,8 +99,7 @@ export const getRegisteredMembers = createAsyncThunk(
 	"group/getMembers",
 	async (_, thunkAPI) => {
 		try {
-			const accessToken = thunkAPI.getState().auth.user.accessToken;
-			return await groupService.getMembers(accessToken);
+			return await groupService.getMembers();
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -116,9 +110,8 @@ export const addGroupMembers = createAsyncThunk(
 	"group/addMembers",
 	async (memberId, thunkAPI) => {
 		try {
-			const accessToken = thunkAPI.getState().auth.user.accessToken;
 			const { groupId } = thunkAPI.getState().conversations.activeGroupInfo;
-			return await groupService.addMembers(memberId, groupId, accessToken);
+			return await groupService.addMembers(memberId, groupId);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -129,9 +122,8 @@ export const removeGroupMembers = createAsyncThunk(
 	"group/removeMembers",
 	async (memberId, thunkAPI) => {
 		try {
-			const accessToken = thunkAPI.getState().auth.user.accessToken;
 			const { groupId } = thunkAPI.getState().conversations.activeGroupInfo;
-			return await groupService.removeMembers(memberId, groupId, accessToken);
+			return await groupService.removeMembers(memberId, groupId);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}

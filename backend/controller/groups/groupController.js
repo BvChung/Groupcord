@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = "backend/uploads/images/";
 
 // @desc Get chat groups based on user
-// @route Get /api/conversation
+// @route Get /api/groups/
 // @access Private
 const getChatGroups = asyncHandler(async (req, res) => {
 	// const userConversations = await Conversation.find({ user: req.user.id });
@@ -18,7 +18,7 @@ const getChatGroups = asyncHandler(async (req, res) => {
 });
 
 // @desc Create conversation
-// @route POST /api/conversation
+// @route POST /api/groups/
 // @access Private
 const createChatGroup = asyncHandler(async (req, res) => {
 	const { groupName } = req.body;
@@ -38,7 +38,7 @@ const createChatGroup = asyncHandler(async (req, res) => {
 });
 
 // @desc Update Group
-// @route PUT /api/conversation/:id
+// @route PUT /api/groups/:id
 // @access Private
 const updateChatGroupName = asyncHandler(async (req, res) => {
 	const { groupId } = req.params;
