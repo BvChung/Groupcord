@@ -1,65 +1,24 @@
-import axios from "axios";
-import { configuration } from "../helperFunctions/helperFunctions";
-import { axiosPublic } from "../../api/axios";
+import { axiosPrivate } from "../../api/axios";
 
 const API_URL = "/api/messages";
 
-const getMessage = async (groupId, accessToken) => {
-	const response = await axiosPublic.get(
-		`${API_URL}?groupId=${groupId}`,
-		configuration(accessToken)
-	);
+const getMessage = async (groupId) => {
+	const response = await axiosPrivate.get(`${API_URL}?groupId=${groupId}`);
 
 	return response.data;
 };
 
-const createMessage = async (messageData, accessToken) => {
-	const response = await axiosPublic.post(
-		API_URL,
-		messageData,
-		configuration(accessToken)
-	);
+const createMessage = async (messageData) => {
+	const response = await axiosPrivate.post(API_URL, messageData);
 
 	return response.data;
 };
 
-const deleteMessage = async (messageId, accessToken) => {
-	const response = await axiosPublic.delete(
-		`${API_URL}/${messageId}`,
-		configuration(accessToken)
-	);
+const deleteMessage = async (messageId) => {
+	const response = await axiosPrivate.delete(`${API_URL}/${messageId}`);
 
 	return response.data;
 };
-
-// const API_URL = "/api/messages";
-// const getMessage = async (groupId, accessToken) => {
-// 	const response = await axios.get(
-// 		`${API_URL}?groupId=${groupId}`,
-// 		configuration(accessToken)
-// 	);
-
-// 	return response.data;
-// };
-
-// const createMessage = async (messageData, accessToken) => {
-// 	const response = await axios.post(
-// 		API_URL,
-// 		messageData,
-// 		configuration(accessToken)
-// 	);
-
-// 	return response.data;
-// };
-
-// const deleteMessage = async (messageId, accessToken) => {
-// 	const response = await axios.delete(
-// 		`${API_URL}/${messageId}`,
-// 		configuration(accessToken)
-// 	);
-
-// 	return response.data;
-// };
 
 const chatService = {
 	createMessage,

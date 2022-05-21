@@ -1,19 +1,3 @@
-const jwt = require("jsonwebtoken");
-
-// JWT Token functions -------------------------------
-
-const generateAccessToken = (id) => {
-	return jwt.sign({ id }, process.env.JWT_ACCESS_SECRET, {
-		expiresIn: "1d",
-	});
-};
-
-const generateRefreshToken = (id) => {
-	return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, {
-		expiresIn: "1d",
-	});
-};
-
 // Socket Io functions -------------------------------
 
 // get last room from socket.rooms (socket.rooms = Set object)
@@ -40,8 +24,6 @@ const createUser = (connectedUsers, socketId, username, userId) => {
 };
 
 module.exports = {
-	generateAccessToken,
-	generateRefreshToken,
 	getPreviousRoom,
 	createUser,
 };

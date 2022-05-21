@@ -7,7 +7,6 @@ import MemberList from "../DisplayMembers/DisplayMembers";
 import NavMenu from "../Menu/NavMenu";
 import { MenuContext } from "../../../appContext/menuContext";
 import { Tooltip } from "@mui/material";
-import { refreshAccessToken } from "../../../features/authentication/authSlice";
 
 export default function ChatNav() {
 	const dispatch = useDispatch();
@@ -87,15 +86,6 @@ export default function ChatNav() {
 					</li>
 					<li>
 						<NavMenu />
-					</li>
-					<li>
-						<button
-							onClick={() => {
-								dispatch(refreshAccessToken());
-							}}
-						>
-							Refresh
-						</button>
 					</li>
 					<Tooltip
 						arrow

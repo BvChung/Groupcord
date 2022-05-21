@@ -23,13 +23,11 @@ const initialState = {
 };
 
 export const getChatMessage = createAsyncThunk(
-	"message/getAll",
+	"message/get",
 	async (_, thunkAPI) => {
 		try {
-			// thunkAPI has a method to get any state value from the redux store
-			const accessToken = thunkAPI.getState().auth.user.accessToken;
 			const { groupId } = thunkAPI.getState().conversations.activeGroupInfo;
-			return await chatService.getMessage(groupId, accessToken);
+			return await chatService.getMessage(groupId);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -40,9 +38,7 @@ export const createChatMessage = createAsyncThunk(
 	"message/create",
 	async (messageData, thunkAPI) => {
 		try {
-			// thunkAPI has a method to get any state value from the redux store
-			const accessToken = thunkAPI.getState().auth.user.accessToken;
-			return await chatService.createMessage(messageData, accessToken);
+			return await chatService.createMessage(messageData);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
@@ -53,8 +49,7 @@ export const deleteChatMessage = createAsyncThunk(
 	"message/delete",
 	async (messageId, thunkAPI) => {
 		try {
-			const accessToken = thunkAPI.getState().auth.user.accessToken;
-			return await chatService.deleteMessage(messageId, accessToken);
+			return await chatService.deleteMessage(messageId);
 		} catch (error) {
 			return thunkAPI.rejectWithValue(errorMessage(error));
 		}
