@@ -47,6 +47,17 @@ export const registerUser = createAsyncThunk(
 	}
 );
 
+export const logoutUser = createAsyncThunk(
+	"auth/logout",
+	async (_, thunkAPI) => {
+		try {
+			return await authService.logout();
+		} catch (error) {
+			return thunkAPI.rejectWithValue(errorMessage(error));
+		}
+	}
+);
+
 export const refreshAccessToken = createAsyncThunk(
 	"auth/refreshToken",
 	async (_, thunkAPI) => {
@@ -70,6 +81,7 @@ export const updateAccountUsername = createAsyncThunk(
 		}
 	}
 );
+
 export const updateAccountEmail = createAsyncThunk(
 	"auth/updateEmail",
 	async (userData, thunkAPI) => {
@@ -81,6 +93,7 @@ export const updateAccountEmail = createAsyncThunk(
 		}
 	}
 );
+
 export const updateAccountPassword = createAsyncThunk(
 	"auth/updatePassword",
 	async (userData, thunkAPI) => {
@@ -116,11 +129,6 @@ export const authSlice = createSlice({
 			state.loginError = false;
 			state.updateError = false;
 			state.message = "";
-		},
-		logoutUser: (state) => {
-			state.user = null;
-			state.loggedIn = false;
-			authService.logout();
 		},
 		resetSuccessNotifications: (state) => {
 			state.changedAvatar = false;
@@ -229,12 +237,15 @@ export const authSlice = createSlice({
 				state.message = action.payload;
 			})
 			.addCase(refreshAccessToken.fulfilled, (state, action) => {
-				console.log(action.payload);
 				state.user = action.payload;
+			})
+			.addCase(logoutUser.fulfilled, (state, action) => {
+				state.user = null;
+				state.loggedIn = false;
+				// console.log(action.payload);
 			});
 	},
 });
 
-export const { resetState, logoutUser, resetSuccessNotifications } =
-	authSlice.actions;
+export const { resetState, resetSuccessNotifications } = authSlice.actions;
 export default authSlice.reducer;

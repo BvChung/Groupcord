@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const {
 	generateAccessToken,
 	generateRefreshToken,
-} = require("../../helper/helperfunctions");
+} = require("../../helper/JWTGeneration");
 const nodemon = require("nodemon");
 
 // For schema data:
@@ -25,6 +25,7 @@ const loginUser = asyncHandler(async (req, res) => {
 	if (user && (await bcrypt.compare(password, user.password))) {
 		// Create JWT refresh token
 		const refreshToken = generateRefreshToken(user._id);
+
 		await User.findByIdAndUpdate(
 			user._id,
 			{
@@ -35,21 +36,22 @@ const loginUser = asyncHandler(async (req, res) => {
 			}
 		);
 
-		res.cookie("jwt", refreshToken, {
-			httpOnly: true,
-			sameSite: "None",
-			secure: true,
-			maxAge: 24 * 60 * 60 * 1000,
-		});
-
-		return res.status(200).json({
-			_id: user.id,
-			name: user.name,
-			username: user.username,
-			email: user.email,
-			userAvatar: user.userAvatar,
-			accessToken: generateAccessToken(user._id),
-		});
+		res
+			.status(200)
+			.cookie("jwt", refreshToken, {
+				sameSite: "strict",
+				httpOnly: true,
+				secure: true,
+				maxAge: 24 * 60 * 60 * 1000,
+			})
+			.json({
+				_id: user.id,
+				name: user.name,
+				username: user.username,
+				email: user.email,
+				userAvatar: user.userAvatar,
+				accessToken: generateAccessToken(user._id),
+			});
 	} else {
 		res.status(401);
 		throw new Error("Email and/or password do not match.");
@@ -106,44 +108,51 @@ const registerUser = asyncHandler(async (req, res) => {
 
 	// If user is succesfully created
 	if (user) {
-		res.cookie("jwt", refreshToken, {
-			httpOnly: true,
-			sameSite: "None",
-			secure: true,
-			maxAge: 24 * 60 * 60 * 1000,
-		});
-
-		return res.status(201).json({
-			_id: user.id,
-			name: user.name,
-			username: user.username,
-			email: user.email,
-			accessToken: generateAccessToken(user._id),
-		});
+		return res
+			.status(201)
+			.cookie("jwt", refreshToken, {
+				sameSite: "strict",
+				httpOnly: true,
+				secure: true,
+				maxAge: 24 * 60 * 60 * 1000,
+			})
+			.json({
+				_id: user.id,
+				name: user.name,
+				username: user.username,
+				email: user.email,
+				accessToken: generateAccessToken(user._id),
+			});
 	} else {
 		res.status(401);
 		throw new Error("Invalid user data");
 	}
 });
 
+// @desc Logout user
+// @route PUT /api/user/logout
+// @access Private
 const logoutUser = asyncHandler(async (req, res) => {
+	// Get http cookie with encoded Refresh JWT
 	const cookies = req.cookies;
 
-	if (!cookies?.jwt) return res.sendStatus(401);
+	if (!cookies?.jwt) return res.sendStatus(204);
 
 	const refreshToken = cookies.jwt;
+
+	const foundUser = await User.findOne({ refreshToken: refreshToken }).exec();
+
+	// If no token in db then just remove token
+	if (!foundUser) {
+		res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+		return res.sendStatus(204);
+	}
 
 	const decodedToken = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
 
 	if (!decodedToken) return res.sendStatus(403);
 
-	const foundUser = await User.findOne({ refreshToken });
-
-	if (!foundUser) return res.sendStatus(404);
-
-	if (foundUser.id !== decodedToken.id) return res.sendStatus(403);
-
-	// Remove refresh token + cookie when user logouts
+	// Remove refresh JWT + cookie when user logouts
 	await User.findByIdAndUpdate(
 		decodedToken.id,
 		{

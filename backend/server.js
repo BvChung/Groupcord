@@ -26,14 +26,16 @@ const io = new Server(server, {
 app.use("/images", express.static(path.join(__dirname, "uploads/images")));
 
 // middleware
-app.use(
-	cors({
-		origin: ["http://localhost:3000"],
-		credentials: true,
-	})
-);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use(
+	cors({
+		origin: "http://localhost:3000",
+		credentials: true,
+		optionSuccessStatus: 200,
+	})
+);
 
 // Middleware for cookies
 app.use(cookieParser());

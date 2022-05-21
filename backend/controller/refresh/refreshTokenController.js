@@ -1,26 +1,35 @@
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/userModel");
-const { generateAccessToken } = require("../../helper/helperfunctions");
+const { generateAccessToken } = require("../../helper/JWTGeneration");
 
+// @desc Issue new access tokens
+// @route GET /api/refresh
+// @access Private
 const handleRefreshToken = asyncHandler(async (req, res) => {
-	const cookies = req.cookies;
-	console.log(cookies);
+	try {
+		const cookies = req.cookies;
 
-	if (!cookies?.jwt) return res.sendStatus(401);
+		if (!cookies?.jwt) return res.sendStatus(401);
 
-	const refreshToken = cookies.jwt;
-	console.log(refreshToken);
+		const refreshToken = cookies.jwt;
 
-	const decodedToken = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+		const foundUser = await User.findOne({ refreshToken: refreshToken });
 
-	const foundUser = await User.findOne({ _id: decodedToken.id });
+		if (!foundUser) return res.sendStatus(401);
 
-	if (!foundUser) return res.sendStatus(404);
+		const decodedToken = jwt.verify(
+			refreshToken,
+			process.env.JWT_REFRESH_SECRET
+		);
 
-	const accessToken = generateAccessToken(decodedToken.id);
+		const accessToken = generateAccessToken(decodedToken.id);
 
-	return res.json({ accessToken });
+		return res.json({ accessToken });
+	} catch (error) {
+		res.status(403);
+		throw new Error("Invalid refresh token.");
+	}
 });
 
 module.exports = {

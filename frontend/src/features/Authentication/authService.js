@@ -1,39 +1,24 @@
 import axios from "axios";
-import { configuration } from "../helperFunctions/helperFunctions";
-import { axiosPublic, axiosPrivate } from "../../api/axios";
+import {
+	axiosPublic,
+	axiosPrivate,
+	requestInterceptor,
+	responseInterceptor,
+} from "../../api/axios";
 
-// Axios connects the frontend to the backend
-
-// Makes http req. to the API_URL and returns data
 const API_URL = "/api/users";
 
-// Register user
-const register = async (userData) => {
-	const response = await axiosPublic.post(`${API_URL}/register`, userData);
-
-	// Save registered user to local storage
-	if (response.data) {
-		localStorage.setItem("user", JSON.stringify(response.data));
-	}
-
-	return response.data;
-};
-
-// Login user
-const login = async (userData) => {
-	const response = await axiosPublic.post(`${API_URL}/login`, userData);
-
-	if (response.data) {
-		localStorage.setItem("user", JSON.stringify(response.data));
-	}
-
-	return response.data;
-};
-
+//Use refresh JWT from http cookie to give new access JWT ------------------------
 const refreshToken = async () => {
 	const response = await axiosPrivate.get("/api/refresh", {
 		withCredentials: true,
 	});
+
+	// if (response.status === 403) {
+	// 	console.log(response);
+	// 	axiosPrivate.interceptors.request.eject(requestInterceptor);
+	// 	axiosPrivate.interceptors.response.eject(responseInterceptor);
+	// }
 
 	if (response.data) {
 		const user = JSON.parse(localStorage.getItem("user"));
@@ -49,12 +34,46 @@ const refreshToken = async () => {
 	}
 };
 
-// Update user
-const updateUsername = async (userData, accessToken) => {
-	const response = await axiosPublic.put(
+// Login user ------------------------
+const login = async (userData) => {
+	const response = await axiosPublic.post(`${API_URL}/login`, userData);
+
+	if (response.data) {
+		localStorage.setItem("user", JSON.stringify(response.data));
+	}
+
+	return response.data;
+};
+
+// Register user ------------------------
+const register = async (userData) => {
+	const response = await axiosPublic.post(`${API_URL}/register`, userData);
+
+	// Save registered user to local storage
+	if (response.data) {
+		localStorage.setItem("user", JSON.stringify(response.data));
+	}
+
+	return response.data;
+};
+
+// Logout user ------------------------
+const logout = async () => {
+	const response = await axiosPrivate.put(`${API_URL}/logout`, {
+		withCredentials: true,
+	});
+
+	localStorage.removeItem("user");
+	console.log(response);
+
+	return response.status;
+};
+
+// Update Personal Info ------------------------
+const updateUsername = async (userData) => {
+	const response = await axiosPrivate.put(
 		`${API_URL}/settings/username`,
-		userData,
-		configuration(accessToken)
+		userData
 	);
 
 	if (response.data) {
@@ -71,11 +90,10 @@ const updateUsername = async (userData, accessToken) => {
 	}
 };
 
-const updateEmail = async (userData, accessToken) => {
-	const response = await axiosPublic.put(
+const updateEmail = async (userData) => {
+	const response = await axiosPrivate.put(
 		`${API_URL}/settings/email`,
-		userData,
-		configuration(accessToken)
+		userData
 	);
 
 	if (response.data) {
@@ -92,22 +110,17 @@ const updateEmail = async (userData, accessToken) => {
 	}
 };
 
-const updatePassword = async (userData, accessToken) => {
-	const response = await axiosPublic.put(
+const updatePassword = async (userData) => {
+	const response = await axiosPrivate.put(
 		`${API_URL}/settings/password`,
-		userData,
-		configuration(accessToken)
+		userData
 	);
 
 	return response.data;
 };
 
-const updateAvatar = async (file, accessToken) => {
-	const response = await axiosPublic.put(
-		`${API_URL}/settings/avatar`,
-		file,
-		configuration(accessToken)
-	);
+const updateAvatar = async (file) => {
+	const response = await axiosPrivate.put(`${API_URL}/settings/avatar`, file);
 
 	if (response.data) {
 		const user = JSON.parse(localStorage.getItem("user"));
@@ -122,130 +135,6 @@ const updateAvatar = async (file, accessToken) => {
 		return storeUserData;
 	}
 };
-
-// Logout user
-const logout = () => {
-	localStorage.removeItem("user");
-};
-
-// const API_URL = "api/users";
-// const register = async (userData) => {
-// 	const response = await axios.post(`${API_URL}/register`, userData);
-
-// 	// Save registered user to local storage
-// 	if (response.data) {
-// 		localStorage.setItem("user", JSON.stringify(response.data));
-// 	}
-
-// 	return response.data;
-// };
-
-// // Login user
-// const login = async (userData) => {
-// 	const response = await axios.post(`${API_URL}/login`, userData);
-
-// 	if (response.data) {
-// 		localStorage.setItem("user", JSON.stringify(response.data));
-// 	}
-
-// 	return response.data;
-// };
-
-// const refreshToken = async () => {
-// 	const response = await axios.get("/api/refresh", { withCredentials: true });
-
-// 	if (response.data) {
-// 		const user = JSON.parse(localStorage.getItem("user"));
-
-// 		const newAccessToken = {
-// 			...user,
-// 			accessToken: response.data.accessToken,
-// 		};
-
-// 		localStorage.setItem("user", JSON.stringify(newAccessToken));
-
-// 		return newAccessToken;
-// 	}
-// };
-
-// // Update user
-// const updateUsername = async (userData, accessToken) => {
-// 	const response = await axios.put(
-// 		`${API_URL}/settings/username`,
-// 		userData,
-// 		configuration(accessToken)
-// 	);
-
-// 	if (response.data) {
-// 		const user = JSON.parse(localStorage.getItem("user"));
-
-// 		const storeUserData = {
-// 			...response.data,
-// 			accessToken: user.accessToken,
-// 		};
-
-// 		localStorage.setItem("user", JSON.stringify(storeUserData));
-
-// 		return storeUserData;
-// 	}
-// };
-
-// const updateEmail = async (userData, accessToken) => {
-// 	const response = await axios.put(
-// 		`${API_URL}/settings/email`,
-// 		userData,
-// 		configuration(accessToken)
-// 	);
-
-// 	if (response.data) {
-// 		const user = JSON.parse(localStorage.getItem("user"));
-
-// 		const storeUserData = {
-// 			...response.data,
-// 			accessToken: user.accessToken,
-// 		};
-
-// 		localStorage.setItem("user", JSON.stringify(storeUserData));
-
-// 		return storeUserData;
-// 	}
-// };
-
-// const updatePassword = async (userData, accessToken) => {
-// 	const response = await axios.put(
-// 		`${API_URL}/settings/password`,
-// 		userData,
-// 		configuration(accessToken)
-// 	);
-
-// 	return response.data;
-// };
-
-// const updateAvatar = async (file, accessToken) => {
-// 	const response = await axios.put(
-// 		`${API_URL}/settings/avatar`,
-// 		file,
-// 		configuration(accessToken)
-// 	);
-
-// 	if (response.data) {
-// 		const user = JSON.parse(localStorage.getItem("user"));
-
-// 		const storeUserData = {
-// 			...response.data,
-// 			accessToken: user.accessToken,
-// 		};
-
-// 		localStorage.setItem("user", JSON.stringify(storeUserData));
-
-// 		return storeUserData;
-// 	}
-// };
-
-// // Logout user
-// const logout = () => {
-// 	localStorage.removeItem("user");
-// };
 
 const authService = {
 	register,

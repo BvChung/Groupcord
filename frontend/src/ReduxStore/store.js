@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, createStore } from "@reduxjs/toolkit";
 import authReducer from "../features/authentication/authSlice";
 import messagesReducer from "../features/messages/messageSlice";
 import themeReducer from "../features/theme/themeSlice";
