@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { SunIcon, MoonIcon } from "@heroicons/react/outline";
+import { MoonIcon } from "@heroicons/react/outline";
+import { SunIcon } from "@heroicons/react/solid";
 import { useSelector, useDispatch } from "react-redux";
 import { changeTheme } from "../../features/theme/themeSlice";
 import { Tooltip } from "@mui/material";
@@ -30,7 +31,7 @@ function Utilities() {
 									onClick={toggleTheme}
 									className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 p-[6px] rounded-full 
 									border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-									hover:bg-gray-200 dark:hover:bg-dark3
+									hover:bg-gray-200 dark:hover:bg-dark4 cursor-pointer
 									transition-all "
 								/>
 							) : (
@@ -39,7 +40,7 @@ function Utilities() {
 									onClick={toggleTheme}
 									className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-200 hover:dark:text-gray-400 p-[6px] rounded-full
 									border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-									hover:bg-gray-200 dark:hover:bg-dark3
+									hover:bg-gray-200 dark:hover:bg-dark3 cursor-pointer
 									transition-all "
 								/>
 							)}

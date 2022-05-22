@@ -173,9 +173,9 @@ export default function ProfileSettings() {
 		displaySuccess();
 		displayError();
 
-		return () => {
-			resetAfterUpdate();
-		};
+		// return () => {
+		// 	resetAfterUpdate();
+		// };
 	}, [displaySuccess, displayError, resetAfterUpdate]);
 
 	const iconStyle = "dark:text-gray-200 text-gray-700";

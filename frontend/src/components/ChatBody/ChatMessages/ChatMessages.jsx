@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 export default function Chat() {
 	const socket = useContext(SocketContext);
 	const dispatch = useDispatch();
+	const messageRef = useRef(null);
 
 	const [userMessage, setUserMessage] = useState({
 		message: "",
@@ -38,12 +39,6 @@ export default function Chat() {
 	const { groupId, members } = useSelector(
 		(state) => state.conversations.activeGroupInfo
 	);
-	const refMessage = useRef(null);
-	const scrollToMessage = () => refMessage.current.scrollIntoView();
-	useEffect(() => {
-		scrollToMessage();
-	}, [groupMessages]);
-	// console.log(hideTextInput);
 
 	const [textInputActive, setTextInputActive] = useState(false);
 	function toggleTextInputActive() {
@@ -52,9 +47,6 @@ export default function Chat() {
 	function toggleTextInputInactive() {
 		setTextInputActive(false);
 	}
-	const inputActiveStyle = textInputActive
-		? "-rotate-[-180] text-sky-500 dark:text-sky-600"
-		: "rotate-90 text-gray-400 ";
 
 	function handleChange(e) {
 		const { value, name } = e.target;
@@ -92,8 +84,13 @@ export default function Chat() {
 		});
 	}
 
+	const scrollToNewMessage = () => messageRef.current.scrollIntoView();
+	useEffect(() => {
+		scrollToNewMessage();
+	}, [groupMessages]);
+
 	// --------------- Socket.io Websocket Transmission -------------------
-	// Loading messages/ joining chat room
+	// Loading messages + joining chat room
 	const loadMessages = useCallback(() => {
 		dispatch(getChatMessage());
 	}, [dispatch]);
@@ -105,14 +102,14 @@ export default function Chat() {
 		socket.emit("join_room", groupId);
 	}, [groupId, socket, dispatch, loadMessages]);
 
-	const dispatchChangedUsernameSocketData = useCallback(
+	const dispatchChangeUsernameSocketData = useCallback(
 		(data) => {
 			dispatch(socketDataUpdateMessageUsername(data));
 			dispatch(socketDataUpdateMembersPeronalInfo(data));
 		},
 		[dispatch]
 	);
-	const dispatchChangedAvatarSocketData = useCallback(
+	const dispatchChangeAvatarSocketData = useCallback(
 		(data) => {
 			dispatch(socketDataUpdateMessageAvatar(data));
 			dispatch(socketDataUpdateMembersPeronalInfo(data));
@@ -125,7 +122,7 @@ export default function Chat() {
 		},
 		[dispatch]
 	);
-	const dispatchDeletedMessageSocketData = useCallback(
+	const dispatchDeleteMessageSocketData = useCallback(
 		(data) => {
 			dispatch(socketDataRemoveDeletedMessage(data));
 		},
@@ -135,24 +132,24 @@ export default function Chat() {
 	useEffect(() => {
 		socket.emit("send_message_username_updated", updatedUsernameToSocket);
 		socket.on("receive_message_username_updated", (messageData) => {
-			dispatchChangedUsernameSocketData(messageData);
+			dispatchChangeUsernameSocketData(messageData);
 		});
 
 		return () => {
 			socket.off("receive_message_username_updated");
 		};
-	}, [socket, updatedUsernameToSocket, dispatchChangedUsernameSocketData]);
+	}, [socket, updatedUsernameToSocket, dispatchChangeUsernameSocketData]);
 
 	useEffect(() => {
 		socket.emit("send_message_avatar_updated", updatedAvatarToSocket);
 		socket.on("receive_message_avatar_updated", (messageData) => {
-			dispatchChangedAvatarSocketData(messageData);
+			dispatchChangeAvatarSocketData(messageData);
 		});
 
 		return () => {
 			socket.off("receive_message_avatar_updated");
 		};
-	}, [socket, updatedAvatarToSocket, dispatchChangedAvatarSocketData]);
+	}, [socket, updatedAvatarToSocket, dispatchChangeAvatarSocketData]);
 
 	useEffect(() => {
 		socket.emit("send_message", newMessageToSocket);
@@ -168,13 +165,13 @@ export default function Chat() {
 	useEffect(() => {
 		socket.emit("send_deleted_message", deletedMessageToSocket);
 		socket.on("receive_deleted_message", (messageData) => {
-			dispatchDeletedMessageSocketData(messageData);
+			dispatchDeleteMessageSocketData(messageData);
 		});
 
 		return () => {
 			socket.off("receive_deleted_message");
 		};
-	}, [socket, deletedMessageToSocket, dispatchDeletedMessageSocketData]);
+	}, [socket, deletedMessageToSocket, dispatchDeleteMessageSocketData]);
 
 	return (
 		<div className="flex-grow bg-white dark:bg-dark2">
@@ -199,7 +196,7 @@ export default function Chat() {
 							/>
 						);
 					})}
-				<div ref={refMessage}></div>
+				<div ref={messageRef}></div>
 			</section>
 
 			<div className="flex h-[10%] w-full justify-center items-center px-6">
@@ -231,7 +228,11 @@ export default function Chat() {
 							>
 								<PaperAirplaneIcon
 									className={`w-6 h-6 
-									${inputActiveStyle} transition-all`}
+									${
+										textInputActive
+											? "-rotate-[-180] text-sky-500 dark:text-sky-600"
+											: "rotate-90 text-gray-400 "
+									} transition-all`}
 								/>
 							</button>
 						</form>
