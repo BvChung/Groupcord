@@ -1,26 +1,25 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { AnnotationIcon } from "@heroicons/react/outline";
+import { UserIcon, AnnotationIcon } from "@heroicons/react/outline";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { registerUser, resetState } from "../features/authentication/authSlice";
+import { loginUser, resetError } from "../features/authentication/authSlice";
 import { Checkbox, FormControlLabel } from "@mui/material";
 
-function Register() {
+export default function LoginPage() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
-	const { user, registerError, isSuccess, isLoading, message } = useSelector(
-		(state) => state.auth
-	);
 	const [form, setForm] = useState({
-		name: "",
-		username: "",
+		guestAccount: false,
 		email: "",
 		password: "",
 	});
 	const [showPassword, setShowPassword] = useState(false);
+	const { user, isError, isLoading, errorMessage, loggedIn } = useSelector(
+		(state) => state.auth
+	);
 
 	function handleChange(event) {
 		const { name, value } = event.target;
@@ -35,50 +34,49 @@ function Register() {
 		e.preventDefault();
 
 		const userData = {
-			name: form.name,
-			username: form.username,
 			email: form.email.toLowerCase(),
 			password: form.password,
 		};
 
-		dispatch(registerUser(userData));
+		dispatch(loginUser(userData));
 	}
-
+	function loadGuestAccount() {
+		setForm(() => {
+			return {
+				guestAccount: true,
+				email: "guestaccount@gmail.com",
+				password: "guestaccount",
+			};
+		});
+	}
 	function toggleShowPassword() {
 		setShowPassword((prev) => !prev);
 	}
 
-	const resetAfterRegister = useCallback(() => {
-		dispatch(resetState());
+	const resetAfterLogin = useCallback(() => {
+		dispatch(resetError());
 	}, [dispatch]);
 
 	useEffect(() => {
-		if (registerError) {
-			toast.error(message);
-		}
-
-		if (isSuccess || user) {
-			// If user logins or registers navigate('/') to dashboard
+		if (loggedIn || user) {
 			navigate("/chat");
 		}
 
-		// reset state in store
 		return () => {
-			resetAfterRegister();
+			resetAfterLogin();
 		};
-	}, [
-		user,
-		isSuccess,
-		message,
-		registerError,
-		resetAfterRegister,
-		navigate,
-		dispatch,
-	]);
+	}, [user, loggedIn, navigate, resetAfterLogin]);
+
+	useEffect(() => {
+		if (isError) {
+			toast.error(errorMessage);
+			dispatch(resetError());
+		}
+	}, [isError, errorMessage, dispatch]);
 
 	return (
 		<div
-			className="flex justify-center h-screen w-screen text-gray1 
+			className="flex justify-center h-screen w-screen first-letter:text-gray1 
 			sm:items-center bg-white dark:bg-dark2"
 		>
 			<section
@@ -92,48 +90,15 @@ function Register() {
 						Groupcord
 					</p>
 				</div>
-				<p className="text-center mb-2 font-medium text-xl text-gray1 dark:text-gray-100">
-					Create Account
+				<p className="text-center mb-1 font-medium text-xl text-gray1 dark:text-gray-100">
+					Sign In
 				</p>
-
 				<form
 					className="flex flex-col align-center content-center 
-				h-fit w-screen px-8 sm:w-[30rem] mb-1"
+				h-fit w-screen px-8 sm:w-[30rem]"
 					onSubmit={handleSubmit}
 				>
-					<div className="mb-3">
-						<div className="flex flex-col gap-4 mb-4 w-full sm:flex-row">
-							<div>
-								<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
-									Name
-								</label>
-								<input
-									name="name"
-									value={form.name}
-									type="text"
-									onChange={handleChange}
-									required
-									className="w-full border-[1px] rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
-								border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
-								></input>
-							</div>
-
-							<div>
-								<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
-									Username
-								</label>
-								<input
-									name="username"
-									value={form.username}
-									type="text"
-									onChange={handleChange}
-									required
-									className="w-full border-[1px] rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
-								border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
-								></input>
-							</div>
-						</div>
-
+					<div className="mb-2">
 						<label className="font-semibold text-sm text-gray1 dark:text-gray-100">
 							Email
 						</label>
@@ -160,7 +125,8 @@ function Register() {
 							className="w-full border-[1px] rounded-sm p-1 focus-within:outline-sky-600 text-gray1 dark:text-white
 						border-gray-300 bg-offwhite dark:focus-within:outline-sky-700  dark:border-gray-600 dark:bg-gray-800"
 						></input>
-						<div className="flex items-center text-gray1 dark:text-offwhite">
+
+						<div className="flex items-center mt-[2px] text-gray1 dark:text-offwhite">
 							<FormControlLabel
 								control={<Checkbox onClick={toggleShowPassword} />}
 								label={
@@ -171,13 +137,12 @@ function Register() {
 							/>
 						</div>
 					</div>
-
 					<button
-						aria-label="Create Account"
-						className="transition-all  text-offwhite2 w-full self-center p-2 rounded-md mb-6 
+						aria-label="Sign In"
+						className="transition-all text-offwhite2 w-full self-center p-2 rounded-md mb-4 
 							bg-sky-500 hover:bg-sky-600 dark:bg-sky-800 dark:hover:bg-sky-700"
 					>
-						{isLoading ? (
+						{isLoading && !form.guestAccount ? (
 							<div className="flex items-center justify-center gap-2">
 								<svg
 									className="animate-spin h-6 w-6 -ml-1 mr-1 text-white"
@@ -199,24 +164,67 @@ function Register() {
 										d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
 									></path>
 								</svg>
-								<span>Creating Account</span>
+								<span>Signing In</span>
 							</div>
 						) : (
 							<div className="flex items-center justify-center gap-2">
-								<span>Create Account</span>
+								<span>Sign In</span>
+							</div>
+						)}
+					</button>
+
+					<div className="flex items-center justify-between mb-4">
+						<span className="w-1/5 border-b border-gray-400 dark:border-gray-500 lg:w-1/5"></span>
+						<span className="text-xs text-center text-gray-600 uppercase dark:text-gray-300">
+							<strong>Login With Guest Account</strong>
+						</span>
+						<span className="w-1/5 border-b border-gray-400 dark:border-gray-500 lg:w-1/5"></span>
+					</div>
+
+					<button
+						aria-label="Sign in with guest account"
+						onClick={loadGuestAccount}
+						className="transition-all bg-blue-600 hover:bg-blue-500 text-offwhite2 
+							w-full self-center p-2 rounded-md mb-6 dark:bg-blue-700 dark:hover:bg-blue-600"
+					>
+						{isLoading && form.guestAccount ? (
+							<div className="flex items-center justify-center gap-2">
+								<svg
+									className="animate-spin h-6 w-6 -ml-1 mr-1 text-white"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+								>
+									<circle
+										className="opacity-25"
+										cx="12"
+										cy="12"
+										r="10"
+										stroke="currentColor"
+										strokeWidth="4"
+									></circle>
+									<path
+										className="opacity-75"
+										fill="currentColor"
+										d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+									></path>
+								</svg>
+								<span>Signing in as Guest</span>
+							</div>
+						) : (
+							<div className="flex items-center justify-center gap-2">
+								<UserIcon className="h-5 w-5" /> <span>Guest Account</span>
 							</div>
 						)}
 					</button>
 				</form>
 				<div className="flex justify-center items-center gap-2 px-8">
-					<span className="dark:text-slate-300">Already have an account?</span>
-					<span className="font-semibold text-sky-600 hover:text-sky-400">
-						<Link to="/">Sign in</Link>
+					<span className="dark:text-slate-300">New to GroupCord?</span>
+					<span className="font-semibold text-sky-600 hover:text-sky-500">
+						<Link to="/register">Register</Link>
 					</span>
 				</div>
 			</section>
 		</div>
 	);
 }
-
-export default Register;

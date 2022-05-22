@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext, useCallback } from "react";
-import Nav from "../components/Navigation/ChatNav/ChatNav";
-import ChatBody from "../components/ChatBody/Body";
+import Nav from "../components/Navigation/Nav";
+import ChatBody from "../components/ChatBody/ChatBody";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser, resetState } from "../features/authentication/authSlice";
 import { resetMessageState } from "../features/messages/messageSlice";
@@ -10,7 +10,7 @@ import { SocketContext } from "../appContext/socketContext";
 import { MenuContext } from "../appContext/menuContext";
 import GroupModal from "../components/Modal/GroupModal";
 
-function Chat() {
+export default function ChatPage() {
 	const socket = useContext(SocketContext);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -31,30 +31,29 @@ function Chat() {
 		},
 		[socket]
 	);
-	const dispatchGetGroups = useCallback(() => {
+	const dispatchGetChatGroups = useCallback(() => {
 		dispatch(getChatGroups());
 	}, [dispatch]);
 
 	useEffect(() => {
-		dispatchGetGroups();
-	}, [dispatchGetGroups]);
+		dispatchGetChatGroups();
+	}, [dispatchGetChatGroups]);
 
 	useEffect(() => {
 		createUser(user);
 	}, [user, createUser]);
 
 	// Logout user if invalid token is present
-	const { expiredJSONWebToken } = useSelector((state) => state.messages);
-
+	const { expiredRefreshJWT } = useSelector((state) => state.auth);
 	useEffect(() => {
-		if (expiredJSONWebToken) {
-			navigate("/");
+		if (expiredRefreshJWT) {
 			dispatch(logoutUser());
 			dispatch(resetMessageState());
 			dispatch(resetGroupState());
 			dispatch(resetState());
+			navigate("/");
 		}
-	}, [expiredJSONWebToken, dispatch, navigate]);
+	}, [expiredRefreshJWT, dispatch, navigate]);
 
 	return (
 		<MenuContext.Provider
@@ -74,5 +73,3 @@ function Chat() {
 		</MenuContext.Provider>
 	);
 }
-
-export default Chat;
