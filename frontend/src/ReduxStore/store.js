@@ -1,14 +1,43 @@
-import { configureStore, createStore } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import {
+	persistStore,
+	persistReducer,
+	FLUSH,
+	REHYDRATE,
+	PAUSE,
+	PERSIST,
+	PURGE,
+	REGISTER,
+} from "redux-persist";
+import storage from "redux-persist/lib/storage";
 import authReducer from "../features/authentication/authSlice";
 import messagesReducer from "../features/messages/messageSlice";
 import themeReducer from "../features/theme/themeSlice";
 import groupReducer from "../features/groups/groupSlice";
 
-export const store = configureStore({
-	reducer: {
-		auth: authReducer,
-		conversations: groupReducer,
-		messages: messagesReducer,
-		theme: themeReducer,
-	},
+const appReducer = combineReducers({
+	auth: authReducer,
+	conversations: groupReducer,
+	messages: messagesReducer,
+	theme: themeReducer,
 });
+
+const persistConfig = {
+	key: "root",
+	version: 1,
+	storage,
+};
+
+const persistedReducer = persistReducer(persistConfig, appReducer);
+
+export const store = configureStore({
+	reducer: persistedReducer,
+	middleware: (getDefaultMiddleware) =>
+		getDefaultMiddleware({
+			serializableCheck: {
+				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+			},
+		}),
+});
+
+export let persistor = persistStore(store);

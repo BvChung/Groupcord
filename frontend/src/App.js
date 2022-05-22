@@ -1,8 +1,8 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Chat from "./pages/Chat";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Profile from "./pages/Profile";
+import { Routes, Route } from "react-router-dom";
+import ChatPage from "./pages/ChatPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import ProfilePage from "./pages/ProfilePage";
 import "./index.css";
 import { ToastContainer, Slide } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -21,29 +21,25 @@ export default function App() {
 	});
 
 	return (
-		<ThemeProvider theme={materialUITheme}>
-			<SocketContext.Provider value={socket}>
-				<BrowserRouter>
-					<div className={darkMode ? "dark" : ""}>
-						{!user && <Utilities />}
-						<Routes>
-							<Route path="/" element={<Login />}></Route>
-							<Route path="/register" element={<Register />}></Route>
-							<Route
-								path="/chat"
-								element={user ? <Chat /> : <Navigate to="/" />}
-							></Route>
-							<Route path="/profile" element={<Profile />}></Route>
-						</Routes>
-					</div>
-				</BrowserRouter>
+		<SocketContext.Provider value={socket}>
+			<ThemeProvider theme={materialUITheme}>
+				<div className={darkMode ? "dark" : ""}>
+					{!user && <Utilities />}
+					<Routes>
+						<Route path="/" element={<LoginPage />} />
+						<Route path="/register" element={<RegisterPage />} />
+						<Route path="/chat" element={<ChatPage />} />
+						<Route path="/profile" element={<ProfilePage />} />
+					</Routes>
+				</div>
+
 				<ToastContainer
 					limit={1}
 					autoClose={1250}
 					transition={Slide}
 					theme={darkMode ? "dark" : "light"}
 				/>
-			</SocketContext.Provider>
-		</ThemeProvider>
+			</ThemeProvider>
+		</SocketContext.Provider>
 	);
 }
