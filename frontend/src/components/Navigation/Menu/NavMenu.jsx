@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
 	logoutUser,
@@ -22,7 +22,9 @@ import { Tooltip } from "@mui/material";
 export default function NavMenu() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const onLogout = () => {
+	const onLogout = (e) => {
+		e.preventDefault();
+
 		dispatch(logoutUser());
 		dispatch(resetState());
 		dispatch(resetMessageState());
@@ -89,14 +91,15 @@ export default function NavMenu() {
 					<StyledMenuItem
 						className="mb-1"
 						onClick={() => {
-							navigate("/profile");
 							close();
 						}}
 					>
-						<div className="flex items-center gap-2">
-							<IdentificationIcon className="h-6 w-6" />
-							<span className="font-sans">Manage account</span>
-						</div>
+						<Link to="/profile">
+							<div className="flex items-center gap-2">
+								<IdentificationIcon className="h-6 w-6" />
+								<span className="font-sans">Manage account</span>
+							</div>
+						</Link>
 					</StyledMenuItem>
 				</MenuSection>
 				<Divider />

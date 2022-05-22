@@ -1,16 +1,19 @@
 import { useState, useContext } from "react";
 import { MoonIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
-import { SunIcon, UsersIcon } from "@heroicons/react/solid";
+import { SunIcon, UsersIcon, ChatAlt2Icon } from "@heroicons/react/solid";
 import { useSelector, useDispatch } from "react-redux";
-import { changeTheme } from "../../../features/theme/themeSlice";
-import MemberList from "../DisplayMembers/DisplayMembers";
-import NavMenu from "../Menu/NavMenu";
-import { MenuContext } from "../../../appContext/menuContext";
+import { changeTheme } from "../../features/theme/themeSlice";
+import MemberList from "./DisplayMembers/DisplayMembers";
+import NavMenu from "./Menu/NavMenu";
 import { Tooltip } from "@mui/material";
+import { useLocation, Link } from "react-router-dom";
+import { MenuContext } from "../../appContext/menuContext";
 
-export default function ChatNav() {
+export default function Nav() {
 	const dispatch = useDispatch();
+	const location = useLocation();
 	const { activeGroupMenu, toggleGroupMenu } = useContext(MenuContext);
+
 	const { groupId } = useSelector(
 		(state) => state.conversations.activeGroupInfo
 	);
@@ -26,7 +29,6 @@ export default function ChatNav() {
 	const handleClose = () => {
 		setOpen(false);
 	};
-
 	function toggleTheme() {
 		dispatch(changeTheme());
 	}
@@ -37,7 +39,7 @@ export default function ChatNav() {
 		border-b-[1px] border-b-gray-300 border-transparent shadow-lg dark:border-dark6 dark:bg-dark3"
 		>
 			<div>
-				{activeGroupMenu ? (
+				{location.pathname === "/chat" && activeGroupMenu && (
 					<button
 						aria-label="Close Menu"
 						onClick={toggleGroupMenu}
@@ -48,7 +50,8 @@ export default function ChatNav() {
 					>
 						<XIcon className="h-7 w-7" />
 					</button>
-				) : (
+				)}
+				{location.pathname === "/chat" && !activeGroupMenu && (
 					<button
 						aria-label="Open Menu"
 						onClick={toggleGroupMenu}
@@ -59,6 +62,18 @@ export default function ChatNav() {
 					>
 						<MenuIcon className="h-7 w-7" />
 					</button>
+				)}
+				{location.pathname === "/profile" && (
+					<Link to="/chat">
+						<Tooltip arrow describeChild title="Return to chat">
+							<div
+								className="p-[6px] border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
+                            hover:bg-gray-200 dark:hover:bg-dark3 rounded-full"
+							>
+								<ChatAlt2Icon className="h-8 w-8 text-sky-500 dark:text-sky-600" />
+							</div>
+						</Tooltip>
+					</Link>
 				)}
 			</div>
 			<div>
