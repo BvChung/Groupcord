@@ -2,21 +2,18 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "./authService";
 import { errorMessage } from "../helperFunctions/helperFunctions";
 
-// Get user from localStorage
-const user = JSON.parse(localStorage.getItem("user"));
-
 const initialState = {
-	user: user ? user : null,
-	updatedUsernameToSocket: {},
-	updatedAvatarToSocket: {},
-	loginError: false,
-	registerError: false,
-	updateError: false,
+	user: null,
 	loggedIn: false,
 	isSuccess: false,
-	changedAvatar: false,
 	isLoading: false,
-	message: "",
+	isError: false,
+	errorMessage: "",
+	updatedUsernameToSocket: {},
+	updatedAvatarToSocket: {},
+	updateError: false,
+	expiredRefreshJWT: false,
+	changedAvatar: false,
 };
 
 // A function that accepts a Redux action type string and a callback function that should return a promise. It generates promise lifecycle action types based on the action type prefix that you pass in,
@@ -122,13 +119,10 @@ export const authSlice = createSlice({
 	name: "auth",
 	initialState,
 	reducers: {
-		resetState: (state) => {
-			state.isLoading = false;
-			state.isSuccess = false;
-			state.registerError = false;
-			state.loginError = false;
-			state.updateError = false;
-			state.message = "";
+		resetState: (state) => initialState,
+		resetError: (state) => {
+			state.isError = false;
+			state.errorMessage = "";
 		},
 		resetSuccessNotifications: (state) => {
 			state.changedAvatar = false;
@@ -144,13 +138,14 @@ export const authSlice = createSlice({
 			})
 			.addCase(registerUser.fulfilled, (state, action) => {
 				state.isLoading = false;
+				state.loggedIn = true;
 				state.isSuccess = true;
 				state.user = action.payload;
 			})
 			.addCase(registerUser.rejected, (state, action) => {
 				state.isLoading = false;
-				state.registerError = true;
-				state.message = action.payload;
+				state.isError = true;
+				state.errorMessage = action.payload;
 				state.user = null;
 			})
 			.addCase(loginUser.pending, (state) => {
@@ -158,14 +153,13 @@ export const authSlice = createSlice({
 			})
 			.addCase(loginUser.fulfilled, (state, action) => {
 				state.isLoading = false;
-				state.isSuccess = true;
 				state.loggedIn = true;
 				state.user = action.payload;
 			})
 			.addCase(loginUser.rejected, (state, action) => {
 				state.isLoading = false;
-				state.loginError = true;
-				state.message = action.payload;
+				state.isError = true;
+				state.errorMessage = action.payload;
 				state.user = null;
 			})
 			.addCase(updateAccountAvatar.pending, (state) => {
@@ -185,14 +179,13 @@ export const authSlice = createSlice({
 			.addCase(updateAccountAvatar.rejected, (state, action) => {
 				state.isLoading = false;
 				state.updateError = true;
-				state.message = action.payload;
+				state.errorMessage = action.payload;
 			})
 			.addCase(updateAccountUsername.pending, (state) => {
 				state.isLoading = true;
 				state.isSuccess = false;
 			})
 			.addCase(updateAccountUsername.fulfilled, (state, action) => {
-				console.log(action.payload);
 				state.isLoading = false;
 				state.isSuccess = true;
 				state.user = action.payload;
@@ -205,8 +198,7 @@ export const authSlice = createSlice({
 			.addCase(updateAccountUsername.rejected, (state, action) => {
 				state.isLoading = false;
 				state.updateError = true;
-				state.message = action.payload;
-				console.log(action.payload);
+				state.errorMessage = action.payload;
 			})
 			.addCase(updateAccountEmail.pending, (state) => {
 				state.isLoading = true;
@@ -221,7 +213,7 @@ export const authSlice = createSlice({
 			.addCase(updateAccountEmail.rejected, (state, action) => {
 				state.isLoading = false;
 				state.updateError = true;
-				state.message = action.payload;
+				state.errorMessage = action.payload;
 			})
 			.addCase(updateAccountPassword.pending, (state) => {
 				state.isLoading = true;
@@ -234,18 +226,20 @@ export const authSlice = createSlice({
 			.addCase(updateAccountPassword.rejected, (state, action) => {
 				state.isLoading = false;
 				state.updateError = true;
-				state.message = action.payload;
+				state.errorMessage = action.payload;
 			})
 			.addCase(refreshAccessToken.fulfilled, (state, action) => {
 				state.user = action.payload;
 			})
+			.addCase(refreshAccessToken.rejected, (state) => {
+				state.expiredRefreshJWT = true;
+			})
 			.addCase(logoutUser.fulfilled, (state, action) => {
-				state.user = null;
-				state.loggedIn = false;
-				// console.log(action.payload);
+				console.log(action.payload);
 			});
 	},
 });
 
-export const { resetState, resetSuccessNotifications } = authSlice.actions;
+export const { resetState, resetSuccessNotifications, resetError } =
+	authSlice.actions;
 export default authSlice.reducer;

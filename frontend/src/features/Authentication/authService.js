@@ -1,24 +1,13 @@
-import axios from "axios";
-import {
-	axiosPublic,
-	axiosPrivate,
-	requestInterceptor,
-	responseInterceptor,
-} from "../../api/axios";
+import { axiosPublic, axiosPrivate } from "../../api/axios";
 
 const API_URL = "/api/users";
 
 //Use refresh JWT from http cookie to give new access JWT ------------------------
 const refreshToken = async () => {
-	const response = await axiosPrivate.get("/api/refresh", {
+	const response = await axiosPublic.get("/api/refresh", {
 		withCredentials: true,
 	});
-
-	// if (response.status === 403) {
-	// 	console.log(response);
-	// 	axiosPrivate.interceptors.request.eject(requestInterceptor);
-	// 	axiosPrivate.interceptors.response.eject(responseInterceptor);
-	// }
+	console.log(response);
 
 	if (response.data) {
 		const user = JSON.parse(localStorage.getItem("user"));
@@ -59,12 +48,11 @@ const register = async (userData) => {
 
 // Logout user ------------------------
 const logout = async () => {
-	const response = await axiosPrivate.put(`${API_URL}/logout`, {
+	const response = await axiosPublic.put(`${API_URL}/logout`, {
 		withCredentials: true,
 	});
 
 	localStorage.removeItem("user");
-	console.log(response);
 
 	return response.status;
 };
