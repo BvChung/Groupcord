@@ -133,28 +133,24 @@ const registerUser = asyncHandler(async (req, res) => {
 // @route PUT /api/user/logout
 // @access Private
 const logoutUser = asyncHandler(async (req, res) => {
-	// Get http cookie with encoded Refresh JWT
 	const cookies = req.cookies;
 
+	// If no cookie => logout
 	if (!cookies?.jwt) return res.sendStatus(204);
 
 	const refreshToken = cookies.jwt;
 
-	const foundUser = await User.findOne({ refreshToken: refreshToken }).exec();
+	const foundUser = await User.findOne({ refreshToken: refreshToken });
 
-	// If no token in db then just remove token
+	// No token in DB => clear cookie + logout
 	if (!foundUser) {
 		res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
 		return res.sendStatus(204);
 	}
 
-	const decodedToken = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-
-	if (!decodedToken) return res.sendStatus(403);
-
-	// Remove refresh JWT + cookie when user logouts
-	await User.findByIdAndUpdate(
-		decodedToken.id,
+	// Remove refresh JWT + cookie + logout
+	await User.findOneAndUpdate(
+		{ refreshToken: refreshToken },
 		{
 			$unset: {
 				refreshToken: "",

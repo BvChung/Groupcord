@@ -13,6 +13,7 @@ const handleRefreshToken = asyncHandler(async (req, res) => {
 		if (!cookies?.jwt) return res.sendStatus(401);
 
 		const refreshToken = cookies.jwt;
+		console.log(refreshToken);
 
 		const foundUser = await User.findOne({ refreshToken: refreshToken });
 

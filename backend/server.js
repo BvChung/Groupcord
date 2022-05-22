@@ -66,37 +66,6 @@ app.use(backendErrorHandler);
 let connectedUsers = [];
 
 io.on("connection", (socket) => {
-	// 1) Objects are used to keep track of data sent via websockets using Socket.io
-	// 2) Method is used to fix issue with Socket.io emitting the same data twice
-	// 3) Prevents multiple dispatch methods in the redux store on the frontend causing data to be added twice
-	let storeMessageData = {
-		_id: "",
-	};
-	let storeDeletedMessageData = {
-		_id: "",
-	};
-	let storeAvatarData = {
-		userAvatar: "",
-	};
-	let storeUsernameData = {
-		username: "",
-	};
-	let storeAddedMember = {
-		username: "",
-	};
-	let storeRemovedMember = {
-		username: "",
-	};
-	let storeDeletedGroupData = {
-		username: "",
-	};
-	let storeGroupNameData = {
-		username: "",
-	};
-	let storeGroupIconData = {
-		groupIcon: "",
-	};
-
 	// Web socket data transmission ----------------------------------
 	console.log(`A user connected ${socket.id}`.brightMagenta.underline);
 	socket.on("user_connected", (userData) => {
@@ -123,16 +92,12 @@ io.on("connection", (socket) => {
 	socket.on("send_message", (messageData) => {
 		if (Object.keys(messageData).length === 0) return;
 
-		if (storeMessageData._id === messageData._id) return;
-
 		socket.to(messageData.groupId).emit("receive_message", messageData);
 		storeMessageData = messageData;
 	});
 
 	socket.on("send_deleted_message", (messageData) => {
 		if (Object.keys(messageData).length === 0) return;
-
-		if (storeDeletedMessageData._id === messageData._id) return;
 
 		socket.to(currentRoom).emit("receive_deleted_message", messageData);
 		storeDeletedMessageData = messageData;
@@ -141,16 +106,12 @@ io.on("connection", (socket) => {
 	socket.on("send_message_avatar_updated", (messageData) => {
 		if (Object.keys(messageData).length === 0) return;
 
-		if (storeAvatarData.userAvatar === messageData.userAvatar) return;
-
 		socket.broadcast.emit("receive_message_avatar_updated", messageData);
 		storeAvatarData = messageData;
 	});
 
 	socket.on("send_message_username_updated", (messageData) => {
 		if (Object.keys(messageData).length === 0) return;
-
-		if (storeUsernameData.username === messageData.username) return;
 
 		socket.broadcast.emit("receive_message_username_updated", messageData);
 		storeUsernameData = messageData;
@@ -177,8 +138,6 @@ io.on("connection", (socket) => {
 	socket.on("send_added_group_member", (groupData) => {
 		if (Object.keys(groupData).length === 0) return;
 
-		if (storeAddedMember.id === groupData.id) return;
-
 		// const member = connectedUsers.find((user) => {
 		// 	return user.userId === groupData.memberChanged._id && user.userId;
 		// });
@@ -204,16 +163,12 @@ io.on("connection", (socket) => {
 		if (Object.keys(groupData).length === 0) return;
 		// console.log(groupData);
 
-		if (storeRemovedMember.id === groupData.id) return;
-
 		socket.broadcast.emit("receive_removed_group_member", groupData);
 		storeRemovedMember = groupData;
 	});
 
 	socket.on("send_group_name_updated", (groupData) => {
 		if (Object.keys(groupData).length === 0) return;
-
-		if (storeGroupNameData._id === groupData._id) return;
 
 		socket.broadcast.emit("receive_group_name_updated", groupData);
 		storeGroupNameData = groupData;
@@ -222,16 +177,12 @@ io.on("connection", (socket) => {
 	socket.on("send_group_icon_updated", (groupData) => {
 		if (Object.keys(groupData).length === 0) return;
 
-		if (storeGroupIconData.groupIcon === groupData.groupIcon) return;
-
 		socket.broadcast.emit("receive_group_icon_updated", groupData);
 		storeGroupIconData = groupData;
 	});
 
 	socket.on("send_group_deleted", (groupData) => {
 		if (Object.keys(groupData).length === 0) return;
-
-		if (storeDeletedGroupData._id === groupData._id) return;
 
 		socket.broadcast.emit("receive_group_deleted", groupData);
 		storeDeletedGroupData = groupData;

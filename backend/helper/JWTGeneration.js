@@ -4,13 +4,13 @@ const jwt = require("jsonwebtoken");
 
 const generateAccessToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_ACCESS_SECRET, {
-		expiresIn: "3s",
+		expiresIn: "30m",
 	});
 };
 
 const generateRefreshToken = (id) => {
 	return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, {
-		expiresIn: "1h",
+		expiresIn: "1d",
 	});
 };
 

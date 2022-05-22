@@ -20,7 +20,8 @@ export const axiosPrivate = axios.create({
 	withCredentials: true,
 });
 
-export const requestInterceptor = axiosPrivate.interceptors.request.use(
+// Edit HTTP Authorization headers of all private req to include access token
+axiosPrivate.interceptors.request.use(
 	(config) => {
 		const { accessToken } = store?.getState()?.auth?.user;
 
@@ -32,16 +33,17 @@ export const requestInterceptor = axiosPrivate.interceptors.request.use(
 	(err) => Promise.reject(err)
 );
 
-export const responseInterceptor = axiosPrivate.interceptors.response.use(
+// 1) Access token expired => returns 403
+// 2) Refresh JWT http cookie => dispatches to return a new access token
+// 3) If refresh token expired => logout user
+// 4) If new access token returned => send another request
+//    *prevRequest._retry => prevents request from sending more than once
+axiosPrivate.interceptors.response.use(
 	(response) => response,
 	async (err) => {
 		const prevRequest = err?.config;
-		console.log(prevRequest);
 
-		// If there is a 403 error and the request is sent only once then issue a new access JWT
-		// using the refresh JWT cookie
 		if (err?.response?.status === 403 && !prevRequest._retry) {
-			console.count(!prevRequest._retry);
 			prevRequest._retry = true;
 			const newAccessToken = await store.dispatch(refreshAccessToken());
 
