@@ -1,12 +1,10 @@
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../../models/userModel");
-const jwt = require("jsonwebtoken");
 const {
 	generateAccessToken,
 	generateRefreshToken,
 } = require("../../helper/JWTGeneration");
-const nodemon = require("nodemon");
 
 // For schema data:
 // .id => 6278dd9dadc7cdbc6f7ec28c
@@ -19,15 +17,15 @@ const loginUser = asyncHandler(async (req, res) => {
 	const { email, password } = req.body;
 
 	// Check for user based on email
-	const user = await User.findOne({ email });
+	const foundUser = await User.findOne({ email });
 
 	// bcrypt.compare() compares password from request and hashed password from database schema
-	if (user && (await bcrypt.compare(password, user.password))) {
+	if (foundUser && (await bcrypt.compare(password, foundUser.password))) {
 		// Create JWT refresh token
-		const refreshToken = generateRefreshToken(user._id);
+		const refreshToken = generateRefreshToken(foundUser._id);
 
 		await User.findByIdAndUpdate(
-			user._id,
+			foundUser._id,
 			{
 				refreshToken,
 			},
@@ -45,12 +43,12 @@ const loginUser = asyncHandler(async (req, res) => {
 				maxAge: 24 * 60 * 60 * 1000,
 			})
 			.json({
-				_id: user.id,
-				name: user.name,
-				username: user.username,
-				email: user.email,
-				userAvatar: user.userAvatar,
-				accessToken: generateAccessToken(user._id),
+				_id: foundUser.id,
+				name: foundUser.name,
+				username: foundUser.username,
+				email: foundUser.email,
+				userAvatar: foundUser.userAvatar,
+				accessToken: generateAccessToken(foundUser._id),
 			});
 	} else {
 		res.status(401);
@@ -93,7 +91,7 @@ const registerUser = asyncHandler(async (req, res) => {
 		password: hashedPassword,
 	});
 
-	// Create JWT refresh token
+	// Create JWT refresh token based on Schema Id
 	const refreshToken = generateRefreshToken(user._id);
 
 	await User.findByIdAndUpdate(
@@ -131,7 +129,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 // @desc Logout user
 // @route PUT /api/user/logout
-// @access Private
+// @access Public
 const logoutUser = asyncHandler(async (req, res) => {
 	const cookies = req.cookies;
 
@@ -144,7 +142,11 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 	// No token in DB => clear cookie + logout
 	if (!foundUser) {
-		res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+		res.clearCookie("jwt", {
+			httpOnly: true,
+			sameSite: "strict",
+			secure: true,
+		});
 		return res.sendStatus(204);
 	}
 
@@ -161,7 +163,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 		}
 	);
 
-	res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+	res.clearCookie("jwt", { httpOnly: true, sameSite: "strict", secure: true });
 
 	return res.sendStatus(204);
 });

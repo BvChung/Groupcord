@@ -229,7 +229,7 @@ export const authSlice = createSlice({
 				state.errorMessage = action.payload;
 			})
 			.addCase(refreshAccessToken.fulfilled, (state, action) => {
-				state.user = action.payload;
+				state.user = { ...state.user, accessToken: action.payload.accessToken };
 			})
 			.addCase(refreshAccessToken.rejected, (state) => {
 				state.expiredRefreshJWT = true;

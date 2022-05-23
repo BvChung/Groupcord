@@ -30,6 +30,7 @@ export default function App() {
 						<Route path="/register" element={<RegisterPage />} />
 						<Route path="/chat" element={<ChatPage />} />
 						<Route path="/profile" element={<ProfilePage />} />
+						<Route path="*" element={<p>404 not found</p>} />
 					</Routes>
 				</div>
 

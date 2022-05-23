@@ -7,29 +7,13 @@ const refreshToken = async () => {
 	const response = await axiosPublic.get("/api/refresh", {
 		withCredentials: true,
 	});
-	console.log(response);
 
-	if (response.data) {
-		const user = JSON.parse(localStorage.getItem("user"));
-
-		const newAccessToken = {
-			...user,
-			accessToken: response.data.accessToken,
-		};
-
-		localStorage.setItem("user", JSON.stringify(newAccessToken));
-
-		return newAccessToken;
-	}
+	return response.data;
 };
 
 // Login user ------------------------
 const login = async (userData) => {
 	const response = await axiosPublic.post(`${API_URL}/login`, userData);
-
-	if (response.data) {
-		localStorage.setItem("user", JSON.stringify(response.data));
-	}
 
 	return response.data;
 };
@@ -37,11 +21,6 @@ const login = async (userData) => {
 // Register user ------------------------
 const register = async (userData) => {
 	const response = await axiosPublic.post(`${API_URL}/register`, userData);
-
-	// Save registered user to local storage
-	if (response.data) {
-		localStorage.setItem("user", JSON.stringify(response.data));
-	}
 
 	return response.data;
 };
@@ -51,8 +30,6 @@ const logout = async () => {
 	const response = await axiosPublic.put(`${API_URL}/logout`, {
 		withCredentials: true,
 	});
-
-	localStorage.removeItem("user");
 
 	return response.status;
 };
@@ -64,18 +41,7 @@ const updateUsername = async (userData) => {
 		userData
 	);
 
-	if (response.data) {
-		const user = JSON.parse(localStorage.getItem("user"));
-
-		const storeUserData = {
-			...response.data,
-			accessToken: user.accessToken,
-		};
-
-		localStorage.setItem("user", JSON.stringify(storeUserData));
-
-		return storeUserData;
-	}
+	return response.data;
 };
 
 const updateEmail = async (userData) => {
@@ -84,18 +50,7 @@ const updateEmail = async (userData) => {
 		userData
 	);
 
-	if (response.data) {
-		const user = JSON.parse(localStorage.getItem("user"));
-
-		const storeUserData = {
-			...response.data,
-			accessToken: user.accessToken,
-		};
-
-		localStorage.setItem("user", JSON.stringify(storeUserData));
-
-		return storeUserData;
-	}
+	return response.data;
 };
 
 const updatePassword = async (userData) => {
@@ -110,18 +65,7 @@ const updatePassword = async (userData) => {
 const updateAvatar = async (file) => {
 	const response = await axiosPrivate.put(`${API_URL}/settings/avatar`, file);
 
-	if (response.data) {
-		const user = JSON.parse(localStorage.getItem("user"));
-
-		const storeUserData = {
-			...response.data,
-			accessToken: user.accessToken,
-		};
-
-		localStorage.setItem("user", JSON.stringify(storeUserData));
-
-		return storeUserData;
-	}
+	return response.data;
 };
 
 const authService = {
