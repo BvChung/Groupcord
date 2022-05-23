@@ -13,12 +13,11 @@ const initialState = {
 	userMessages: {},
 	newMessageToSocket: {},
 	deletedMessageToSocket: {},
+	loadInitialMessages: false,
 	hideTextInput: false,
 	isLoading: false,
-	loadInitialMessages: false,
 	isSuccess: false,
 	isError: false,
-	expiredJSONWebToken: false,
 	errorMessage: "",
 };
 
@@ -60,19 +59,7 @@ export const messageSlice = createSlice({
 	name: "message",
 	initialState,
 	reducers: {
-		resetMessageState: (state) => {
-			// console.log("reset messages");
-			state.userMessages = {};
-			state.newMessageToSocket = {};
-			state.deletedMessageToSocket = {};
-			state.hideTextInput = false;
-			state.isLoading = false;
-			state.loadInitialMessages = false;
-			state.isSuccess = false;
-			state.isError = false;
-			state.expiredJSONWebToken = false;
-			state.errorMessage = "";
-		},
+		resetMessageState: (state) => initialState,
 		hideTextInput: (state) => {
 			state.hideTextInput = true;
 		},
@@ -80,6 +67,12 @@ export const messageSlice = createSlice({
 			if (state.hideTextInput) {
 				state.hideTextInput = false;
 			}
+		},
+		clearNewMessageSocketData: (state) => {
+			state.newMessageToSocket = {};
+		},
+		clearDeletedMessageSocketData: (state) => {
+			state.deletedMessageToSocket = {};
 		},
 		clearChatMessages: (state) => {
 			state.userMessages.groupMessages = [];
@@ -127,9 +120,6 @@ export const messageSlice = createSlice({
 			state.isLoading = false;
 			state.isError = true;
 			state.errorMessage = action.payload;
-
-			// if (action.payload)
-			console.log(action.payload);
 		});
 		builder.addCase(getChatMessage.pending, (state) => {
 			state.isLoading = true;
@@ -143,13 +133,8 @@ export const messageSlice = createSlice({
 			);
 		});
 		builder.addCase(getChatMessage.rejected, (state, action) => {
-			// console.log(action.payload);
 			state.isLoading = false;
 			state.errorMessage = action.payload;
-
-			// if (action.payload.includes("403")) {
-			// 	state.expiredJSONWebToken = true;
-			// }
 		});
 		builder.addCase(deleteChatMessage.fulfilled, (state, action) => {
 			state.userMessages.groupMessages = deleteMessageData(
@@ -164,6 +149,8 @@ export const messageSlice = createSlice({
 export const {
 	resetMessageState,
 	clearChatMessages,
+	clearNewMessageSocketData,
+	clearDeletedMessageSocketData,
 	hideTextInput,
 	resetTextInput,
 	socketDataUpdateMessageUsername,
