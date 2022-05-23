@@ -2,10 +2,9 @@ import { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { updateAccountAvatar } from "../../../features/authentication/authSlice";
 import DefaultAvatar from "../../../assets/images/avatar.jpg";
-import { CameraIcon } from "@heroicons/react/solid";
 
-export default function EditAvatar({ user, iconStyle }) {
-	const ref = useRef();
+export default function EditAvatar({ user }) {
+	const imageRef = useRef();
 	const dispatch = useDispatch();
 	const imageEnvPath = process.env.REACT_APP_PUBLIC_FOLDER;
 	const [imageUpload, setImageUpload] = useState(null);
@@ -19,7 +18,7 @@ export default function EditAvatar({ user, iconStyle }) {
 			file.append("image", imageUpload);
 
 			dispatch(updateAccountAvatar(file));
-			ref.current.value = "";
+			imageRef.current.value = "";
 			setImageUpload(null);
 		}
 	}
@@ -103,7 +102,7 @@ export default function EditAvatar({ user, iconStyle }) {
 				{imageUpload && (
 					<div className="flex items-center gap-4">
 						<button
-							onClick={() => {
+							onClick={(e) => {
 								setImageUpload(null);
 							}}
 							className="bg-transparent text-gray1 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800 w-16 px-1 py-[.65rem] text-xs font-bold rounded-sm"
@@ -124,7 +123,7 @@ export default function EditAvatar({ user, iconStyle }) {
 					id="image"
 					name="image"
 					className="hidden"
-					ref={ref}
+					ref={imageRef}
 					accept=".png,.jpeg,.jpg,.gif"
 					onChange={(e) => {
 						setImageUpload(e.target.files[0]);

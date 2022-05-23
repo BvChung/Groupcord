@@ -40,7 +40,7 @@ export default function ChatItem({
 			{/* Render Message or render new date label if type present */}
 			{type !== "newDateLabel" ? (
 				<div
-					className={`flex items-center my-6 first:mt-0 last:mb-0 fade transition-all ${messagePosition}`}
+					className={`flex items-center my-7 first:mt-0 last:mb-0 fade transition-all ${messagePosition}`}
 				>
 					{userId !== user._id && (
 						<img
@@ -49,7 +49,7 @@ export default function ChatItem({
 									? `${imageEnvPath}${userAvatar}`
 									: DefaultAvatar
 							}
-							className="object-fill w-12 h-12 mr-2 sm:mr-4 rounded-full"
+							className="object-fill w-12 h-12 sm:w-14 sm:h-14 mr-3 sm:mr-4 rounded-full"
 							alt="Avatar"
 						/>
 					)}
@@ -66,9 +66,11 @@ export default function ChatItem({
 										{dateCreated}
 									</span>
 								)}
-								<span className="text-gray-600 text-sm leading-6 dark:text-gray-300">
-									{timeCreated}
-								</span>
+								{date === dateCreated && (
+									<span className="text-gray-600 text-sm leading-6 dark:text-gray-300">
+										{timeCreated}
+									</span>
+								)}
 							</div>
 							{userId === user._id && (
 								<Tooltip arrow describeChild title="Delete Message">
@@ -95,7 +97,7 @@ export default function ChatItem({
 									? `${imageEnvPath}${userAvatar}`
 									: DefaultAvatar
 							}
-							className="object-fill w-12 h-12 ml-2 sm:ml-4 rounded-full"
+							className="object-fill w-14 h-14 ml-3 sm:ml-4 rounded-full"
 							alt="Avatar"
 						/>
 					)}

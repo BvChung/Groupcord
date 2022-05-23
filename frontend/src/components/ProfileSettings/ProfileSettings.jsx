@@ -185,11 +185,11 @@ export default function ProfileSettings() {
 
 	return (
 		<div className="flex justify-center overflow-auto dark:bg-dark2 bg-white h-screen">
-			<div className="w-full relative sm:max-w-4xl px-4 py-6 sm:py-6 sm:px-8 ">
+			<div className="w-full relative sm:max-w-4xl px-4 py-4 sm:px-8 sm:py-8 ">
 				<div className="dark:text-white text-gray1 mb-6 ">
 					<h1
 						className="text-gray1 dark:text-white border-b-[1px] border-gray-300 dark:border-gray-500 
-						text-2xl sm:text-3xl font-semibold pb-6 font-sans"
+						text-2xl sm:text-3xl font-semibold pb-4 font-sans"
 					>
 						Manage Account
 					</h1>

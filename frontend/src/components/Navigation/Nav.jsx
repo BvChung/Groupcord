@@ -79,24 +79,26 @@ export default function Nav() {
 			<div>
 				<ul className="flex flex-row justify-center items-center gap-2">
 					<li className="flex items-center">
-						{groupId !== "Global" && !hideGroupMemberDisplay && (
-							<Tooltip arrow describeChild title="Member List">
-								<button
-									onClick={() => {
-										handleClickOpen();
-									}}
-									aria-label="Open Member List"
-								>
-									<UsersIcon
-										className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 
+						{groupId !== "Global" &&
+							location.pathname === "/chat" &&
+							!hideGroupMemberDisplay && (
+								<Tooltip arrow describeChild title="Member List">
+									<button
+										onClick={() => {
+											handleClickOpen();
+										}}
+										aria-label="Open Member List"
+									>
+										<UsersIcon
+											className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 
 										p-[6px] rounded-full 
 									border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
 									hover:bg-gray-200 dark:hover:bg-dark4
 									transition-all"
-									/>
-								</button>
-							</Tooltip>
-						)}
+										/>
+									</button>
+								</Tooltip>
+							)}
 						<MemberList open={open} handleClose={handleClose} />
 					</li>
 					<li>
