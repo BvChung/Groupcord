@@ -4,6 +4,7 @@ import {
 	updateAccountUsername,
 	updateAccountEmail,
 	updateAccountPassword,
+	updateAccountAvatar,
 	resetState,
 	resetSuccessNotifications,
 } from "../../features/authentication/authSlice";
@@ -16,6 +17,7 @@ import EditPassword from "./EditPassword/EditPassword";
 export default function ProfileSettings() {
 	const dispatch = useDispatch();
 	const toastId = useRef(null);
+	const imageRef = useRef();
 
 	const { user, updateError, message, isSuccess, changedAvatar } = useSelector(
 		(state) => state.auth
@@ -32,6 +34,7 @@ export default function ProfileSettings() {
 	const [editUsername, setEditUsername] = useState(false);
 	const [editEmail, setEditEmail] = useState(false);
 	const [editPassword, setEditPassword] = useState(false);
+	const [imageUpload, setImageUpload] = useState(null);
 
 	function toggleEditUsername() {
 		setEditUsername((prev) => !prev);
@@ -141,6 +144,19 @@ export default function ProfileSettings() {
 		);
 	}
 
+	function handledAvatarSubmission(e) {
+		e.preventDefault();
+
+		if (imageUpload) {
+			const file = new FormData();
+			file.append("image", imageUpload);
+
+			dispatch(updateAccountAvatar(file));
+			imageRef.current.value = "";
+			setImageUpload(null);
+		}
+	}
+
 	const displayError = useCallback(() => {
 		if (
 			updateError &&
@@ -163,7 +179,6 @@ export default function ProfileSettings() {
 			dispatch(resetSuccessNotifications());
 		}
 	}, [isSuccess, changedAvatar, dispatch, resetFormData]);
-	// console.log(formData);
 
 	const resetAfterUpdate = useCallback(() => {
 		dispatch(resetState());
@@ -184,99 +199,121 @@ export default function ProfileSettings() {
 	const formStyle = "border-[1px] border-gray-300 dark:border-gray-500 ";
 
 	return (
-		<div className="flex justify-center overflow-auto dark:bg-dark2 bg-white h-screen">
-			<div className="w-full relative sm:max-w-4xl px-4 py-4 sm:px-8 sm:py-8 ">
+		<div className="flex justify-center overflow-auto dark:bg-dark2 bg-white w-full h-screen">
+			<div className="w-full sm:max-w-6xl px-4 py-3 sm:px-8 sm:py-8 ">
 				<div className="dark:text-white text-gray1 mb-6 ">
 					<h1
 						className="text-gray1 dark:text-white border-b-[1px] border-gray-300 dark:border-gray-500 
-						text-2xl sm:text-3xl font-semibold pb-4 font-sans"
+						text-xl sm:text-2xl font-semibold pb-4 font-sans"
 					>
 						Manage Account
 					</h1>
 				</div>
 
-				<EditAvatar user={user} iconStyle={iconStyle} />
+				<EditAvatar
+					user={user}
+					iconStyle={iconStyle}
+					imageUpload={imageUpload}
+					setImageUpload={setImageUpload}
+					imageRef={imageRef}
+					editUsername={editUsername}
+					setEditUsername={setEditUsername}
+					resetUsernameForm={resetUsernameForm}
+					editEmail={editEmail}
+					setEditEmail={setEditEmail}
+					resetEmailForm={resetEmailForm}
+					editPassword={editPassword}
+					setEditPassword={setEditPassword}
+					resetPasswordForm={resetPasswordForm}
+				/>
 
-				<div className="w-full">
-					<EditUsername
-						user={user}
-						formData={formData}
-						handleFormData={handleFormData}
-						resetUsernameForm={resetUsernameForm}
-						editUsername={editUsername}
-						toggleEditUsername={toggleEditUsername}
-						editEmail={editEmail}
-						setEditEmail={setEditEmail}
-						resetEmailForm={resetEmailForm}
-						editPassword={editPassword}
-						setEditPassword={setEditPassword}
-						resetPasswordForm={resetPasswordForm}
-						accountInfoStyle={accountInfoStyle}
-						iconStyle={iconStyle}
-						formStyle={formStyle}
-					/>
+				<EditUsername
+					user={user}
+					formData={formData}
+					handleFormData={handleFormData}
+					editUsername={editUsername}
+					setEditUsername={setEditUsername}
+					resetUsernameForm={resetUsernameForm}
+					editEmail={editEmail}
+					setEditEmail={setEditEmail}
+					resetEmailForm={resetEmailForm}
+					editPassword={editPassword}
+					setEditPassword={setEditPassword}
+					resetPasswordForm={resetPasswordForm}
+					imageUpload={imageUpload}
+					setImageUpload={setImageUpload}
+					accountInfoStyle={accountInfoStyle}
+					iconStyle={iconStyle}
+					formStyle={formStyle}
+				/>
 
-					<EditEmail
-						user={user}
-						formData={formData}
-						handleFormData={handleFormData}
-						resetUsernameForm={resetUsernameForm}
-						editUsername={editUsername}
-						setEditUsername={setEditUsername}
-						editEmail={editEmail}
-						toggleEditEmail={toggleEditEmail}
-						resetEmailForm={resetEmailForm}
-						editPassword={editPassword}
-						setEditPassword={setEditPassword}
-						resetPasswordForm={resetPasswordForm}
-						accountInfoStyle={accountInfoStyle}
-						iconStyle={iconStyle}
-						formStyle={formStyle}
-					/>
+				<EditEmail
+					user={user}
+					formData={formData}
+					handleFormData={handleFormData}
+					resetUsernameForm={resetUsernameForm}
+					editUsername={editUsername}
+					setEditUsername={setEditUsername}
+					editEmail={editEmail}
+					setEditEmail={setEditEmail}
+					resetEmailForm={resetEmailForm}
+					editPassword={editPassword}
+					setEditPassword={setEditPassword}
+					resetPasswordForm={resetPasswordForm}
+					imageUpload={imageUpload}
+					setImageUpload={setImageUpload}
+					accountInfoStyle={accountInfoStyle}
+					iconStyle={iconStyle}
+					formStyle={formStyle}
+				/>
 
-					<EditPassword
-						formData={formData}
-						handleFormData={handleFormData}
-						resetUsernameForm={resetUsernameForm}
-						editUsername={editUsername}
-						setEditUsername={setEditUsername}
-						editEmail={editEmail}
-						resetEmailForm={resetEmailForm}
-						editPassword={editPassword}
-						setEditEmail={setEditEmail}
-						toggleEditPassword={toggleEditPassword}
-						resetPasswordForm={resetPasswordForm}
-						accountInfoStyle={accountInfoStyle}
-						iconStyle={iconStyle}
-						formStyle={formStyle}
-					/>
-				</div>
+				<EditPassword
+					formData={formData}
+					handleFormData={handleFormData}
+					resetUsernameForm={resetUsernameForm}
+					editUsername={editUsername}
+					setEditUsername={setEditUsername}
+					editEmail={editEmail}
+					resetEmailForm={resetEmailForm}
+					setEditEmail={setEditEmail}
+					editPassword={editPassword}
+					setEditPassword={setEditPassword}
+					resetPasswordForm={resetPasswordForm}
+					imageUpload={imageUpload}
+					setImageUpload={setImageUpload}
+					accountInfoStyle={accountInfoStyle}
+					iconStyle={iconStyle}
+					formStyle={formStyle}
+				/>
 
-				{(editEmail || editPassword || editUsername) && (
-					<div className="flex justify-end items-center mt-4 md:mt-5 gap-4">
+				{(editEmail || editPassword || editUsername || imageUpload) && (
+					<div className="flex justify-end items-center my-3 md:my-5 gap-4">
 						<button
 							onClick={() => {
 								if (editUsername) {
 									resetUsernameForm();
-									toggleEditUsername();
+									setEditUsername(false);
 								}
 								if (editEmail) {
 									resetEmailForm();
-									toggleEditEmail();
+									setEditEmail(false);
 								}
 								if (editPassword) {
 									resetPasswordForm();
-									toggleEditPassword();
+									setEditPassword(false);
+								}
+								if (imageUpload) {
+									setImageUpload(null);
 								}
 							}}
-							className="bg-transparent text-gray1 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800 
+							className="bg-transparent text-gray1 hover:bg-gray-200 active:bg-gray-300 dark:text-white dark:hover:bg-gray-800 dark:active:bg-gray-900
 							  	w-20 px-1 py-[.65rem] text-sm font-bold rounded-sm transition-all"
+							aria-label="Cancel"
 						>
 							Cancel
 						</button>
 						<button
 							onClick={(e) => {
-								// handleSubmit(e);
 								if (editUsername) {
 									handleUsernameSubmission(e);
 								}
@@ -286,10 +323,14 @@ export default function ProfileSettings() {
 								if (editPassword) {
 									handlePasswordSubmission(e);
 								}
+								if (imageUpload) {
+									handledAvatarSubmission(e);
+								}
 							}}
-							className="dark:bg-sky-800 dark:text-white dark:hover:bg-sky-900 dark:active:bg-sky-800 
-								bg-sky-600 text-gray-100 hover:bg-sky-700 active:bg-sky-600
-							  	w-20 px-1 py-[.65rem] text-sm font-bold rounded-sm transition-all"
+							className="dark:bg-sky-800 dark:text-white dark:hover:bg-sky-700 dark:active:bg-sky-600 
+								bg-sky-600 text-gray-100 hover:bg-sky-700 active:bg-sky-800
+							  	w-20 px-1 py-2 sm:py-[.65rem] text-sm font-bold rounded-sm transition-all"
+							aria-label="Save"
 						>
 							Save
 						</button>

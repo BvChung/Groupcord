@@ -24,7 +24,7 @@ export default function ProfilePage() {
 	}, [expiredRefreshJWT, dispatch, navigate]);
 
 	return (
-		<div className="flex flex-col dark:bg-slate-900 w-screen h-screen ">
+		<div className="flex flex-col w-screen h-screen">
 			<Nav />
 			<ProfileSettings />
 		</div>

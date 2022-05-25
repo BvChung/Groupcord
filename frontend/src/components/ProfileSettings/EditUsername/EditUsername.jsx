@@ -6,13 +6,15 @@ export default function EditUsername({
 	formData,
 	handleFormData,
 	editUsername,
-	toggleEditUsername,
+	setEditUsername,
 	editEmail,
 	resetEmailForm,
 	editPassword,
 	setEditEmail,
 	setEditPassword,
 	resetPasswordForm,
+	imageUpload,
+	setImageUpload,
 	accountInfoStyle,
 	iconStyle,
 	formStyle,
@@ -22,10 +24,10 @@ export default function EditUsername({
 			{!editUsername ? (
 				<Tooltip arrow describeChild title="Edit Username">
 					<div
-						className={`grid grid-cols-3 items-center py-2 sm:py-[.84rem] px-2 sm:px-4 w-full mb-6 cursor-pointer
+						className={`grid grid-cols-3 items-center py-2 sm:py-[.84rem] px-2 sm:px-4 w-full mb-8 cursor-pointer
                         ${accountInfoStyle}`}
 						onClick={() => {
-							toggleEditUsername();
+							setEditUsername(true);
 							if (editEmail) {
 								setEditEmail(false);
 								resetEmailForm();
@@ -34,10 +36,13 @@ export default function EditUsername({
 								setEditPassword(false);
 								resetPasswordForm();
 							}
+							if (imageUpload) {
+								setImageUpload(null);
+							}
 						}}
 					>
 						<div className="flex basis-24 sm:basis-32 items-center">
-							<p className="text-xs leading-6 uppercase font-medium">
+							<p className="text-gray-700 dark:text-gray-300 text-xs leading-6 uppercase font-medium">
 								Username
 							</p>
 						</div>

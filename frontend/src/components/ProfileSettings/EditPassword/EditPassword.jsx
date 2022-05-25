@@ -12,7 +12,9 @@ export default function EditPassword({
 	resetEmailForm,
 	editPassword,
 	setEditEmail,
-	toggleEditPassword,
+	setEditPassword,
+	imageUpload,
+	setImageUpload,
 	accountInfoStyle,
 	iconStyle,
 	formStyle,
@@ -29,7 +31,7 @@ export default function EditPassword({
 						className={`grid grid-cols-3 items-center px-2 py-2 sm:px-4 sm:py-[.81rem] w-full cursor-pointer
                         ${accountInfoStyle}`}
 						onClick={() => {
-							toggleEditPassword();
+							setEditPassword(true);
 							if (editUsername) {
 								setEditUsername(false);
 								resetUsernameForm();
@@ -38,10 +40,13 @@ export default function EditPassword({
 								setEditEmail(false);
 								resetEmailForm();
 							}
+							if (imageUpload) {
+								setImageUpload(null);
+							}
 						}}
 					>
 						<div className="flex items-center">
-							<p className="text-xs leading-6 uppercase font-medium">
+							<p className="text-gray-700 dark:text-gray-300 text-xs leading-6 uppercase font-medium">
 								Password
 							</p>
 						</div>

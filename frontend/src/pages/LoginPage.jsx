@@ -184,7 +184,7 @@ export default function LoginPage() {
 					<button
 						aria-label="Sign in with guest account"
 						onClick={loadGuestAccount}
-						className="transition-all bg-blue-600 hover:bg-blue-500 text-offwhite2 
+						className="transition-all bg-blue-600 hover:bg-blue-700 text-offwhite2 
 							w-full self-center p-2 rounded-md mb-6 dark:bg-blue-700 dark:hover:bg-blue-600"
 					>
 						{isLoading && form.guestAccount ? (

@@ -10,10 +10,12 @@ export default function EditEmail({
 	editUsername,
 	setEditUsername,
 	editEmail,
-	toggleEditEmail,
+	setEditEmail,
 	editPassword,
 	setEditPassword,
 	resetPasswordForm,
+	imageUpload,
+	setImageUpload,
 	accountInfoStyle,
 	iconStyle,
 	formStyle,
@@ -23,10 +25,10 @@ export default function EditEmail({
 			{!editEmail ? (
 				<Tooltip arrow describeChild title="Edit Email">
 					<div
-						className={`grid grid-cols-3 mb-6 items-center px-2 py-2 sm:py-[.81rem] sm:px-4 w-full cursor-pointer
+						className={`grid grid-cols-3 mb-8 items-center px-2 py-2 sm:py-[.81rem] sm:px-4 w-full cursor-pointer
                         ${accountInfoStyle}`}
 						onClick={() => {
-							toggleEditEmail();
+							setEditEmail(true);
 							if (editUsername) {
 								setEditUsername(false);
 								resetUsernameForm();
@@ -35,10 +37,15 @@ export default function EditEmail({
 								setEditPassword(false);
 								resetPasswordForm();
 							}
+							if (imageUpload) {
+								setImageUpload(null);
+							}
 						}}
 					>
 						<div className="flex basis-24 sm:basis-32 items-center">
-							<p className="text-xs leading-6 uppercase font-medium">Email</p>
+							<p className="text-gray-700 dark:text-gray-300 text-xs leading-6 uppercase font-medium">
+								Email
+							</p>
 						</div>
 						<div className="flex basis-64 sm:basis-96">
 							<p className="text-sm sm:text-base">{user.email}</p>
