@@ -44,8 +44,8 @@ export default function ContactMenu() {
 	}
 
 	const createButtonActive = darkMode
-		? "bg-sky-700 text-white hover:bg-sky-800 active:bg-sky-900"
-		: "bg-sky-600 text-gray-100 hover:bg-sky-700 active:bg-sky-600";
+		? "bg-sky-800 hover:bg-sky-700 active:bg-sky-600"
+		: "bg-sky-600 hover:bg-sky-700 active:bg-sky-800";
 	const createButtonInactive = darkMode
 		? "bg-menu text-gray-700"
 		: "bg-white text-gray-300";
@@ -72,22 +72,20 @@ export default function ContactMenu() {
 				}}
 			>
 				<div
-					className={`md:w-full py-6 px-8  ${
+					className={`md:w-full p-4 sm:p-7  ${
 						darkMode ? "bg-dark3" : "bg-offwhite"
 					} `}
 				>
 					<div
-						className={`flex justify-between items-center pb-2  ${headerStyle}`}
+						className={`flex justify-between items-center pb-4 mb-4 ${headerStyle}`}
 					>
-						<h1
-							className={`text-xl sm:text-2xl font-semibold font-sans ${textStyle}`}
-						>
+						<h1 className={`text-xl font-bold font-sans ${textStyle}`}>
 							Create Group
 						</h1>
 						<UserGroupIcon className="h-7 w-7 sm:h-8 sm:w-8" />
 					</div>
 
-					<div className={`flex mb-4 pb-6 pt-4  ${formStyle}`}>
+					<div className={`flex mb-4 pb-7 ${formStyle}`}>
 						<TextField
 							name="groupName"
 							value={formData.groupName}
@@ -100,7 +98,7 @@ export default function ContactMenu() {
 							variant="outlined"
 						/>
 					</div>
-					<div className="flex justify-end items-center gap-4 ">
+					<div className="flex justify-end items-center gap-4">
 						<button
 							aria-label="Exit group creation"
 							onClick={() => {
@@ -108,7 +106,7 @@ export default function ContactMenu() {
 								resetFormData();
 							}}
 							className={`transition-colors ${buttonStyle}   
-							px-1 py-[.65rem] text-sm w-20 font-bold rounded-sm`}
+							px-1 py-2 sm:py-[.65rem] text-sm w-20 font-bold rounded-sm`}
 						>
 							Cancel
 						</button>
@@ -121,7 +119,7 @@ export default function ContactMenu() {
 								formData.groupName !== ""
 									? createButtonActive
 									: createButtonInactive
-							}  w-20 px-1 py-[.65rem] text-sm font-bold rounded-sm`}
+							}  w-20 px-1 py-2 sm:py-[.65rem] text-sm font-semibold rounded-sm transition-all`}
 						>
 							Create
 						</button>

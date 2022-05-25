@@ -12,7 +12,7 @@ import {
 	hideTextInput,
 } from "../../../../features/messages/messageSlice";
 import { toast } from "react-toastify";
-import { PencilIcon, PencilAltIcon, TrashIcon } from "@heroicons/react/solid";
+import { PencilIcon, TrashIcon } from "@heroicons/react/solid";
 import DefaultAvatar from "../../../../assets/images/avatar.jpg";
 import { Tooltip, TextField } from "@mui/material";
 import Spinner from "../../../Spinner/Spinner";
@@ -99,7 +99,7 @@ export default function GroupSettings({
 				handleClose();
 			}}
 		>
-			<div className={`w-full px-6 py-6 sm:px-6 sm:py-6 ${bgStyle}`}>
+			<div className={`w-full p-4 sm:p-7 ${bgStyle}`}>
 				<div className={`${textStyle} mb-7`}>
 					<h2 className={`${borderStyle} text-xl font-bold pb-4 font-sans `}>
 						Group Settings
@@ -118,7 +118,7 @@ export default function GroupSettings({
 
 				<div className={`flex items-center mb-7 pb-6 ${borderStyle}`}>
 					{!imageUpload ? (
-						<div className="relative w-fit rounded-full overflow-hidden mr-6">
+						<div className="relative w-fit rounded-full overflow-hidden mr-6 shadow-xl">
 							<label
 								htmlFor="image"
 								className="relative flex items-center cursor-pointer"
@@ -201,10 +201,10 @@ export default function GroupSettings({
 							}}
 						>
 							<div
-								className={`text-white px-4 py-1 text-sm font-semibold rounded-sm ${
+								className={`text-white px-4 py-1 sm:px-4 sm:py-2 text-sm font-semibold rounded-sm ${
 									darkMode
-										? "bg-blue-800 hover:bg-blue-700"
-										: "bg-blue-500 hover:bg-blue-600"
+										? "bg-blue-700 hover:bg-blue-600 active:bg-blue-500"
+										: "bg-blue-600 hover:bg-blue-700 active:bg-blue-800"
 								} transition-all`}
 							>
 								Upload Image
@@ -216,7 +216,7 @@ export default function GroupSettings({
 								darkMode ? "text-gray-400" : "text-gray-700"
 							} ${textStyle}`}
 						>
-							Must be JPEG, JPG, PNG, or GIF and cannot exceed 1MB.
+							Must be JPG, PNG, or GIF and cannot exceed 1MB.
 						</p>
 					</div>
 
@@ -244,16 +244,18 @@ export default function GroupSettings({
 				{!editGroupName ? (
 					<Tooltip arrow describeChild title="Edit Group Name">
 						<div
-							className={`grid grid-cols-3 items-center py-2 sm:py-4 px-2 sm:px-4 w-full mb-7 cursor-pointer ${groupNameStyle} `}
+							className={`grid grid-cols-3 items-center py-2 sm:py-4 px-2 sm:px-4 w-full mb-7 cursor-pointer ${groupNameStyle}`}
 							onClick={() => {
 								setEditGroupName(true);
 							}}
 						>
 							<div className="flex basis-24 sm:basis-32 items-center">
-								<p className="text-xs leading-6 uppercase font-medium">Name</p>
+								<p className=" text-xs leading-6 uppercase font-medium">Name</p>
 							</div>
-							<div className="flex basis-72 sm:basis-96">
-								<p className="text-sm sm:text-base">{groupName}</p>
+							<div className="flex items-center justify-center basis-72 sm:basis-96 max-w-[24rem]">
+								<p className="text-sm sm:text-base overflow-x-auto pb-1">
+									{groupName}
+								</p>
 							</div>
 							<div className="flex justify-end">
 								<PencilIcon className={`h-6 w-6 sm:h-7 sm:w-7 ${iconStyle}`} />
@@ -292,12 +294,13 @@ export default function GroupSettings({
 									setImageUpload(null);
 								}
 							}}
+							aria-label="Cancel"
 							className={`bg-transparent  ${
 								darkMode
-									? "text-white hover:bg-gray-800 "
-									: "text-gray1 hover:bg-gray-200 "
+									? "text-white hover:bg-gray-800 active:bg-gray-900"
+									: "text-gray1 hover:bg-gray-200 active:bg-gray-300"
 							} 
-							  	w-20 px-1 py-[.65rem] text-sm font-semibold rounded-sm transition-all`}
+							  	w-20 px-1 py-2 sm:py-[.65rem] text-sm font-semibold rounded-sm transition-all`}
 						>
 							Cancel
 						</button>
@@ -311,38 +314,38 @@ export default function GroupSettings({
 									submitGroupIcon(e);
 								}
 							}}
+							aria-label="Save"
 							className={`${
 								darkMode
-									? "bg-sky-800 text-white hover:bg-sky-900 active:bg-sky-800"
-									: "bg-sky-600 text-gray-100 hover:bg-sky-700 active:bg-sky-600"
-							}  w-20 px-2 py-[10px] sm:px-1 sm:py-[.65rem] text-sm font-semibold rounded-sm transition-all`}
+									? "bg-sky-800 text-white hover:bg-sky-700 active:bg-sky-600"
+									: "bg-sky-600 text-gray-100 hover:bg-sky-700 active:bg-sky-800"
+							}  w-20 px-1 py-2 sm:py-[.65rem] text-sm font-semibold rounded-sm transition-all`}
 						>
 							Save
 						</button>
 					</div>
 				)}
 
-				<div className="flex justify-end">
-					<button
-						onClick={() => {
-							dispatch(deleteChatGroup(groupId));
-							dispatch(clearChatMessages());
-							dispatch(hideTextInput());
-							dispatch(hideGroupMemberDisplay());
-							toast.success(`Group ${groupName} has been deleted`);
-						}}
-						className={`flex items-center w-fit px-4 py-3 sm:px-6 sm:py-3 justify-center gap-2
+				<button
+					onClick={() => {
+						dispatch(deleteChatGroup(groupId));
+						dispatch(clearChatMessages());
+						dispatch(hideTextInput());
+						dispatch(hideGroupMemberDisplay());
+						toast.success(`Group ${groupName} has been deleted`);
+					}}
+					aria-label="Delete Group"
+					className={`flex items-center w-fit px-3 py-3 sm:px-6 sm:py-3 justify-center gap-2
 							${
 								darkMode
-									? "bg-red-900 hover:bg-red-800 text-white"
-									: "bg-red-700 hover:bg-red-800 text-white"
+									? "bg-red-900 hover:bg-red-800 active:bg-red-700 text-white"
+									: "bg-red-700 hover:bg-red-800 active:bg-red-900 text-white"
 							}
 						  rounded-sm shadow-md text-sm active:shadow-lg cursor-pointer transition-all`}
-					>
-						<TrashIcon className="h-5 w-5" />
-						<span className="font-semibold">Delete Group</span>
-					</button>
-				</div>
+				>
+					<TrashIcon className="h-5 w-5" />
+					<span className="font-semibold">Delete Group</span>
+				</button>
 
 				{isLoading && <Spinner />}
 			</div>
