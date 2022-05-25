@@ -12,25 +12,29 @@ import { KeyIcon, MinusCircleIcon } from "@heroicons/react/solid";
 import { LogoutIcon } from "@heroicons/react/outline";
 import DefaultAvatar from "../../../../assets/images/avatar.jpg";
 import { Tooltip } from "@mui/material";
-import Spinner from "../../../Spinner/Spinner";
 
 export default function MemberList({ id, username, userAvatar, handleClose }) {
 	const dispatch = useDispatch();
 
 	const { user } = useSelector((state) => state.auth);
+	const { darkMode } = useSelector((state) => state.theme);
 	const { groupOwner, groupId } = useSelector(
 		(state) => state.conversations.activeGroupInfo
 	);
 	const imageEnvPath = process.env.REACT_APP_PUBLIC_FOLDER;
 
 	return (
-		<div className="flex items-center justify-between mb-4 px-4 py-2 border-[1px] rounded-md">
+		<div
+			className={`flex items-center justify-between px-3 py-2 sm:px-6 sm:py-3 border-b-2 ${
+				darkMode ? "border-dark3 bg-dark5" : "border-offwhite bg-gray-100"
+			} last:border-0`}
+		>
 			<div className="flex items-center">
 				<img
 					src={
 						userAvatar !== "" ? `${imageEnvPath}${userAvatar}` : DefaultAvatar
 					}
-					className="object-fill w-10 h-10 mr-2 sm:mr-4 rounded-full"
+					className="object-fill w-10 h-10 mr-4 rounded-full"
 					alt="Avatar"
 				/>
 				<span className="mr-4">{username}</span>
@@ -46,13 +50,17 @@ export default function MemberList({ id, username, userAvatar, handleClose }) {
 						onClick={() => {
 							dispatch(removeGroupMembers(id));
 						}}
-						className="bg-red-700 dark:bg-red-900 text-white w-fit py-[.5rem] text-sm font-bold rounded-sm"
+						className={`${
+							darkMode
+								? "bg-red-800 hover:bg-red-700 active:bg-red-600 text-white"
+								: "bg-red-700 hover:bg-red-800 active:bg-red-900 text-gray-100"
+						}   text-white w-fit py-[.5rem] text-sm font-bold rounded-full transition-all`}
+						aria-label="Remove Member"
 					>
 						<div className="flex items-center justify-center gap-1 px-2">
-							<MinusCircleIcon className="h-5 w-5" />
-							<p>Remove</p>
+							<MinusCircleIcon className="h-5 w-5 hidden sm:block" />
+							<p className="text-xs sm:text-sm">Remove</p>
 						</div>
-						{/* <Spinner /> */}
 					</button>
 				)}
 				{user._id === id && user._id !== groupOwner && id !== groupOwner && (
@@ -65,11 +73,16 @@ export default function MemberList({ id, username, userAvatar, handleClose }) {
 							dispatch(hideGroupMemberDisplay());
 							handleClose();
 						}}
-						className="bg-red-600 dark:bg-red-800 text-white w-fit py-[.5rem] text-sm font-bold rounded-sm"
+						className={`${
+							darkMode
+								? "bg-red-800 hover:bg-red-700 active:bg-red-600 text-white"
+								: "bg-red-700 hover:bg-red-800 active:bg-red-900 text-gray-100"
+						}   text-white w-fit py-[.5rem] text-sm font-bold rounded-full transition-all`}
+						aria-label="Leave Group"
 					>
 						<div className="flex items-center justify-center gap-1 px-2">
-							<LogoutIcon className="h-5 w-5" />
-							<p>Leave Group</p>
+							<LogoutIcon className="h-5 w-5 hidden sm:block" />
+							<p className="text-xs sm:text-sm">Leave Group</p>
 						</div>
 					</button>
 				)}

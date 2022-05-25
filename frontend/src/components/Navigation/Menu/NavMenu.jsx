@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
 	logoutUser,
@@ -91,15 +91,14 @@ export default function NavMenu() {
 					<StyledMenuItem
 						className="mb-1"
 						onClick={() => {
+							navigate("/profile");
 							close();
 						}}
 					>
-						<Link to="/profile">
-							<div className="flex items-center gap-2">
-								<IdentificationIcon className="h-6 w-6" />
-								<span className="font-sans">Manage account</span>
-							</div>
-						</Link>
+						<div className="flex items-center gap-2">
+							<IdentificationIcon className="h-6 w-6" />
+							<span className="font-sans">Manage account</span>
+						</div>
 					</StyledMenuItem>
 				</MenuSection>
 				<Divider />
@@ -181,6 +180,9 @@ const StyledMenuItem = styled(MenuItemUnstyled)(
 
 const TriggerButton = styled("button")(
 	({ theme }) => `
+	display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: Inter, sans-serif;
   box-sizing: border-box;
   min-height: auto;
@@ -189,7 +191,7 @@ const TriggerButton = styled("button")(
   border: 1px solid transparent;
   border-radius: 50em;
   margin: 0;
-  padding: 6px;
+  padding: 3px;
 
   &:hover {
     background: ${theme.palette.mode === "dark" ? "#1a1a1a" : "#e5e7eb"};

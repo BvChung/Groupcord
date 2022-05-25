@@ -6,12 +6,13 @@ import { changeTheme } from "../../features/theme/themeSlice";
 import MemberList from "./DisplayMembers/DisplayMembers";
 import NavMenu from "./Menu/NavMenu";
 import { Tooltip } from "@mui/material";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { MenuContext } from "../../appContext/menuContext";
 
 export default function Nav() {
 	const dispatch = useDispatch();
 	const location = useLocation();
+	const navigate = useNavigate();
 	const { activeGroupMenu, toggleGroupMenu } = useContext(MenuContext);
 
 	const { groupId } = useSelector(
@@ -36,7 +37,7 @@ export default function Nav() {
 	return (
 		<nav
 			className="flex items-center justify-between w-full px-4 py-2 h-14 bg-offwhite
-		border-b-[1px] border-b-gray-300 border-transparent shadow-lg dark:border-dark6 dark:bg-dark3"
+		border-b-[1px] border-b-gray-300 border-transparent shadow-lg dark:border-black dark:bg-dark3"
 		>
 			<div>
 				{location.pathname === "/chat" && activeGroupMenu && (
@@ -45,7 +46,7 @@ export default function Nav() {
 						onClick={toggleGroupMenu}
 						className="text-gray2 dark:text-gray-400 p-[6px] rounded-full lg:hidden
 						border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-						hover:bg-gray-200 dark:hover:bg-dark3
+						hover:bg-gray-200 dark:hover:bg-dark4
 						transition-all "
 					>
 						<XIcon className="h-7 w-7" />
@@ -57,23 +58,24 @@ export default function Nav() {
 						onClick={toggleGroupMenu}
 						className="text-gray2 dark:text-gray-400 p-[6px] rounded-full lg:hidden
 						border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-						hover:bg-gray-200 dark:hover:bg-dark3
+						hover:bg-gray-200 dark:hover:bg-dark4
 						transition-all "
 					>
 						<MenuIcon className="h-7 w-7" />
 					</button>
 				)}
 				{location.pathname === "/profile" && (
-					<Link to="/chat">
-						<Tooltip arrow describeChild title="Return to chat">
-							<div
-								className="p-[6px] border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-                            hover:bg-gray-200 dark:hover:bg-dark3 rounded-full"
-							>
-								<ChatAlt2Icon className="h-8 w-8 text-sky-500 dark:text-sky-600" />
-							</div>
-						</Tooltip>
-					</Link>
+					<Tooltip arrow describeChild title="Return to chat">
+						<button
+							onClick={() => {
+								navigate("/chat");
+							}}
+							className="p-[6px] border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
+                            hover:bg-gray-200 dark:hover:bg-dark4 rounded-full"
+						>
+							<ChatAlt2Icon className="h-8 w-8 text-sky-500 dark:text-sky-600" />
+						</button>
+					</Tooltip>
 				)}
 			</div>
 			<div>
