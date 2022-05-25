@@ -150,7 +150,6 @@ export const groupSlice = createSlice({
 			}
 		},
 		socketDataUpdateMembers: (state, action) => {
-			console.log(action.payload);
 			state.activeGroupInfo.members = action.payload.groupData.members;
 		},
 		socketDataUpdateMembersPeronalInfo: (state, action) => {

@@ -54,7 +54,7 @@ export default function ChatItem({
 						/>
 					)}
 					<div
-						className={`rounded-lg w-fit max-w-4xl h-fit p-4 break-words ${messageStyle} `}
+						className={`rounded-lg w-fit max-w-4xl h-fit p-3 sm:p-4 break-words ${messageStyle} `}
 					>
 						<div className="flex items-center justify-between gap-4 mb-[6px]">
 							<div className="flex items-center gap-4">

@@ -23,10 +23,7 @@ export default function Chat() {
 	const dispatch = useDispatch();
 	const messageRef = useRef(null);
 
-	const [userMessage, setUserMessage] = useState({
-		message: "",
-	});
-	const { user, updatedAvatarToSocket, updatedUsernameToSocket } = useSelector(
+	const { updatedAvatarToSocket, updatedUsernameToSocket } = useSelector(
 		(state) => state.auth
 	);
 	const { groupMessages } = useSelector((state) => state.messages.userMessages);
@@ -36,17 +33,14 @@ export default function Chat() {
 		loadInitialMessages,
 		hideTextInput,
 	} = useSelector((state) => state.messages);
-	const { groupId, members } = useSelector(
+	const { groupId } = useSelector(
 		(state) => state.conversations.activeGroupInfo
 	);
 
+	const [userMessage, setUserMessage] = useState({
+		message: "",
+	});
 	const [textInputActive, setTextInputActive] = useState(false);
-	function toggleTextInputActive() {
-		setTextInputActive(true);
-	}
-	function toggleTextInputInactive() {
-		setTextInputActive(false);
-	}
 
 	function handleChange(e) {
 		const { value, name } = e.target;
@@ -63,16 +57,6 @@ export default function Chat() {
 		// Prevent just white spaces from being sent
 		if (!userMessage.message.replaceAll(" ", "")) return;
 
-		if (groupId !== "Global") {
-			const findMember = members.find((member) => {
-				return member._id === user._id;
-			});
-			if (!findMember) {
-				return toast.error(
-					"User is not authorized to send messages in this group"
-				);
-			}
-		}
 		dispatch(
 			createChatMessage({
 				message: userMessage.message,
@@ -176,7 +160,7 @@ export default function Chat() {
 	return (
 		<div className="flex-grow bg-white dark:bg-dark2">
 			<section
-				className="h-[90%] min-h-[375px] max-height-chat px-2 sm:px-4 md:px-6 lg:px-12 xl:px-16 2xl:px-20 py-4 
+				className="h-[90%] min-h-[375px] max-height-chat pl-3 pr-2 sm:px-4 md:px-6 lg:px-12 xl:px-16 2xl:px-20 py-4 
 				overflow-y-auto transition-all fade relative"
 			>
 				{loadInitialMessages &&
@@ -206,8 +190,12 @@ export default function Chat() {
 					bg-offwhite focus-within:border-sky-500 dark:focus-within:border-sky-700 dark:border-gray-600 dark:bg-gray-800"
 					>
 						<form
-							onFocus={toggleTextInputActive}
-							onBlur={toggleTextInputInactive}
+							onFocus={() => {
+								setTextInputActive(true);
+							}}
+							onBlur={() => {
+								setTextInputActive(false);
+							}}
 							className="flex w-full"
 							onSubmit={handleSubmit}
 						>
