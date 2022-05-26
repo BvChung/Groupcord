@@ -4,7 +4,10 @@ import { UserIcon, AnnotationIcon } from "@heroicons/react/outline";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { loginUser, resetError } from "../features/authentication/authSlice";
+import {
+	loginUser,
+	resetErrorState,
+} from "../features/authentication/authSlice";
 import { Checkbox, FormControlLabel } from "@mui/material";
 
 export default function LoginPage() {
@@ -54,7 +57,7 @@ export default function LoginPage() {
 	}
 
 	const resetAfterLogin = useCallback(() => {
-		dispatch(resetError());
+		dispatch(resetErrorState());
 	}, [dispatch]);
 
 	useEffect(() => {
@@ -70,7 +73,7 @@ export default function LoginPage() {
 	useEffect(() => {
 		if (isError) {
 			toast.error(errorMessage);
-			dispatch(resetError());
+			dispatch(resetErrorState());
 		}
 	}, [isError, errorMessage, dispatch]);
 

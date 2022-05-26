@@ -4,7 +4,10 @@ import { AnnotationIcon } from "@heroicons/react/outline";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { registerUser, resetError } from "../features/authentication/authSlice";
+import {
+	registerUser,
+	resetErrorState,
+} from "../features/authentication/authSlice";
 import { Checkbox, FormControlLabel } from "@mui/material";
 
 export default function RegisterPage() {
@@ -48,13 +51,13 @@ export default function RegisterPage() {
 	}
 
 	const resetAfterRegister = useCallback(() => {
-		dispatch(resetError());
+		dispatch(resetErrorState());
 	}, [dispatch]);
 
 	useEffect(() => {
 		if (isError) {
 			toast.error(errorMessage);
-			dispatch(resetError());
+			dispatch(resetErrorState());
 		}
 	}, [isError, errorMessage, dispatch]);
 
