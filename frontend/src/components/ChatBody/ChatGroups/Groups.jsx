@@ -1,40 +1,20 @@
-import { useState, useEffect, useContext, useCallback } from "react";
+import { useState, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useSendGroupData } from "../../../hooks/webSocket/useSendGroupData";
+import { useSendMemberData } from "../../../hooks/webSocket/useSendMemberData";
+
 import { ChatAlt2Icon } from "@heroicons/react/outline";
 import { SearchIcon, GlobeIcon } from "@heroicons/react/solid";
 import GroupItem from "./GroupItem/GroupItem";
-import {
-	updateActiveGroup,
-	socketDataUpdateMembers,
-	socketDataAddGroupForMember,
-	socketDataRemoveGroupForMember,
-	socketDataUpdateGroupName,
-	socketDataUpdateGroupIcon,
-	socketDataDeleteGroup,
-	hideGroupMemberDisplay,
-} from "../../../features/groups/groupSlice";
-import {
-	clearChatMessages,
-	hideTextInput,
-} from "../../../features/messages/messageSlice";
-import { SocketContext } from "../../../appContext/socketContext";
+import { updateActiveGroup } from "../../../features/groups/groupSlice";
 import { MenuContext } from "../../../appContext/menuContext";
-import { toast } from "react-toastify";
 
 export default function Groups() {
 	const dispatch = useDispatch();
-	const socket = useContext(SocketContext);
 	const { setOpenGroupModal, activeGroupMenu } = useContext(MenuContext);
-	const { user } = useSelector((state) => state.auth);
-	const {
-		groups,
-		groupDeletedToSocket,
-		updatedGroupNameToSocket,
-		updatedGroupIconToSocket,
-		loadInitialGroups,
-		addedMemberToSocket,
-		removedMemberToSocket,
-	} = useSelector((state) => state.conversations);
+	const { groups, loadInitialGroups } = useSelector(
+		(state) => state.conversations
+	);
 	const { groupId } = useSelector(
 		(state) => state.conversations.activeGroupInfo
 	);
@@ -49,149 +29,8 @@ export default function Groups() {
 			: "border-l-[3px] border-l-gray4 dark:border-l-gray-600 hover:border-l-gray-400 dark:hover:border-l-gray-400";
 
 	// Websocket data transmission -------------------------------
-	const dispatchAddGroupSocketData = useCallback(
-		(data) => {
-			dispatch(socketDataAddGroupForMember(data));
-		},
-		[dispatch]
-	);
-	const dispatchRemoveGroupSocketData = useCallback(
-		(data) => {
-			dispatch(socketDataRemoveGroupForMember(data));
-		},
-		[dispatch]
-	);
-	const dispatchUpdatedMembersSocketData = useCallback(
-		(data) => {
-			dispatch(socketDataUpdateMembers(data));
-		},
-		[dispatch]
-	);
-	const dispatchDeletedGroupSocketData = useCallback(
-		(data) => {
-			dispatch(socketDataDeleteGroup(data));
-		},
-		[dispatch]
-	);
-	const dispatchUpdatedGroupNameSocketData = useCallback(
-		(data) => {
-			dispatch(socketDataUpdateGroupName(data));
-		},
-		[dispatch]
-	);
-	const dispatchUpdatedGroupIconSocketData = useCallback(
-		(data) => {
-			dispatch(socketDataUpdateGroupIcon(data));
-		},
-		[dispatch]
-	);
-	// console.log(groups);
-
-	useEffect(() => {
-		socket.emit("send_added_group_member", addedMemberToSocket);
-		socket.on("receive_added_group_member", (data) => {
-			if (data.groupData._id === groupId) {
-				// Updates the current active group with members/ users that can be added
-				dispatchUpdatedMembersSocketData(data);
-			}
-			if (data.memberChanged._id === user._id) {
-				// Adds group in sidebar
-				dispatchAddGroupSocketData(data);
-			}
-		});
-
-		return () => {
-			socket.off("receive_added_group_member");
-		};
-	}, [
-		socket,
-		addedMemberToSocket,
-		dispatchUpdatedMembersSocketData,
-		dispatchAddGroupSocketData,
-		groupId,
-		user._id,
-	]);
-
-	useEffect(() => {
-		socket.emit("send_removed_group_member", removedMemberToSocket);
-		socket.on("receive_removed_group_member", (data) => {
-			if (
-				data.memberChanged._id === user._id &&
-				data.groupData._id === groupId
-			) {
-				// Clear chat and hide text input for removed member
-				dispatch(clearChatMessages());
-				dispatch(hideTextInput());
-				dispatch(hideGroupMemberDisplay());
-			}
-			if (data.groupData._id === groupId) {
-				// Updates the current active group with members/users that can be added
-				dispatchUpdatedMembersSocketData(data);
-			}
-			if (data.memberChanged._id === user._id) {
-				// Removes group in sidebar
-				dispatchRemoveGroupSocketData(data);
-			}
-		});
-
-		return () => {
-			socket.off("receive_removed_group_member");
-		};
-	}, [
-		socket,
-		removedMemberToSocket,
-		dispatch,
-		dispatchUpdatedMembersSocketData,
-		dispatchRemoveGroupSocketData,
-		groupId,
-		user._id,
-	]);
-
-	useEffect(() => {
-		socket.emit("send_group_deleted", groupDeletedToSocket);
-		socket.on("receive_group_deleted", (groupData) => {
-			dispatchDeletedGroupSocketData(groupData);
-
-			if (groupData._id === groupId) {
-				dispatch(clearChatMessages());
-				dispatch(hideTextInput());
-				dispatch(hideGroupMemberDisplay());
-				toast.info(`${groupData.groupName} has been deleted`);
-			}
-		});
-
-		return () => {
-			socket.off("receive_group_deleted");
-		};
-	}, [
-		socket,
-		groupDeletedToSocket,
-		dispatch,
-		groupId,
-		dispatchDeletedGroupSocketData,
-	]);
-
-	useEffect(() => {
-		socket.emit("send_group_name_updated", updatedGroupNameToSocket);
-		socket.on("receive_group_name_updated", (groupData) => {
-			dispatchUpdatedGroupNameSocketData(groupData);
-		});
-
-		return () => {
-			socket.off("receive_group_name_updated");
-		};
-	}, [socket, updatedGroupNameToSocket, dispatchUpdatedGroupNameSocketData]);
-
-	useEffect(() => {
-		socket.emit("send_group_icon_updated", updatedGroupIconToSocket);
-		socket.on("receive_group_icon_updated", (groupData) => {
-			dispatchUpdatedGroupIconSocketData(groupData);
-		});
-
-		return () => {
-			socket.off("receive_group_icon_updated");
-		};
-	}, [socket, updatedGroupIconToSocket, dispatchUpdatedGroupIconSocketData]);
+	useSendGroupData();
+	useSendMemberData();
 
 	return (
 		<div

@@ -3,36 +3,24 @@ import { useDispatch, useSelector } from "react-redux";
 import {
 	createChatMessage,
 	getChatMessage,
-	socketDataAddMessage,
-	socketDataRemoveDeletedMessage,
-	socketDataUpdateMessageUsername,
-	socketDataUpdateMessageAvatar,
 	resetTextInput,
 } from "../../../features/messages/messageSlice";
-import {
-	resetGroupMemberDisplay,
-	socketDataUpdateMembersPeronalInfo,
-} from "../../../features/groups/groupSlice";
+import { resetGroupMemberDisplay } from "../../../features/groups/groupSlice";
+import { SocketContext } from "../../../appContext/socketContext";
+import { useSendMessageData } from "../../../hooks/webSocket/useSendMessageData";
+import { useSendProfileData } from "../../../hooks/webSocket/useSendProfileData";
 import ChatItem from "./ChatMessagesItem";
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
-import { SocketContext } from "../../../appContext/socketContext";
-import { toast } from "react-toastify";
 
 export default function Chat() {
 	const socket = useContext(SocketContext);
 	const dispatch = useDispatch();
 	const messageRef = useRef(null);
 
-	const { updatedAvatarToSocket, updatedUsernameToSocket } = useSelector(
-		(state) => state.auth
-	);
 	const { groupMessages } = useSelector((state) => state.messages.userMessages);
-	const {
-		newMessageToSocket,
-		deletedMessageToSocket,
-		loadInitialMessages,
-		hideTextInput,
-	} = useSelector((state) => state.messages);
+	const { loadInitialMessages, hideTextInput } = useSelector(
+		(state) => state.messages
+	);
 	const { groupId } = useSelector(
 		(state) => state.conversations.activeGroupInfo
 	);
@@ -86,76 +74,8 @@ export default function Chat() {
 		socket.emit("join_room", groupId);
 	}, [groupId, socket, dispatch, loadMessages]);
 
-	const dispatchChangeUsernameSocketData = useCallback(
-		(data) => {
-			dispatch(socketDataUpdateMessageUsername(data));
-			dispatch(socketDataUpdateMembersPeronalInfo(data));
-		},
-		[dispatch]
-	);
-	const dispatchChangeAvatarSocketData = useCallback(
-		(data) => {
-			dispatch(socketDataUpdateMessageAvatar(data));
-			dispatch(socketDataUpdateMembersPeronalInfo(data));
-		},
-		[dispatch]
-	);
-	const dispatchNewMessageSocketData = useCallback(
-		(data) => {
-			dispatch(socketDataAddMessage(data));
-		},
-		[dispatch]
-	);
-	const dispatchDeleteMessageSocketData = useCallback(
-		(data) => {
-			dispatch(socketDataRemoveDeletedMessage(data));
-		},
-		[dispatch]
-	);
-
-	useEffect(() => {
-		socket.emit("send_message_username_updated", updatedUsernameToSocket);
-		socket.on("receive_message_username_updated", (messageData) => {
-			dispatchChangeUsernameSocketData(messageData);
-		});
-
-		return () => {
-			socket.off("receive_message_username_updated");
-		};
-	}, [socket, updatedUsernameToSocket, dispatchChangeUsernameSocketData]);
-
-	useEffect(() => {
-		socket.emit("send_message_avatar_updated", updatedAvatarToSocket);
-		socket.on("receive_message_avatar_updated", (messageData) => {
-			dispatchChangeAvatarSocketData(messageData);
-		});
-
-		return () => {
-			socket.off("receive_message_avatar_updated");
-		};
-	}, [socket, updatedAvatarToSocket, dispatchChangeAvatarSocketData]);
-
-	useEffect(() => {
-		socket.emit("send_message", newMessageToSocket);
-		socket.on("receive_message", (messageData) => {
-			dispatchNewMessageSocketData(messageData);
-		});
-
-		return () => {
-			socket.off("receive_message");
-		};
-	}, [socket, newMessageToSocket, dispatchNewMessageSocketData]);
-
-	useEffect(() => {
-		socket.emit("send_deleted_message", deletedMessageToSocket);
-		socket.on("receive_deleted_message", (messageData) => {
-			dispatchDeleteMessageSocketData(messageData);
-		});
-
-		return () => {
-			socket.off("receive_deleted_message");
-		};
-	}, [socket, deletedMessageToSocket, dispatchDeleteMessageSocketData]);
+	useSendMessageData();
+	useSendProfileData();
 
 	return (
 		<div className="flex-grow bg-white dark:bg-dark2">

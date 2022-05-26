@@ -21,7 +21,7 @@ const deleteGroup = async (groupId) => {
 };
 
 const updateName = async (groupId, groupName) => {
-	const response = await axiosPrivate.put(`${API_URL}/update/name/${groupId}`, {
+	const response = await axiosPrivate.put(`${API_URL}/name/${groupId}`, {
 		groupName,
 	});
 
@@ -29,10 +29,7 @@ const updateName = async (groupId, groupName) => {
 };
 
 const updateIcon = async (groupId, file) => {
-	const response = await axiosPrivate.put(
-		`${API_URL}/update/icon/${groupId}`,
-		file
-	);
+	const response = await axiosPrivate.put(`${API_URL}/icon/${groupId}`, file);
 
 	return response.data;
 };

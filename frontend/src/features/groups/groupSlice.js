@@ -15,7 +15,6 @@ import {
 } from "../helperFunctions/groupFunctions";
 
 const initialState = {
-	registeredMembers: {},
 	groups: {},
 	activeGroupInfo: {
 		groupId: "Global",
@@ -23,8 +22,8 @@ const initialState = {
 		groupOwner: "",
 		members: [],
 	},
+	registeredMembers: {},
 	membersAvailableToAddToGroup: {},
-	memberUpdatedToSocket: {},
 	addedMemberToSocket: {},
 	removedMemberToSocket: {},
 	groupDeletedToSocket: {},
@@ -135,6 +134,13 @@ export const groupSlice = createSlice({
 	initialState,
 	reducers: {
 		resetGroupState: (state) => initialState,
+		resetSuccessState: (state) => {
+			state.isSuccess = false;
+		},
+		resetErrorState: (state) => {
+			state.isError = false;
+			state.errorMessage = "";
+		},
 		updateActiveGroup: (state, action) => {
 			state.activeGroupInfo = action.payload;
 		},
@@ -152,7 +158,7 @@ export const groupSlice = createSlice({
 		socketDataUpdateMembers: (state, action) => {
 			state.activeGroupInfo.members = action.payload.groupData.members;
 		},
-		socketDataUpdateMembersPeronalInfo: (state, action) => {
+		socketDataUpdateMembersPersonalInfo: (state, action) => {
 			state.activeGroupInfo.members = updateData(
 				state.activeGroupInfo.members,
 				action.payload
@@ -180,7 +186,6 @@ export const groupSlice = createSlice({
 		});
 		builder.addCase(createChatGroups.fulfilled, (state, action) => {
 			state.isLoading = false;
-			state.isSuccess = true;
 			state.groups.push(action.payload);
 		});
 		builder.addCase(createChatGroups.rejected, (state) => {
@@ -207,6 +212,7 @@ export const groupSlice = createSlice({
 			state.isError = true;
 		});
 		builder.addCase(deleteChatGroup.fulfilled, (state, action) => {
+			state.isSuccess = true;
 			state.groups = action.payload.allGroups;
 			state.groupDeletedToSocket = action.payload.deletedGroup;
 		});
@@ -265,6 +271,7 @@ export const groupSlice = createSlice({
 			state.isLoading = true;
 		});
 		builder.addCase(updateChatGroupName.fulfilled, (state, action) => {
+			state.isSuccess = true;
 			state.isLoading = false;
 
 			state.activeGroupInfo.groupName =
@@ -276,6 +283,7 @@ export const groupSlice = createSlice({
 			state.isLoading = true;
 		});
 		builder.addCase(updateChatGroupIcon.fulfilled, (state, action) => {
+			state.isSuccess = true;
 			state.isLoading = false;
 
 			state.groups = updateData(state.groups, action.payload);
@@ -291,12 +299,14 @@ export const groupSlice = createSlice({
 
 export const {
 	resetGroupState,
+	resetSuccessState,
+	resetErrorState,
 	leaveGroup,
 	hideGroupMemberDisplay,
 	resetGroupMemberDisplay,
 	updateActiveGroup,
 	socketDataUpdateMembers,
-	socketDataUpdateMembersPeronalInfo,
+	socketDataUpdateMembersPersonalInfo,
 	socketDataUpdateGroups,
 	socketDataAddGroupForMember,
 	socketDataRemoveGroupForMember,
