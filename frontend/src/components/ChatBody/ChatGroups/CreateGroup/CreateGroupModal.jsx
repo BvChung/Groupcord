@@ -1,15 +1,16 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import { useSelector, useDispatch } from "react-redux";
-import { createChatGroups } from "../../features/groups/groupSlice";
+import { createChatGroups } from "../../../../features/groups/groupSlice";
 import { toast } from "react-toastify";
-import { MenuContext } from "../../appContext/menuContext";
 import { UserGroupIcon } from "@heroicons/react/solid";
 
-export default function GroupCreationModal() {
+export default function GroupCreation({
+	activeGroupModal,
+	setActiveGroupModal,
+}) {
 	const dispatch = useDispatch();
-	const { toggleGroupModal, openGroupModal } = useContext(MenuContext);
 
 	const { darkMode } = useSelector((state) => state.theme);
 	const [formData, setFormData] = useState({
@@ -32,7 +33,7 @@ export default function GroupCreationModal() {
 
 		dispatch(createChatGroups(formData));
 		toast.success(`${formData.groupName} has been created`);
-		toggleGroupModal();
+		setActiveGroupModal(false);
 	}
 	function resetFormData() {
 		setFormData((prevData) => {
@@ -63,11 +64,11 @@ export default function GroupCreationModal() {
 	return (
 		<>
 			<Dialog
-				open={openGroupModal}
+				open={activeGroupModal}
 				fullWidth={true}
 				maxWidth="sm"
 				onClose={() => {
-					toggleGroupModal();
+					setActiveGroupModal(false);
 					resetFormData();
 				}}
 			>
@@ -102,7 +103,7 @@ export default function GroupCreationModal() {
 						<button
 							aria-label="Exit group creation"
 							onClick={() => {
-								toggleGroupModal();
+								setActiveGroupModal(false);
 								resetFormData();
 							}}
 							className={`transition-colors ${buttonStyle}   

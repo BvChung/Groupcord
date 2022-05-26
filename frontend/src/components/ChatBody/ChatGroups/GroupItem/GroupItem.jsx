@@ -61,6 +61,7 @@ export default function GroupItem({
 								src={`${imageEnvPath}${groupIcon}`}
 								className="object-fill w-12 h-w-12"
 								alt="Avatar"
+								loading="lazy"
 							/>
 						</div>
 					) : (

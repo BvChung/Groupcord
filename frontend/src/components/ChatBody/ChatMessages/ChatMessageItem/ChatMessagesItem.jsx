@@ -1,8 +1,8 @@
 import { useSelector, useDispatch } from "react-redux";
-import { deleteChatMessage } from "../../../features/messages/messageSlice";
+import { deleteChatMessage } from "../../../../features/messages/messageSlice";
 import { TrashIcon } from "@heroicons/react/solid";
 import Tooltip from "@mui/material/Tooltip";
-import DefaultAvatar from "../../../assets/images/avatar.jpg";
+import DefaultAvatar from "../../../../assets/images/avatar.jpg";
 
 export default function ChatItem({
 	type,
@@ -51,6 +51,7 @@ export default function ChatItem({
 							}
 							className="object-fill w-12 h-12 sm:w-14 sm:h-14 mr-3 sm:mr-4 rounded-full"
 							alt="Avatar"
+							loading="lazy"
 						/>
 					)}
 					<div
@@ -99,6 +100,7 @@ export default function ChatItem({
 							}
 							className="object-fill w-14 h-14 ml-3 sm:ml-4 rounded-full"
 							alt="Avatar"
+							loading="lazy"
 						/>
 					)}
 				</div>

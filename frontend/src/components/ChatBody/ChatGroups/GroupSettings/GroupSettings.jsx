@@ -17,7 +17,6 @@ import { toast } from "react-toastify";
 import { PencilIcon, TrashIcon } from "@heroicons/react/solid";
 import DefaultAvatar from "../../../../assets/images/avatar.jpg";
 import { Tooltip, TextField } from "@mui/material";
-import Spinner from "../../../Spinner/Spinner";
 
 export default function GroupSettings({
 	groupId,
@@ -51,6 +50,7 @@ export default function GroupSettings({
 		});
 	}
 
+	// Form submission functions ---------------------------------------
 	function submitGroupName(e) {
 		e.preventDefault();
 
@@ -83,6 +83,7 @@ export default function GroupSettings({
 		}
 	}
 
+	// Success/Error functions ---------------------------------------
 	const displaySuccess = useCallback(() => {
 		if (isSuccess) {
 			toast.success(`${groupName} has been updated.`);
@@ -117,6 +118,8 @@ export default function GroupSettings({
 			resetWithUnmount();
 		};
 	}, [displaySuccess, displayError, resetWithUnmount]);
+
+	// CSS styles ---------------------------------------
 
 	const bgStyle = darkMode ? "bg-dark3" : "bg-offwhite";
 	const textStyle = darkMode ? "text-white" : "text-gray1";
@@ -390,8 +393,6 @@ export default function GroupSettings({
 					<TrashIcon className="h-5 w-5" />
 					<span className="font-semibold">Delete Group</span>
 				</button>
-
-				{isLoading && <Spinner />}
 			</div>
 		</Dialog>
 	);
