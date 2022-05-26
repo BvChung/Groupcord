@@ -23,6 +23,13 @@ const updateUsername = asyncHandler(async (req, res) => {
 		throw new Error("Your new username cannot be the same as the original.");
 	}
 
+	if (username.slice(0, 1) === " " || username.slice(-1) === " ") {
+		res.status(400);
+		throw new Error(
+			"Your new username cannot begin or end with a blank space."
+		);
+	}
+
 	// Update user information
 	await User.findByIdAndUpdate(
 		req.user._id,
@@ -70,6 +77,11 @@ const updateEmail = asyncHandler(async (req, res) => {
 	if (currentUser.email === email) {
 		res.status(400);
 		throw new Error("Your new email cannot be the same as the original.");
+	}
+
+	if (email.slice(0, 1) === " " || email.slice(-1) === " ") {
+		res.status(400);
+		throw new Error("Your new email cannot begin or end with a blank space.");
 	}
 
 	// Update user information

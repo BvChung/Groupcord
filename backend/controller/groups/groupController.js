@@ -1,6 +1,5 @@
 const asyncHandler = require("express-async-handler");
 const Conversation = require("../../models/conversationModel");
-const User = require("../../models/userModel");
 const Messages = require("../../models/messageModel");
 const fs = require("fs");
 const path = "backend/uploads/images/";
@@ -17,7 +16,7 @@ const getChatGroups = asyncHandler(async (req, res) => {
 	});
 });
 
-// @desc Create conversation
+// @desc Create group
 // @route POST /api/groups/
 // @access Private
 const createChatGroup = asyncHandler(async (req, res) => {
@@ -37,8 +36,36 @@ const createChatGroup = asyncHandler(async (req, res) => {
 	return res.status(200).json(conversation);
 });
 
-// @desc Update Group
-// @route PUT /api/groups/:id
+// @desc Delete group
+// @route DELETE /api/groups/:groupId
+// @access Private
+const deleteChatGroup = asyncHandler(async (req, res) => {
+	// Delete group
+	const deletedGroup = await Conversation.findByIdAndDelete(req.params.groupId);
+
+	// Delete all messages associated with group in database
+	await Messages.deleteMany({ groupId: req.params.groupId });
+
+	// Remove image file with group deletion
+	if (deletedGroup.groupIcon !== "") {
+		fs.unlink(`${path}${deletedGroup.groupIcon}`, (err) => {
+			if (err) {
+				console.error(`${deletedGroup.groupIcon} does not exist.`);
+			}
+
+			console.log(`${deletedGroup.groupIcon} was deleted`);
+		});
+	}
+
+	const allGroups = await Conversation.find({ membersId: req.user.id });
+	return res.status(200).json({
+		allGroups,
+		deletedGroup,
+	});
+});
+
+// @desc Update group name
+// @route PUT /api/groups/name/:groupId
 // @access Private
 const updateChatGroupName = asyncHandler(async (req, res) => {
 	const { groupId } = req.params;
@@ -58,6 +85,9 @@ const updateChatGroupName = asyncHandler(async (req, res) => {
 	});
 });
 
+// @desc Update group icon
+// @route PUT /api/groups/icon/:groupId
+// @access Private
 const updateIcon = asyncHandler(async (req, res) => {
 	const { groupId } = req.params;
 
@@ -87,127 +117,10 @@ const updateIcon = asyncHandler(async (req, res) => {
 	return res.status(200).json(updatedGroup);
 });
 
-// @desc Delete group
-// @route DELETE /api/conversation/:id
-// @access Private
-const deleteChatGroup = asyncHandler(async (req, res) => {
-	// Delete group
-	const deletedGroup = await Conversation.findByIdAndDelete(req.params.groupId);
-
-	// Delete all messages associated with group in database
-	await Messages.deleteMany({ groupId: req.params.groupId });
-
-	// Remove image file with group deletion
-	if (deletedGroup.groupIcon !== "") {
-		fs.unlink(`${path}${deletedGroup.groupIcon}`, (err) => {
-			if (err) {
-				console.error(`${deletedGroup.groupIcon} does not exist.`);
-			}
-
-			console.log(`${deletedGroup.groupIcon} was deleted`);
-		});
-	}
-
-	const allGroups = await Conversation.find({ membersId: req.user.id });
-	return res.status(200).json({
-		allGroups,
-		deletedGroup,
-	});
-});
-
-// @desc Get members
-// @route GET /api/conversation/members
-// @access Private
-const getMembers = asyncHandler(async (req, res) => {
-	const registeredMembers = await User.find({}).select({
-		username: 1,
-		userAvatar: 1,
-	});
-
-	const returnedUsers = registeredMembers.filter((user) => {
-		return user.username !== req.user.username;
-	});
-
-	return res.status(200).json(returnedUsers);
-});
-
-// @desc Update with new groups members
-// @route PUT /api/conversation
-// @access Private
-const addGroupMembers = asyncHandler(async (req, res) => {
-	const { groupId } = req.params;
-	const { memberId } = req.body;
-
-	const currentUser = await User.findById(memberId).select({
-		username: 1,
-		userAvatar: 1,
-	});
-
-	const updatedMembers = await Conversation.findByIdAndUpdate(
-		groupId,
-		{
-			$addToSet: {
-				membersId: memberId,
-				members: {
-					_id: currentUser.id,
-					username: currentUser.username,
-					userAvatar: currentUser.userAvatar,
-				},
-			},
-		},
-		{
-			new: true,
-		}
-	);
-
-	return res.status(200).json({
-		updatedMembers: updatedMembers,
-		memberChanged: currentUser,
-	});
-});
-
-// @desc Update each groups members
-// @route PUT /api/conversation
-// @access Private
-const removeGroupMembers = asyncHandler(async (req, res) => {
-	const { groupId } = req.params;
-	const { memberId } = req.body;
-
-	const currentUser = await User.findById(memberId).select({
-		username: 1,
-		userAvatar: 1,
-	});
-
-	const updatedMembers = await Conversation.findByIdAndUpdate(
-		groupId,
-		{
-			$pull: {
-				membersId: memberId,
-				members: {
-					_id: currentUser.id,
-					username: currentUser.username,
-					userAvatar: currentUser.userAvatar,
-				},
-			},
-		},
-		{
-			new: true,
-		}
-	);
-
-	return res.status(200).json({
-		updatedMembers: updatedMembers,
-		memberChanged: currentUser,
-	});
-});
-
 module.exports = {
 	getChatGroups,
 	createChatGroup,
 	updateChatGroupName,
 	updateIcon,
 	deleteChatGroup,
-	getMembers,
-	addGroupMembers,
-	removeGroupMembers,
 };
