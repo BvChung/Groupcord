@@ -2,23 +2,25 @@ import { useState, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useSendGroupData } from "../../../hooks/webSocket/useSendGroupData";
 import { useSendMemberData } from "../../../hooks/webSocket/useSendMemberData";
-
 import { ChatAlt2Icon } from "@heroicons/react/outline";
 import { SearchIcon, GlobeIcon } from "@heroicons/react/solid";
 import GroupItem from "./GroupItem/GroupItem";
 import { updateActiveGroup } from "../../../features/groups/groupSlice";
+import CreateGroupModal from "./CreateGroup/CreateGroupModal";
 import { MenuContext } from "../../../appContext/menuContext";
+import Spinner from "../../Spinner/Spinner";
 
 export default function Groups() {
 	const dispatch = useDispatch();
-	const { setOpenGroupModal, activeGroupMenu } = useContext(MenuContext);
-	const { groups, loadInitialGroups } = useSelector(
+	const { activeGroupMenu } = useContext(MenuContext);
+	const { groups, loadInitialGroups, isLoading } = useSelector(
 		(state) => state.conversations
 	);
 	const { groupId } = useSelector(
 		(state) => state.conversations.activeGroupInfo
 	);
 	const [searchText, setSearchText] = useState("");
+	const [activeGroupModal, setActiveGroupModal] = useState(false);
 
 	const showGroupsStyle = activeGroupMenu
 		? "lg:flex lg:flex-col left-0 "
@@ -49,7 +51,7 @@ export default function Groups() {
 						bg-sky-600 hover:bg-sky-700 active:bg-sky-800 dark:bg-sky-800 dark:hover:bg-sky-700 dark:active:bg-sky-600 rounded-md shadow-md
 					 	active:shadow-lg cursor-pointer transition-all"
 					onClick={() => {
-						setOpenGroupModal(true);
+						setActiveGroupModal(true);
 					}}
 				>
 					<ChatAlt2Icon className="w-6 h-6 text-white" />
@@ -72,51 +74,61 @@ export default function Groups() {
 				</div>
 			</div>
 
-			<section className="mx-6 h-auto py-4 px-5 bg-offwhite dark:bg-dark5 rounded-md shadow-md">
-				<div
-					className="h-auto max-height bg-transparent py-1 pr-1
-						rounded-lg overflow-y-auto"
-				>
+			<CreateGroupModal
+				activeGroupModal={activeGroupModal}
+				setActiveGroupModal={setActiveGroupModal}
+			/>
+
+			<div className="mx-6 h-auto py-4 px-5 bg-offwhite dark:bg-dark5 rounded-md shadow-md">
+				{!isLoading ? (
 					<div
-						onClick={() => {
-							dispatch(
-								updateActiveGroup({
-									groupId: "Global",
-									groupName: "",
-									groupOwner: "",
-									members: [],
-								})
-							);
-						}}
-						className={`flex items-center w-full h-16 px-3 gap-4 cursor-pointer
-							 ${globalActive}`}
+						className="h-auto max-height bg-transparent py-1 pr-1
+						rounded-lg overflow-y-auto"
 					>
-						<div className="rounded-full overflow-hidden">
-							<GlobeIcon className="h-12 w-12 text-sky-600 dark:text-sky-700" />
-						</div>
-						<span className="text-gray1 dark:text-white">Global</span>
-					</div>
-					{loadInitialGroups &&
-						groups
-							.filter((group) => {
-								return group.groupName
-									.toLowerCase()
-									.includes(searchText.toLowerCase());
-							})
-							.map((group) => {
-								return (
-									<GroupItem
-										key={group._id}
-										groupId={group._id}
-										groupName={group.groupName}
-										groupOwner={group.groupOwner}
-										members={group.members}
-										groupIcon={group.groupIcon}
-									/>
+						<div
+							onClick={() => {
+								dispatch(
+									updateActiveGroup({
+										groupId: "Global",
+										groupName: "",
+										groupOwner: "",
+										members: [],
+									})
 								);
-							})}
-				</div>
-			</section>
+							}}
+							className={`flex items-center w-full h-16 px-3 gap-4 cursor-pointer
+							 ${globalActive}`}
+						>
+							<div className="rounded-full overflow-hidden">
+								<GlobeIcon className="h-12 w-12 text-sky-600 dark:text-sky-700" />
+							</div>
+							<span className="text-gray1 dark:text-white">Global</span>
+						</div>
+
+						{loadInitialGroups &&
+							groups
+								.filter((group) => {
+									return group.groupName
+										.toLowerCase()
+										.includes(searchText.toLowerCase());
+								})
+								.map((group) => {
+									return (
+										<GroupItem
+											key={group._id}
+											groupId={group._id}
+											groupName={group.groupName}
+											groupOwner={group.groupOwner}
+											members={group.members}
+											groupIcon={group.groupIcon}
+										/>
+									);
+								})}
+					</div>
+				) : (
+					<Spinner mt={3} />
+				)}
+			</div>
 		</div>
 	);
 }
