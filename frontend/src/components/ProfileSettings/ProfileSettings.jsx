@@ -5,8 +5,8 @@ import {
 	updateAccountEmail,
 	updateAccountPassword,
 	updateAccountAvatar,
-	resetState,
-	resetSuccessNotifications,
+	resetSuccessState,
+	resetErrorState,
 } from "../../features/authentication/authSlice";
 import { toast } from "react-toastify";
 import EditEmail from "./EditEmail/EditEmail";
@@ -16,13 +16,11 @@ import EditPassword from "./EditPassword/EditPassword";
 
 export default function ProfileSettings() {
 	const dispatch = useDispatch();
-	const toastId = useRef(null);
 	const imageRef = useRef();
 
-	const { user, updateError, message, isSuccess, changedAvatar } = useSelector(
+	const { user, isError, errorMessage, isSuccess } = useSelector(
 		(state) => state.auth
 	);
-
 	const [formData, setFormData] = useState({
 		username: user.username,
 		email: user.email,
@@ -30,31 +28,10 @@ export default function ProfileSettings() {
 		newPassword: "",
 		confirmNewPassword: "",
 	});
-
 	const [editUsername, setEditUsername] = useState(false);
 	const [editEmail, setEditEmail] = useState(false);
 	const [editPassword, setEditPassword] = useState(false);
 	const [imageUpload, setImageUpload] = useState(null);
-
-	function toggleEditUsername() {
-		setEditUsername((prev) => !prev);
-	}
-	function toggleEditEmail() {
-		setEditEmail((prev) => !prev);
-	}
-	function toggleEditPassword() {
-		setEditPassword((prev) => !prev);
-	}
-
-	const resetFormData = useCallback(() => {
-		setFormData({
-			username: user.username,
-			email: user.email,
-			currentPassword: "",
-			newPassword: "",
-			confirmNewPassword: "",
-		});
-	}, [setFormData, user.username, user.email]);
 
 	function resetUsernameForm() {
 		setFormData((prevData) => {
@@ -64,6 +41,7 @@ export default function ProfileSettings() {
 			};
 		});
 	}
+
 	function resetEmailForm() {
 		setFormData((prevData) => {
 			return {
@@ -72,6 +50,7 @@ export default function ProfileSettings() {
 			};
 		});
 	}
+
 	function resetPasswordForm() {
 		setFormData((prevData) => {
 			return {
@@ -94,30 +73,37 @@ export default function ProfileSettings() {
 		});
 	}
 
+	// Form Submission functions ---------------------------------------
 	function handleUsernameSubmission(e) {
 		e.preventDefault();
 
-		if (formData.username === "") return toast.error(`Enter a username.`);
-
 		if (user.username === "GuestAccount") {
 			return toast.error(`GuestAccount's information cannot be edited.`);
 		}
+
+		if (formData.username === "") return toast.error(`Enter a username.`);
 
 		dispatch(updateAccountUsername({ username: formData.username }));
 	}
+
 	function handleEmailSubmission(e) {
 		e.preventDefault();
-
-		if (formData.email === "") return toast.error(`Enter an email address.`);
 
 		if (user.username === "GuestAccount") {
 			return toast.error(`GuestAccount's information cannot be edited.`);
 		}
 
+		if (formData.email === "") return toast.error(`Enter an email address.`);
+
 		dispatch(updateAccountEmail({ email: formData.email }));
 	}
+
 	function handlePasswordSubmission(e) {
 		e.preventDefault();
+
+		if (user.username === "GuestAccount") {
+			return toast.error(`GuestAccount's information cannot be edited.`);
+		}
 
 		if (
 			formData.currentPassword === "" ||
@@ -125,10 +111,6 @@ export default function ProfileSettings() {
 			formData.confirmNewPassword === ""
 		)
 			return toast.error(`All forms must be filled out.`);
-
-		if (user.username === "GuestAccount") {
-			return toast.error(`GuestAccount's information cannot be edited.`);
-		}
 
 		if (formData.confirmNewPassword !== formData.newPassword) {
 			return toast.error(
@@ -157,42 +139,52 @@ export default function ProfileSettings() {
 		}
 	}
 
-	const displayError = useCallback(() => {
-		if (
-			updateError &&
-			message === "File too large" &&
-			!toast.isActive(toastId.current)
-		) {
-			toastId.current = toast.error(
-				message + " to upload. Maximum image size is 1 MB."
-			);
-		}
-	}, [message, updateError]);
-
+	// Success/Error functions ---------------------------------------
 	const displaySuccess = useCallback(() => {
 		if (isSuccess) {
 			toast.success("Your account has been updated.");
-			resetFormData();
-		}
-		if (changedAvatar) {
-			toast.success("Your avatar has been updated.");
-			dispatch(resetSuccessNotifications());
-		}
-	}, [isSuccess, changedAvatar, dispatch, resetFormData]);
 
-	const resetAfterUpdate = useCallback(() => {
-		dispatch(resetState());
+			setFormData({
+				username: user.username,
+				email: user.email,
+				currentPassword: "",
+				newPassword: "",
+				confirmNewPassword: "",
+			});
+
+			dispatch(resetSuccessState());
+		}
+	}, [isSuccess, dispatch, user.email, user.username]);
+
+	const displayError = useCallback(() => {
+		if (isError) {
+			if (errorMessage === "File too large") {
+				dispatch(resetErrorState());
+				return toast.error(
+					errorMessage + " to upload. Maximum image size is 1 MB."
+				);
+			} else {
+				dispatch(resetErrorState());
+				return toast.error(errorMessage);
+			}
+		}
+	}, [errorMessage, isError, dispatch]);
+
+	const resetWithUnmount = useCallback(() => {
+		dispatch(resetSuccessState());
+		dispatch(resetErrorState());
 	}, [dispatch]);
 
 	useEffect(() => {
 		displaySuccess();
 		displayError();
 
-		// return () => {
-		// 	resetAfterUpdate();
-		// };
-	}, [displaySuccess, displayError, resetAfterUpdate]);
+		return () => {
+			resetWithUnmount();
+		};
+	}, [displaySuccess, displayError, resetWithUnmount]);
 
+	// Css styles ----------------------------------------------------------
 	const iconStyle = "dark:text-gray-200 text-gray-700";
 	const accountInfoStyle =
 		"text-gray1 dark:text-white border-b-[1px] border-t-[1px] border-gray-300 hover:bg-gray-100 dark:border-gray-500 dark:hover:bg-slate-800 ";

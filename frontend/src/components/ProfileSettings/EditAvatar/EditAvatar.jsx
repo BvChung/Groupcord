@@ -28,7 +28,7 @@ export default function EditAvatar({
 			</div>
 			<div className="flex items-center mb-2 sm:mb-0">
 				{!imageUpload ? (
-					<div className="relative rounded-full overflow-hidden shadow-xl">
+					<div className="relative w-fit rounded-full overflow-hidden shadow-xl">
 						<label
 							htmlFor="image"
 							className="relative flex items-center cursor-pointer"
@@ -59,16 +59,16 @@ export default function EditAvatar({
 										? `${imageEnvPath}${user.userAvatar}`
 										: DefaultAvatar
 								}
-								className="object-fill w-28 h-w-28"
+								className="object-fill w-32 h-32"
 								alt="Avatar"
 							/>
 							{showChangeAvatar && (
 								<div className="absolute bg-gray-900 w-full h-full bg-opacity-40 z-[100]">
-									<div className="z-20 absolute flex flex-col items-center justify-center top-[30%] left-[24%] text-lg text-gray-800">
-										<strong className="text-white text-center text-xs uppercase">
+									<div className="z-20 absolute flex flex-col items-center justify-center top-[38%] left-[27%] text-lg text-gray-800">
+										<strong className="text-white text-center text-sm uppercase">
 											Change
 										</strong>
-										<strong className="text-white text-center text-xs uppercase">
+										<strong className="text-white text-center text-sm uppercase">
 											Avatar
 										</strong>
 									</div>
@@ -77,7 +77,7 @@ export default function EditAvatar({
 						</label>
 					</div>
 				) : (
-					<div className="relative rounded-full overflow-hidden mr-4 sm:mr-10 shadow-xl">
+					<div className="relative rounded-full overflow-hidden shadow-xl">
 						<label
 							htmlFor="image"
 							className="relative flex items-center cursor-pointer"
@@ -90,12 +90,12 @@ export default function EditAvatar({
 						>
 							<img
 								src={URL.createObjectURL(imageUpload)}
-								className="object-fill w-28 h-w-28"
+								className="object-fill w-32 h-32"
 								alt="Avatar"
 							/>
 							{showChangeAvatar && (
 								<div className="absolute bg-gray-900 w-full h-full bg-opacity-40 z-[100]">
-									<div className="z-20 absolute flex flex-col items-center justify-center top-[34%] left-[22%] text-lg text-gray-800">
+									<div className="z-20 absolute flex flex-col items-center justify-center top-[38%] left-[27%] text-lg text-gray-800">
 										<strong className="text-white text-center text-sm uppercase">
 											Change
 										</strong>

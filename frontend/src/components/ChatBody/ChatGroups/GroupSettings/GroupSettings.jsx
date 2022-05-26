@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Dialog from "@mui/material/Dialog";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -6,6 +6,8 @@ import {
 	updateChatGroupName,
 	updateChatGroupIcon,
 	hideGroupMemberDisplay,
+	resetErrorState,
+	resetSuccessState,
 } from "../../../../features/groups/groupSlice";
 import {
 	clearChatMessages,
@@ -28,9 +30,10 @@ export default function GroupSettings({
 	const imageRef = useRef();
 	const imageEnvPath = process.env.REACT_APP_PUBLIC_FOLDER;
 
-	const { isLoading } = useSelector((state) => state?.conversations);
+	const { isLoading, isSuccess, isError, errorMessage } = useSelector(
+		(state) => state?.conversations
+	);
 	const { darkMode } = useSelector((state) => state.theme);
-
 	const [showChangeIcon, setShowChangeIcon] = useState(false);
 	const [imageUpload, setImageUpload] = useState(null);
 	const [editGroupName, setEditGroupName] = useState(false);
@@ -79,6 +82,41 @@ export default function GroupSettings({
 			setImageUpload(null);
 		}
 	}
+
+	const displaySuccess = useCallback(() => {
+		if (isSuccess) {
+			toast.success(`${groupName} has been updated.`);
+			dispatch(resetSuccessState());
+		}
+	}, [isSuccess, groupName, dispatch]);
+
+	const displayError = useCallback(() => {
+		if (isError) {
+			if (errorMessage === "File too large") {
+				dispatch(resetErrorState());
+				return toast.error(
+					errorMessage + " to upload. Maximum image size is 1 MB."
+				);
+			} else {
+				dispatch(resetErrorState());
+				return toast.error(errorMessage);
+			}
+		}
+	}, [errorMessage, isError, dispatch]);
+
+	const resetWithUnmount = useCallback(() => {
+		dispatch(resetSuccessState());
+		dispatch(resetErrorState());
+	}, [dispatch]);
+
+	useEffect(() => {
+		displaySuccess();
+		displayError();
+
+		return () => {
+			resetWithUnmount();
+		};
+	}, [displaySuccess, displayError, resetWithUnmount]);
 
 	const bgStyle = darkMode ? "bg-dark3" : "bg-offwhite";
 	const textStyle = darkMode ? "text-white" : "text-gray1";
@@ -250,7 +288,13 @@ export default function GroupSettings({
 							}}
 						>
 							<div className="flex basis-24 sm:basis-32 items-center">
-								<p className=" text-xs leading-6 uppercase font-medium">Name</p>
+								<p
+									className={`${
+										darkMode ? "text-gray-300" : "text-gray-700"
+									} ${textStyle} text-xs leading-6 uppercase font-medium`}
+								>
+									Name
+								</p>
 							</div>
 							<div className="flex items-center justify-center basis-72 sm:basis-96 max-w-[24rem]">
 								<p className="text-sm sm:text-base overflow-x-auto pb-1">

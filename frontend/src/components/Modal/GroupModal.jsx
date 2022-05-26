@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { MenuContext } from "../../appContext/menuContext";
 import { UserGroupIcon } from "@heroicons/react/solid";
 
-export default function ContactMenu() {
+export default function GroupCreationModal() {
 	const dispatch = useDispatch();
 	const { toggleGroupModal, openGroupModal } = useContext(MenuContext);
 

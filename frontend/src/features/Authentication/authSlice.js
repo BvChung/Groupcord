@@ -11,9 +11,7 @@ const initialState = {
 	errorMessage: "",
 	updatedUsernameToSocket: {},
 	updatedAvatarToSocket: {},
-	updateError: false,
 	expiredRefreshJWT: false,
-	changedAvatar: false,
 };
 
 // A function that accepts a Redux action type string and a callback function that should return a promise. It generates promise lifecycle action types based on the action type prefix that you pass in,
@@ -120,12 +118,12 @@ export const authSlice = createSlice({
 	initialState,
 	reducers: {
 		resetState: (state) => initialState,
-		resetError: (state) => {
+		resetSuccessState: (state) => {
+			state.isSuccess = false;
+		},
+		resetErrorState: (state) => {
 			state.isError = false;
 			state.errorMessage = "";
-		},
-		resetSuccessNotifications: (state) => {
-			state.changedAvatar = false;
 		},
 	},
 	// Create extra reducers for the pending, fulfilled and rejected states
@@ -168,7 +166,7 @@ export const authSlice = createSlice({
 			})
 			.addCase(updateAccountAvatar.fulfilled, (state, action) => {
 				state.isLoading = false;
-				state.changedAvatar = true;
+				state.isSuccess = true;
 				state.user = action.payload;
 				state.updatedAvatarToSocket = {
 					_id: action.payload._id,
@@ -178,7 +176,7 @@ export const authSlice = createSlice({
 			})
 			.addCase(updateAccountAvatar.rejected, (state, action) => {
 				state.isLoading = false;
-				state.updateError = true;
+				state.isError = true;
 				state.errorMessage = action.payload;
 			})
 			.addCase(updateAccountUsername.pending, (state) => {
@@ -197,7 +195,7 @@ export const authSlice = createSlice({
 			})
 			.addCase(updateAccountUsername.rejected, (state, action) => {
 				state.isLoading = false;
-				state.updateError = true;
+				state.isError = true;
 				state.errorMessage = action.payload;
 			})
 			.addCase(updateAccountEmail.pending, (state) => {
@@ -205,14 +203,13 @@ export const authSlice = createSlice({
 				state.isSuccess = false;
 			})
 			.addCase(updateAccountEmail.fulfilled, (state, action) => {
-				console.log(action.payload);
 				state.isLoading = false;
 				state.isSuccess = true;
 				state.user = action.payload;
 			})
 			.addCase(updateAccountEmail.rejected, (state, action) => {
 				state.isLoading = false;
-				state.updateError = true;
+				state.isError = true;
 				state.errorMessage = action.payload;
 			})
 			.addCase(updateAccountPassword.pending, (state) => {
@@ -225,7 +222,7 @@ export const authSlice = createSlice({
 			})
 			.addCase(updateAccountPassword.rejected, (state, action) => {
 				state.isLoading = false;
-				state.updateError = true;
+				state.isError = true;
 				state.errorMessage = action.payload;
 			})
 			.addCase(refreshAccessToken.fulfilled, (state, action) => {
@@ -240,6 +237,6 @@ export const authSlice = createSlice({
 	},
 });
 
-export const { resetState, resetSuccessNotifications, resetError } =
+export const { resetState, resetSuccessState, resetErrorState } =
 	authSlice.actions;
 export default authSlice.reducer;
