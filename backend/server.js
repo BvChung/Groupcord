@@ -156,45 +156,10 @@ io.on("connection", (socket) => {
 		storeUsernameData = messageData;
 	});
 
-	socket.on("send_group_data", (groupData) => {
-		if (Object.keys(groupData).length === 0) return;
-		console.log(groupData);
-
-		const member = connectedUsers.find((user) => {
-			return user.userId === groupData.memberChanged._id && user.userId;
-		});
-
-		if (member) {
-			socket
-				.to(member.socketId)
-				.to(currentRoom)
-				.emit("receive_group_data", groupData);
-		} else {
-			socket.to(currentRoom).emit("receive_group_data", groupData);
-		}
-	});
-
 	socket.on("send_added_group_member", (groupData) => {
 		if (Object.keys(groupData).length === 0) return;
 
 		if (storeAddedMember.id === groupData.id) return;
-
-		// const member = connectedUsers.find((user) => {
-		// 	return user.userId === groupData.memberChanged._id && user.userId;
-		// });
-
-		// if (member) {
-		// 	socket
-		// 		.to(member.socketId)
-		// 		.to(currentRoom)
-		// 		.emit("receive_added_group_member", groupData);
-		// 	console.log(groupData);
-		// 	storeAddedMember = groupData;
-		// } else {
-		// 	socket.to(currentRoom).emit("receive_added_group_member", groupData);
-		// 	console.log(groupData);
-		// 	storeAddedMember = groupData;
-		// }
 
 		socket.broadcast.emit("receive_added_group_member", groupData);
 		storeAddedMember = groupData;

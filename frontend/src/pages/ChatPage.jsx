@@ -8,7 +8,6 @@ import { getChatGroups, resetGroupState } from "../features/groups/groupSlice";
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../appContext/socketContext";
 import { MenuContext } from "../appContext/menuContext";
-import GroupModal from "../components/Modal/GroupModal";
 
 export default function ChatPage() {
 	const socket = useContext(SocketContext);
@@ -18,10 +17,6 @@ export default function ChatPage() {
 	const [activeGroupMenu, setActiveGroupMenu] = useState(false);
 	function toggleGroupMenu() {
 		setActiveGroupMenu((prevState) => !prevState);
-	}
-	const [openGroupModal, setOpenGroupModal] = useState(false);
-	function toggleGroupModal() {
-		setOpenGroupModal((prev) => !prev);
 	}
 	const { user } = useSelector((state) => state.auth);
 
@@ -58,9 +53,6 @@ export default function ChatPage() {
 	return (
 		<MenuContext.Provider
 			value={{
-				openGroupModal,
-				setOpenGroupModal,
-				toggleGroupModal,
 				activeGroupMenu,
 				toggleGroupMenu,
 			}}
@@ -68,7 +60,6 @@ export default function ChatPage() {
 			<div className="flex flex-col w-screen h-screen ">
 				<Nav />
 				<ChatBody />
-				{openGroupModal && <GroupModal />}
 			</div>
 		</MenuContext.Provider>
 	);

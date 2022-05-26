@@ -1,10 +1,10 @@
 import { useState, useContext } from "react";
 import { MoonIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
-import { SunIcon, UsersIcon, ChatAlt2Icon } from "@heroicons/react/solid";
+import { SunIcon, UsersIcon, ArrowLeftIcon } from "@heroicons/react/solid";
 import { useSelector, useDispatch } from "react-redux";
 import { changeTheme } from "../../features/theme/themeSlice";
-import MemberList from "./DisplayMembers/DisplayMembers";
-import NavMenu from "./Menu/NavMenu";
+import MemberList from "./DisplayMembers/DisplayMembersModal";
+import NavMenu from "./NavMenu/NavMenu";
 import { Tooltip } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MenuContext } from "../../appContext/menuContext";
@@ -73,7 +73,7 @@ export default function Nav() {
 							className="p-[6px] border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
                             hover:bg-gray-200 dark:hover:bg-dark4 rounded-full"
 						>
-							<ChatAlt2Icon className="h-8 w-8 text-sky-500 dark:text-sky-600" />
+							<ArrowLeftIcon className="h-6 w-6 text-gray-700 dark:text-gray-400" />
 						</button>
 					</Tooltip>
 				)}

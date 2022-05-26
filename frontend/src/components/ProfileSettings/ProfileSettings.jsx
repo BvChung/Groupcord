@@ -144,17 +144,9 @@ export default function ProfileSettings() {
 		if (isSuccess) {
 			toast.success("Your account has been updated.");
 
-			setFormData({
-				username: user.username,
-				email: user.email,
-				currentPassword: "",
-				newPassword: "",
-				confirmNewPassword: "",
-			});
-
 			dispatch(resetSuccessState());
 		}
-	}, [isSuccess, dispatch, user.email, user.username]);
+	}, [isSuccess, dispatch]);
 
 	const displayError = useCallback(() => {
 		if (isError) {
