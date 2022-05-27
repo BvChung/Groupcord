@@ -19,9 +19,13 @@ export default function Chat() {
 	const messageRef = useRef(null);
 
 	const { groupMessages } = useSelector((state) => state.messages.userMessages);
-	const { loadInitialMessages, hideTextInput, isLoading } = useSelector(
-		(state) => state.messages
-	);
+	const {
+		loadInitialMessages,
+		hideTextInput,
+		isLoading,
+		isError,
+		errorMessage,
+	} = useSelector((state) => state.messages);
 	const { groupId } = useSelector(
 		(state) => state.conversations.activeGroupInfo
 	);
@@ -62,7 +66,6 @@ export default function Chat() {
 		scrollToNewMessage();
 	}, [groupMessages]);
 
-	// --------------- Socket.io Websocket Transmission -------------------
 	// Loading messages + joining chat room
 	const loadMessages = useCallback(() => {
 		dispatch(getChatMessage());
@@ -75,11 +78,31 @@ export default function Chat() {
 		socket.emit("join_room", groupId);
 	}, [groupId, socket, dispatch, loadMessages]);
 
+	// const displayError = useCallback(() => {
+	// 	if (isError) {
+	// 		dispatch(resetErrorState());
+	// 		return toast.error(errorMessage);
+	// 	}
+	// }, [errorMessage, isError, dispatch]);
+
+	// const resetWithUnmount = useCallback(() => {
+	// 	dispatch(resetErrorState());
+	// }, [dispatch]);
+
+	// useEffect(() => {
+	// 	displayError();
+
+	// 	return () => {
+	// 		resetWithUnmount();
+	// 	};
+	// }, [displaySuccess, displayError, resetWithUnmount]);
+
+	// --------------- Socket.io Websocket Transmission -------------------
 	useSendMessageData();
 	useSendProfileData();
 
 	return (
-		<div className="flex-grow bg-white dark:bg-dark2">
+		<div className="flex-grow bg-offwhite dark:bg-dark2">
 			{!isLoading ? (
 				<>
 					<div

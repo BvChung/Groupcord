@@ -29,7 +29,7 @@ export default function GroupSettings({
 	const imageRef = useRef();
 	const imageEnvPath = process.env.REACT_APP_PUBLIC_FOLDER;
 
-	const { isLoading, isSuccess, isError, errorMessage } = useSelector(
+	const { isSuccess, isError, errorMessage } = useSelector(
 		(state) => state?.conversations
 	);
 	const { darkMode } = useSelector((state) => state.theme);
@@ -183,6 +183,7 @@ export default function GroupSettings({
 									}
 									className="object-fill w-24 h-24"
 									alt="Icon"
+									loading="lazy"
 								/>
 								{showChangeIcon && (
 									<div className="absolute bg-gray-900 w-full h-full bg-opacity-40 z-[100]">
@@ -300,7 +301,7 @@ export default function GroupSettings({
 								</p>
 							</div>
 							<div className="flex items-center justify-center basis-72 sm:basis-96 max-w-[24rem]">
-								<p className="text-sm sm:text-base overflow-x-auto pb-1">
+								<p className="max-w-[11rem] text-sm sm:text-base break-words">
 									{groupName}
 								</p>
 							</div>

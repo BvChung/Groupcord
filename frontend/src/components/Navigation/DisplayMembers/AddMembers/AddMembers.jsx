@@ -10,7 +10,7 @@ export default function AddMembers({ id, userAvatar, username }) {
 
 	return (
 		<div
-			className={`flex items-center justify-between px-3 py-2 sm:px-6 sm:py-3 border-b-2 ${
+			className={`flex items-center justify-between px-2 py-2 sm:px-4 sm:py-3 border-b-2 ${
 				darkMode ? "border-dark3 bg-dark5" : "border-offwhite bg-gray-100"
 			} last:border-0`}
 		>
@@ -19,10 +19,13 @@ export default function AddMembers({ id, userAvatar, username }) {
 					src={
 						userAvatar !== "" ? `${imageEnvPath}${userAvatar}` : DefaultAvatar
 					}
-					className="object-fill w-10 h-10 mr-4 rounded-full"
+					className="object-fill w-12 h-12 mr-4 rounded-full"
 					alt="Avatar"
+					loading="lazy"
 				/>
-				<span className="">{username}</span>
+				<span className="max-w-[140px] sm:max-w-[195px] overflow-hidden text-ellipsis">
+					{username}
+				</span>
 			</div>
 			<div className="flex justify-center">
 				<button

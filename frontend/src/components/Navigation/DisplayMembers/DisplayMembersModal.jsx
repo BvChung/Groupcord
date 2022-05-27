@@ -36,18 +36,18 @@ export default function DisplayMembers({ open, handleClose }) {
 		<Dialog
 			open={open}
 			fullWidth={true}
-			maxWidth="sm"
+			maxWidth="xs"
 			onClose={() => {
 				handleClose();
 				setSwitchMemberDisplay(false);
 				setSearchText("");
 			}}
 		>
-			<div className={`w-full p-4 sm:p-7 ${bgStyle}`}>
+			<div className={`w-full p-3 sm:p-6 ${bgStyle}`}>
 				<div
 					className={`flex items-center justify-between mb-7 pb-4 ${titleStyle} `}
 				>
-					<h1 className={`text-xl font-bold `}>
+					<h1 className={`text-xl font-bold break-words`}>
 						{switchMemberDisplay ? `Add members to ${groupName}` : "Members"}
 					</h1>
 
@@ -62,13 +62,15 @@ export default function DisplayMembers({ open, handleClose }) {
 								onClick={() => {
 									if (switchMemberDisplay) {
 										setSwitchMemberDisplay(false);
+										setSearchText("");
 									}
 									if (!switchMemberDisplay) {
 										setSwitchMemberDisplay(true);
+										setSearchText("");
 										dispatch(getRegisteredMembers());
 									}
 								}}
-								aria-label="Switch display"
+								aria-label="Switch member display"
 							>
 								{switchMemberDisplay ? (
 									<UsersIcon className="h-5 w-5" />
@@ -83,61 +85,66 @@ export default function DisplayMembers({ open, handleClose }) {
 					)}
 				</div>
 
-				{switchMemberDisplay && (
-					<div className="flex justify-center mb-6">
-						<div
-							className={`flex items-center justify-center border-[1px] w-full sm:w-3/4 p-[6px] rounded-full shadow-sm ${inputStyle}`}
-						>
-							<input
-								name="searchText"
-								value={searchText}
-								type="text"
-								placeholder="Search for members"
-								onChange={(e) => setSearchText(e.target.value)}
-								className={`${inputTextStyle} outline-none bg-transparent w-11/12 px-2 `}
-							></input>
-							<SearchIcon
-								className={`w-7 h-7 text-white rounded-full p-1 ${
-									darkMode ? "bg-sky-700" : "bg-sky-600"
-								}`}
-							/>
-						</div>
+				<div className="flex justify-center mb-6">
+					<div
+						className={`flex items-center justify-center border-[1px] w-full p-[6px] rounded-lg shadow-sm ${inputStyle}`}
+					>
+						<input
+							name="searchText"
+							value={searchText}
+							type="text"
+							placeholder="Search for members"
+							onChange={(e) => setSearchText(e.target.value)}
+							className={`${inputTextStyle} outline-none bg-transparent w-11/12 px-2 `}
+						></input>
+						<SearchIcon
+							className={`w-7 h-7 text-white rounded-full p-1 ${
+								darkMode ? "bg-sky-700" : "bg-sky-600"
+							}`}
+						/>
 					</div>
-				)}
+				</div>
 
 				{isLoading && switchMemberDisplay && <Spinner />}
 
-				{!switchMemberDisplay &&
-					members.map((member) => {
-						return (
-							<MemberList
-								key={member._id}
-								id={member._id}
-								username={member.username}
-								userAvatar={member.userAvatar}
-								handleClose={handleClose}
-							/>
-						);
-					})}
-
-				{switchMemberDisplay &&
-					!isLoading &&
-					membersAvailableToAddToGroup
-						.filter((member) => {
-							return member.username
-								.toLowerCase()
-								.includes(searchText.toLowerCase());
-						})
-						.map((member) => {
-							return (
-								<AddMembers
-									key={member._id}
-									id={member._id}
-									username={member.username}
-									userAvatar={member.userAvatar}
-								/>
-							);
-						})}
+				<div className="max-h-[20rem] overflow-y-auto">
+					{!switchMemberDisplay &&
+						members
+							.filter((member) => {
+								return member.username
+									.toLowerCase()
+									.includes(searchText.toLowerCase());
+							})
+							.map((member) => {
+								return (
+									<MemberList
+										key={member._id}
+										id={member._id}
+										username={member.username}
+										userAvatar={member.userAvatar}
+										handleClose={handleClose}
+									/>
+								);
+							})}
+					{switchMemberDisplay &&
+						!isLoading &&
+						membersAvailableToAddToGroup
+							.filter((member) => {
+								return member.username
+									.toLowerCase()
+									.includes(searchText.toLowerCase());
+							})
+							.map((member) => {
+								return (
+									<AddMembers
+										key={member._id}
+										id={member._id}
+										username={member.username}
+										userAvatar={member.userAvatar}
+									/>
+								);
+							})}
+				</div>
 			</div>
 		</Dialog>
 	);

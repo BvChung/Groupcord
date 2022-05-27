@@ -71,7 +71,7 @@ export default function NavMenu() {
 			>
 				<Tooltip arrow describeChild title="My Account">
 					<UserCircleIcon
-						className="h-9 w-9 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 
+						className="h-9 w-9 text-gray-600 hover:text-gray-700 dark:text-gray-200 hover:dark:text-gray-300 
 										 rounded-full 
 									border-[1px] border-transparent 
 									hover:bg-gray-200 dark:hover:bg-dark4

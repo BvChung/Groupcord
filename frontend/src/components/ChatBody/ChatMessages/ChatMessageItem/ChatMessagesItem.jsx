@@ -37,7 +37,7 @@ export default function ChatItem({
 	});
 	return (
 		<>
-			{/* Render Message or render new date label if type present */}
+			{/* Render Message or render date label if type present */}
 			{type !== "newDateLabel" ? (
 				<div
 					className={`flex items-center my-7 first:mt-0 last:mb-0 fade transition-all ${messagePosition}`}
@@ -98,7 +98,7 @@ export default function ChatItem({
 									? `${imageEnvPath}${userAvatar}`
 									: DefaultAvatar
 							}
-							className="object-fill w-14 h-14 ml-3 sm:ml-4 rounded-full"
+							className="object-fill w-12 h-12 sm:w-14 sm:h-14 ml-3 sm:ml-4 rounded-full"
 							alt="Avatar"
 							loading="lazy"
 						/>

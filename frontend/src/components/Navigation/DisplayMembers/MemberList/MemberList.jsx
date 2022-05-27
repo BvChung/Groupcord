@@ -34,13 +34,16 @@ export default function MemberList({ id, username, userAvatar, handleClose }) {
 					src={
 						userAvatar !== "" ? `${imageEnvPath}${userAvatar}` : DefaultAvatar
 					}
-					className="object-fill w-10 h-10 mr-4 rounded-full"
+					className="object-fill w-12 h-12 mr-4 rounded-full"
 					alt="Avatar"
+					loading="lazy"
 				/>
-				<span className="mr-4">{username}</span>
+				<span className="max-w-[140px] sm:max-w-[195px] overflow-hidden text-ellipsis">
+					{username}
+				</span>
 				{id === groupOwner && (
 					<Tooltip arrow describeChild title="Group Owner">
-						<KeyIcon className="h-5 w-5 text-sky-500" />
+						<KeyIcon className="ml-4 h-5 w-5 text-sky-500" />
 					</Tooltip>
 				)}
 			</div>

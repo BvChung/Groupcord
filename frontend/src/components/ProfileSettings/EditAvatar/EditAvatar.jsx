@@ -61,6 +61,7 @@ export default function EditAvatar({
 								}
 								className="object-fill w-32 h-32"
 								alt="Avatar"
+								loading="lazy"
 							/>
 							{showChangeAvatar && (
 								<div className="absolute bg-gray-900 w-full h-full bg-opacity-40 z-[100]">

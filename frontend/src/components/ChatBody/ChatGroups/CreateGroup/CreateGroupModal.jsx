@@ -45,8 +45,8 @@ export default function GroupCreation({
 	}
 
 	const createButtonActive = darkMode
-		? "bg-sky-800 hover:bg-sky-700 active:bg-sky-600"
-		: "bg-sky-600 hover:bg-sky-700 active:bg-sky-800";
+		? "bg-sky-800 text-white hover:bg-sky-700 active:bg-sky-600"
+		: "bg-sky-600 text-white hover:bg-sky-700 active:bg-sky-800";
 	const createButtonInactive = darkMode
 		? "bg-menu text-gray-700"
 		: "bg-white text-gray-300";

@@ -1,11 +1,14 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useSendGroupData } from "../../../hooks/webSocket/useSendGroupData";
 import { useSendMemberData } from "../../../hooks/webSocket/useSendMemberData";
 import { ChatAlt2Icon } from "@heroicons/react/outline";
 import { SearchIcon, GlobeIcon } from "@heroicons/react/solid";
 import GroupItem from "./GroupItem/GroupItem";
-import { updateActiveGroup } from "../../../features/groups/groupSlice";
+import {
+	updateActiveGroup,
+	getChatGroups,
+} from "../../../features/groups/groupSlice";
 import CreateGroupModal from "./CreateGroup/CreateGroupModal";
 import { MenuContext } from "../../../appContext/menuContext";
 import Spinner from "../../Spinner/Spinner";
@@ -13,7 +16,7 @@ import Spinner from "../../Spinner/Spinner";
 export default function Groups() {
 	const dispatch = useDispatch();
 	const { activeGroupMenu } = useContext(MenuContext);
-	const { groups, loadInitialGroups, isLoading } = useSelector(
+	const { groups, loadingGroups, loadInitialGroups } = useSelector(
 		(state) => state.conversations
 	);
 	const { groupId } = useSelector(
@@ -29,6 +32,14 @@ export default function Groups() {
 		groupId === "Global"
 			? "bg-sky-100 dark:bg-slate-800 border-l-sky-500 border-l-[3px] dark:border-l-sky-500"
 			: "border-l-[3px] border-l-gray4 dark:border-l-gray-600 hover:border-l-gray-400 dark:hover:border-l-gray-400";
+
+	const dispatchGetChatGroups = useCallback(() => {
+		dispatch(getChatGroups());
+	}, [dispatch]);
+
+	useEffect(() => {
+		dispatchGetChatGroups();
+	}, [dispatchGetChatGroups]);
 
 	// Websocket data transmission -------------------------------
 	useSendGroupData();
@@ -80,7 +91,7 @@ export default function Groups() {
 			/>
 
 			<div className="mx-6 h-auto py-4 px-5 bg-offwhite dark:bg-dark5 rounded-md shadow-md">
-				{!isLoading ? (
+				{!loadingGroups ? (
 					<div
 						className="h-auto max-height bg-transparent py-1 pr-1
 						rounded-lg overflow-y-auto"

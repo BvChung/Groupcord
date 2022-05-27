@@ -36,7 +36,7 @@ export default function Nav() {
 
 	return (
 		<nav
-			className="flex items-center justify-between w-full px-4 py-2 h-14 bg-offwhite
+			className="flex items-center justify-between w-full px-4 py-2 h-14 bg-white
 		border-b-[1px] border-b-gray-300 border-transparent shadow-lg dark:border-black dark:bg-dark3"
 		>
 			<div>
@@ -44,9 +44,9 @@ export default function Nav() {
 					<button
 						aria-label="Close Menu"
 						onClick={toggleGroupMenu}
-						className="text-gray2 dark:text-gray-400 p-[6px] rounded-full lg:hidden
+						className="text-gray2 dark:text-gray-200 p-[6px] rounded-full lg:hidden
 						border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-						hover:bg-gray-200 dark:hover:bg-dark4
+						hover:bg-gray-200 dark:hover:bg-dark5 hover:dark:text-gray-300 
 						transition-all "
 					>
 						<XIcon className="h-7 w-7" />
@@ -56,9 +56,9 @@ export default function Nav() {
 					<button
 						aria-label="Open Menu"
 						onClick={toggleGroupMenu}
-						className="text-gray2 dark:text-gray-400 p-[6px] rounded-full lg:hidden
+						className="text-gray2 dark:text-gray-200 p-[6px] rounded-full lg:hidden
 						border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-						hover:bg-gray-200 dark:hover:bg-dark4
+						hover:bg-gray-200 dark:hover:bg-dark5 hover:dark:text-gray-300 
 						transition-all "
 					>
 						<MenuIcon className="h-7 w-7" />
@@ -71,9 +71,9 @@ export default function Nav() {
 								navigate("/chat");
 							}}
 							className="p-[6px] border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-                            hover:bg-gray-200 dark:hover:bg-dark4 rounded-full"
+                            hover:bg-gray-200 dark:hover:bg-dark5 rounded-full"
 						>
-							<ArrowLeftIcon className="h-6 w-6 text-gray-700 dark:text-gray-400" />
+							<ArrowLeftIcon className="h-6 w-6 text-gray-700 dark:text-gray-200" />
 						</button>
 					</Tooltip>
 				)}
@@ -92,10 +92,10 @@ export default function Nav() {
 										aria-label="Open Member List"
 									>
 										<UsersIcon
-											className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 
+											className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-200 hover:dark:text-gray-300 
 										p-[6px] rounded-full 
 									border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-									hover:bg-gray-200 dark:hover:bg-dark4
+									hover:bg-gray-200 dark:hover:bg-dark5 
 									transition-all"
 										/>
 									</button>
@@ -116,16 +116,16 @@ export default function Nav() {
 								<SunIcon
 									aria-label="Turn on dark mode"
 									onClick={toggleTheme}
-									className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 p-[6px] rounded-full 
+									className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-200 hover:dark:text-gray-300 p-[6px] rounded-full 
 									border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-									hover:bg-gray-200 dark:hover:bg-dark4 cursor-pointer
+									hover:bg-gray-200 dark:hover:bg-dark5 cursor-pointer
 									transition-all "
 								/>
 							) : (
 								<MoonIcon
 									aria-label="Turn on light mode"
 									onClick={toggleTheme}
-									className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-200 hover:dark:text-gray-400 p-[6px] rounded-full
+									className="h-11 w-11 text-gray-600 hover:text-gray-700 dark:text-gray-200 hover:dark:text-gray-300 p-[6px] rounded-full
 									border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
 									hover:bg-gray-200 dark:hover:bg-dark3 cursor-pointer
 									transition-all "

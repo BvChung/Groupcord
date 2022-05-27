@@ -4,7 +4,7 @@ import ChatBody from "../components/ChatBody/ChatBody";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser, resetState } from "../features/authentication/authSlice";
 import { resetMessageState } from "../features/messages/messageSlice";
-import { getChatGroups, resetGroupState } from "../features/groups/groupSlice";
+import { resetGroupState } from "../features/groups/groupSlice";
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../appContext/socketContext";
 import { MenuContext } from "../appContext/menuContext";
@@ -26,13 +26,6 @@ export default function ChatPage() {
 		},
 		[socket]
 	);
-	const dispatchGetChatGroups = useCallback(() => {
-		dispatch(getChatGroups());
-	}, [dispatch]);
-
-	useEffect(() => {
-		dispatchGetChatGroups();
-	}, [dispatchGetChatGroups]);
 
 	useEffect(() => {
 		createUser(user);
