@@ -32,7 +32,7 @@ const initialState = {
 	hideGroupMemberDisplay: false,
 	isLoading: false,
 	loadingGroups: false,
-	loadInitialGroups: false,
+	loadCompleted: false,
 	isSuccess: false,
 	isError: false,
 	errorMessage: "",
@@ -182,9 +182,6 @@ export const groupSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		builder.addCase(createChatGroups.pending, (state) => {
-			state.isLoading = true;
-		});
 		builder.addCase(createChatGroups.fulfilled, (state, action) => {
 			state.isLoading = false;
 			state.groups.push(action.payload);
@@ -195,17 +192,17 @@ export const groupSlice = createSlice({
 		});
 		builder.addCase(getChatGroups.pending, (state) => {
 			state.loadingGroups = true;
-			state.loadInitialGroups = false;
+			state.loadCompleted = false;
 		});
 		builder.addCase(getChatGroups.fulfilled, (state, action) => {
 			state.loadingGroups = false;
-			state.loadInitialGroups = true;
-			state.groups = action.payload.userConversations;
+			state.loadCompleted = true;
+			state.groups = action.payload;
 
 			if (state.activeGroupInfo.groupId !== "Global") {
 				state.activeGroupInfo.members = findGroupData(
 					state.activeGroupInfo,
-					action.payload.userConversations
+					action.payload
 				);
 			}
 		});
@@ -219,7 +216,6 @@ export const groupSlice = createSlice({
 			state.groups = action.payload.allGroups;
 			state.groupDeletedToSocket = action.payload.deletedGroup;
 		});
-		builder.addCase(addGroupMembers.pending, (state, action) => {});
 		builder.addCase(addGroupMembers.fulfilled, (state, action) => {
 			// Update current group info
 			state.activeGroupInfo.members = action.payload.updatedMembers.members;
@@ -238,7 +234,6 @@ export const groupSlice = createSlice({
 				memberChanged: action.payload.memberChanged,
 			};
 		});
-		builder.addCase(removeGroupMembers.pending, (state, action) => {});
 		builder.addCase(removeGroupMembers.fulfilled, (state, action) => {
 			state.activeGroupInfo.members = action.payload.updatedMembers.members;
 
@@ -263,30 +258,25 @@ export const groupSlice = createSlice({
 				state.activeGroupInfo.members
 			);
 		});
-		builder.addCase(updateChatGroupName.pending, (state, action) => {
-			state.isLoading = true;
-		});
 		builder.addCase(updateChatGroupName.fulfilled, (state, action) => {
 			state.isSuccess = true;
-			state.isLoading = false;
 
 			state.activeGroupInfo.groupName =
 				action.payload.updatedGroupName.groupName;
 			state.groups = action.payload.allGroups;
 			state.updatedGroupNameToSocket = action.payload.updatedGroupName;
 		});
-		builder.addCase(updateChatGroupIcon.pending, (state, action) => {
-			state.isLoading = true;
+		builder.addCase(updateChatGroupName.rejected, (state, action) => {
+			state.isError = true;
+			state.errorMessage = action.payload;
 		});
 		builder.addCase(updateChatGroupIcon.fulfilled, (state, action) => {
 			state.isSuccess = true;
-			state.isLoading = false;
 
 			state.groups = updateData(state.groups, action.payload);
 			state.updatedGroupIconToSocket = action.payload;
 		});
 		builder.addCase(updateChatGroupIcon.rejected, (state, action) => {
-			state.isLoading = false;
 			state.isError = true;
 			state.errorMessage = action.payload;
 		});

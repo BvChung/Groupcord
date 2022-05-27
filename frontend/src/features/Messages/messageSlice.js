@@ -60,6 +60,10 @@ export const messageSlice = createSlice({
 	initialState,
 	reducers: {
 		resetMessageState: (state) => initialState,
+		resetMessageErrorState: (state) => {
+			state.isError = false;
+			state.errorMessage = "";
+		},
 		hideTextInput: (state) => {
 			state.hideTextInput = true;
 		},
@@ -67,12 +71,6 @@ export const messageSlice = createSlice({
 			if (state.hideTextInput) {
 				state.hideTextInput = false;
 			}
-		},
-		clearNewMessageSocketData: (state) => {
-			state.newMessageToSocket = {};
-		},
-		clearDeletedMessageSocketData: (state) => {
-			state.deletedMessageToSocket = {};
 		},
 		clearChatMessages: (state) => {
 			state.userMessages.groupMessages = [];
@@ -146,6 +144,7 @@ export const messageSlice = createSlice({
 
 export const {
 	resetMessageState,
+	resetMessageErrorState,
 	clearChatMessages,
 	clearNewMessageSocketData,
 	clearDeletedMessageSocketData,

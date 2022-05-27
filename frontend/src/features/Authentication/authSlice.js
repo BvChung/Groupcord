@@ -160,11 +160,7 @@ export const authSlice = createSlice({
 				state.errorMessage = action.payload;
 				state.user = null;
 			})
-			.addCase(updateAccountAvatar.pending, (state) => {
-				state.isLoading = true;
-			})
 			.addCase(updateAccountAvatar.fulfilled, (state, action) => {
-				state.isLoading = false;
 				state.isSuccess = true;
 				state.user = action.payload;
 				state.updatedAvatarToSocket = {
@@ -174,15 +170,10 @@ export const authSlice = createSlice({
 				};
 			})
 			.addCase(updateAccountAvatar.rejected, (state, action) => {
-				state.isLoading = false;
 				state.isError = true;
 				state.errorMessage = action.payload;
 			})
-			.addCase(updateAccountUsername.pending, (state) => {
-				state.isLoading = true;
-			})
 			.addCase(updateAccountUsername.fulfilled, (state, action) => {
-				state.isLoading = false;
 				state.isSuccess = true;
 				state.user = action.payload;
 				state.updatedUsernameToSocket = {
@@ -192,32 +183,21 @@ export const authSlice = createSlice({
 				};
 			})
 			.addCase(updateAccountUsername.rejected, (state, action) => {
-				state.isLoading = false;
 				state.isError = true;
 				state.errorMessage = action.payload;
 			})
-			.addCase(updateAccountEmail.pending, (state) => {
-				state.isLoading = true;
-			})
 			.addCase(updateAccountEmail.fulfilled, (state, action) => {
-				state.isLoading = false;
 				state.isSuccess = true;
 				state.user = action.payload;
 			})
 			.addCase(updateAccountEmail.rejected, (state, action) => {
-				state.isLoading = false;
 				state.isError = true;
 				state.errorMessage = action.payload;
 			})
-			.addCase(updateAccountPassword.pending, (state) => {
-				state.isLoading = true;
-			})
 			.addCase(updateAccountPassword.fulfilled, (state, action) => {
-				state.isLoading = false;
 				state.isSuccess = true;
 			})
 			.addCase(updateAccountPassword.rejected, (state, action) => {
-				state.isLoading = false;
 				state.isError = true;
 				state.errorMessage = action.payload;
 			})
@@ -227,8 +207,8 @@ export const authSlice = createSlice({
 			.addCase(refreshAccessToken.rejected, (state) => {
 				state.expiredRefreshJWT = true;
 			})
-			.addCase(logoutUser.fulfilled, (state, action) => {
-				console.log(action.payload);
+			.addCase(logoutUser.fulfilled, (state) => {
+				state.loggedIn = false;
 			});
 	},
 });
