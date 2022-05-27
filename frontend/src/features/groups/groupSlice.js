@@ -31,8 +31,9 @@ const initialState = {
 	updatedGroupIconToSocket: {},
 	hideGroupMemberDisplay: false,
 	isLoading: false,
-	isSuccess: false,
+	loadingGroups: false,
 	loadInitialGroups: false,
+	isSuccess: false,
 	isError: false,
 	errorMessage: "",
 };
@@ -193,10 +194,11 @@ export const groupSlice = createSlice({
 			state.isError = true;
 		});
 		builder.addCase(getChatGroups.pending, (state) => {
-			state.isLoading = true;
+			state.loadingGroups = true;
+			state.loadInitialGroups = false;
 		});
 		builder.addCase(getChatGroups.fulfilled, (state, action) => {
-			state.isLoading = false;
+			state.loadingGroups = false;
 			state.loadInitialGroups = true;
 			state.groups = action.payload.userConversations;
 
@@ -207,20 +209,18 @@ export const groupSlice = createSlice({
 				);
 			}
 		});
-		builder.addCase(getChatGroups.rejected, (state) => {
-			state.isLoading = false;
+		builder.addCase(getChatGroups.rejected, (state, action) => {
+			state.loadingGroups = false;
 			state.isError = true;
+			state.errorMessage = action.payload;
 		});
 		builder.addCase(deleteChatGroup.fulfilled, (state, action) => {
 			state.isSuccess = true;
 			state.groups = action.payload.allGroups;
 			state.groupDeletedToSocket = action.payload.deletedGroup;
 		});
-		builder.addCase(addGroupMembers.pending, (state, action) => {
-			state.isLoading = true;
-		});
+		builder.addCase(addGroupMembers.pending, (state, action) => {});
 		builder.addCase(addGroupMembers.fulfilled, (state, action) => {
-			state.isLoading = false;
 			// Update current group info
 			state.activeGroupInfo.members = action.payload.updatedMembers.members;
 
@@ -238,12 +238,8 @@ export const groupSlice = createSlice({
 				memberChanged: action.payload.memberChanged,
 			};
 		});
-		builder.addCase(removeGroupMembers.pending, (state, action) => {
-			state.isLoading = true;
-		});
+		builder.addCase(removeGroupMembers.pending, (state, action) => {});
 		builder.addCase(removeGroupMembers.fulfilled, (state, action) => {
-			state.isLoading = false;
-
 			state.activeGroupInfo.members = action.payload.updatedMembers.members;
 
 			state.groups = updateData(state.groups, action.payload.updatedMembers);

@@ -162,7 +162,6 @@ export const authSlice = createSlice({
 			})
 			.addCase(updateAccountAvatar.pending, (state) => {
 				state.isLoading = true;
-				state.isSuccess = false;
 			})
 			.addCase(updateAccountAvatar.fulfilled, (state, action) => {
 				state.isLoading = false;
@@ -181,7 +180,6 @@ export const authSlice = createSlice({
 			})
 			.addCase(updateAccountUsername.pending, (state) => {
 				state.isLoading = true;
-				state.isSuccess = false;
 			})
 			.addCase(updateAccountUsername.fulfilled, (state, action) => {
 				state.isLoading = false;
@@ -200,7 +198,6 @@ export const authSlice = createSlice({
 			})
 			.addCase(updateAccountEmail.pending, (state) => {
 				state.isLoading = true;
-				state.isSuccess = false;
 			})
 			.addCase(updateAccountEmail.fulfilled, (state, action) => {
 				state.isLoading = false;
@@ -214,7 +211,6 @@ export const authSlice = createSlice({
 			})
 			.addCase(updateAccountPassword.pending, (state) => {
 				state.isLoading = true;
-				state.isSuccess = false;
 			})
 			.addCase(updateAccountPassword.fulfilled, (state, action) => {
 				state.isLoading = false;

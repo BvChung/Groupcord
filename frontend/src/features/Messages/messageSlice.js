@@ -104,11 +104,9 @@ export const messageSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder.addCase(createChatMessage.pending, (state) => {
-			state.isLoading = true;
 			state.newMessageToSocket = {};
 		});
 		builder.addCase(createChatMessage.fulfilled, (state, action) => {
-			state.isLoading = false;
 			state.isSuccess = true;
 			state.userMessages.groupMessages = addDateLabelToNewMessages(
 				state.userMessages.groupMessages,
@@ -117,12 +115,12 @@ export const messageSlice = createSlice({
 			state.newMessageToSocket = action.payload;
 		});
 		builder.addCase(createChatMessage.rejected, (state, action) => {
-			state.isLoading = false;
 			state.isError = true;
 			state.errorMessage = action.payload;
 		});
 		builder.addCase(getChatMessage.pending, (state) => {
 			state.isLoading = true;
+			state.loadInitialMessages = false;
 		});
 		builder.addCase(getChatMessage.fulfilled, (state, action) => {
 			state.isLoading = false;

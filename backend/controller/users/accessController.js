@@ -119,6 +119,7 @@ const registerUser = asyncHandler(async (req, res) => {
 				name: user.name,
 				username: user.username,
 				email: user.email,
+				userAvatar: user.userAvatar,
 				accessToken: generateAccessToken(user._id),
 			});
 	} else {
