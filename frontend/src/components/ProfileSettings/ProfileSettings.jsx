@@ -129,6 +129,10 @@ export default function ProfileSettings() {
 	function handledAvatarSubmission(e) {
 		e.preventDefault();
 
+		if (user.username === "GuestAccount") {
+			return toast.error(`GuestAccount's information cannot be edited.`);
+		}
+
 		if (imageUpload) {
 			const file = new FormData();
 			file.append("image", imageUpload);

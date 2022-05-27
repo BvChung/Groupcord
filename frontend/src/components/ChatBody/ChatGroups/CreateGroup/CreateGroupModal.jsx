@@ -26,15 +26,6 @@ export default function GroupCreation({
 			};
 		});
 	}
-	function handleSubmit(e) {
-		e.preventDefault();
-
-		if (formData.groupName === "" || !formData) return;
-
-		dispatch(createChatGroups(formData));
-		toast.success(`${formData.groupName} has been created`);
-		setActiveGroupModal(false);
-	}
 	function resetFormData() {
 		setFormData((prevData) => {
 			return {
@@ -42,6 +33,18 @@ export default function GroupCreation({
 				groupName: "",
 			};
 		});
+	}
+
+	function handleSubmit(e) {
+		e.preventDefault();
+
+		if (formData.groupName === "" || !formData.groupName.replaceAll(" ", ""))
+			return;
+
+		dispatch(createChatGroups(formData));
+		toast.success(`${formData.groupName} has been created`);
+		resetFormData();
+		setActiveGroupModal(false);
 	}
 
 	const createButtonActive = darkMode

@@ -8,12 +8,9 @@ const path = "backend/uploads/images/";
 // @route Get /api/groups/
 // @access Private
 const getChatGroups = asyncHandler(async (req, res) => {
-	// const userConversations = await Conversation.find({ user: req.user.id });
 	const userConversations = await Conversation.find({ membersId: req.user.id });
 
-	return res.status(200).json({
-		userConversations,
-	});
+	return res.status(200).json(userConversations);
 });
 
 // @desc Create group
@@ -22,7 +19,7 @@ const getChatGroups = asyncHandler(async (req, res) => {
 const createChatGroup = asyncHandler(async (req, res) => {
 	const { groupName } = req.body;
 
-	const conversation = await Conversation.create({
+	const newConversation = await Conversation.create({
 		groupOwner: req.user.id,
 		groupName,
 		membersId: req.user.id,
@@ -33,7 +30,7 @@ const createChatGroup = asyncHandler(async (req, res) => {
 		},
 	});
 
-	return res.status(200).json(conversation);
+	return res.status(200).json(newConversation);
 });
 
 // @desc Delete group

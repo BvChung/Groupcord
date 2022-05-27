@@ -4,6 +4,7 @@ import {
 	createChatMessage,
 	getChatMessage,
 	resetTextInput,
+	resetMessageErrorState,
 } from "../../../features/messages/messageSlice";
 import { resetGroupMemberDisplay } from "../../../features/groups/groupSlice";
 import { SocketContext } from "../../../appContext/socketContext";
@@ -12,6 +13,7 @@ import { useSendProfileData } from "../../../hooks/webSocket/useSendProfileData"
 import ChatItem from "./ChatMessageItem/ChatMessagesItem";
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
 import Spinner from "../../Spinner/Spinner";
+import { toast } from "react-toastify";
 
 export default function Chat() {
 	const socket = useContext(SocketContext);
@@ -78,24 +80,25 @@ export default function Chat() {
 		socket.emit("join_room", groupId);
 	}, [groupId, socket, dispatch, loadMessages]);
 
-	// const displayError = useCallback(() => {
-	// 	if (isError) {
-	// 		dispatch(resetErrorState());
-	// 		return toast.error(errorMessage);
-	// 	}
-	// }, [errorMessage, isError, dispatch]);
+	// Error display -----------------------------------------
+	const displayError = useCallback(() => {
+		if (isError) {
+			dispatch(resetMessageErrorState());
+			return toast.error(errorMessage);
+		}
+	}, [errorMessage, isError, dispatch]);
 
-	// const resetWithUnmount = useCallback(() => {
-	// 	dispatch(resetErrorState());
-	// }, [dispatch]);
+	const resetWithUnmount = useCallback(() => {
+		dispatch(resetMessageErrorState());
+	}, [dispatch]);
 
-	// useEffect(() => {
-	// 	displayError();
+	useEffect(() => {
+		displayError();
 
-	// 	return () => {
-	// 		resetWithUnmount();
-	// 	};
-	// }, [displaySuccess, displayError, resetWithUnmount]);
+		return () => {
+			resetWithUnmount();
+		};
+	}, [displayError, resetWithUnmount]);
 
 	// --------------- Socket.io Websocket Transmission -------------------
 	useSendMessageData();

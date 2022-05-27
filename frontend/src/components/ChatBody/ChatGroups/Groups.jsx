@@ -16,7 +16,7 @@ import Spinner from "../../Spinner/Spinner";
 export default function Groups() {
 	const dispatch = useDispatch();
 	const { activeGroupMenu } = useContext(MenuContext);
-	const { groups, loadingGroups, loadInitialGroups } = useSelector(
+	const { groups, loadingGroups, loadCompleted } = useSelector(
 		(state) => state.conversations
 	);
 	const { groupId } = useSelector(
@@ -116,7 +116,7 @@ export default function Groups() {
 							<span className="text-gray1 dark:text-white">Global</span>
 						</div>
 
-						{loadInitialGroups &&
+						{loadCompleted &&
 							groups
 								.filter((group) => {
 									return group.groupName

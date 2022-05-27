@@ -79,12 +79,12 @@ export default function GroupItem({
 
 			{groupOwner === user._id && activeGroupInfo.groupId === groupId && (
 				<>
-					<Tooltip placement="top" arrow describeChild title="More">
+					<Tooltip placement="top" arrow describeChild title="Settings">
 						<button onClick={handleClickOpen}>
 							<DotsVerticalIcon
 								className="w-8 h-8 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 
 									p-1 rounded-full border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
-									hover:bg-gray-200 dark:hover:bg-dark5 transition-all"
+									hover:bg-gray-300 dark:hover:bg-gray-700 transition-all"
 							/>
 						</button>
 					</Tooltip>
