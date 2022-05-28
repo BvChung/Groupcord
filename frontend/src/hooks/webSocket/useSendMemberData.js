@@ -6,11 +6,11 @@ import {
 	socketDataAddGroupForMember,
 	socketDataRemoveGroupForMember,
 	hideGroupMemberDisplay,
-} from "../../features/groups/groupSlice";
+} from "../../reducers/groups/groupSlice";
 import {
 	clearChatMessages,
 	hideTextInput,
-} from "../../features/messages/messageSlice";
+} from "../../reducers/messages/messageSlice";
 
 export function useSendMemberData() {
 	const dispatch = useDispatch();

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import { useSelector, useDispatch } from "react-redux";
-import { getRegisteredMembers } from "../../../features/groups/groupSlice";
+import { getRegisteredMembers } from "../../../reducers/groups/groupSlice";
 import MemberList from "./MemberList/MemberList";
 import AddMembers from "./AddMembers/AddMembers";
 import { SearchIcon, UserAddIcon, UsersIcon } from "@heroicons/react/outline";

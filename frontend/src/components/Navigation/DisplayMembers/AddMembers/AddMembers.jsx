@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { PlusCircleIcon } from "@heroicons/react/solid";
-import { addGroupMembers } from "../../../../features/groups/groupSlice";
+import { addGroupMembers } from "../../../../reducers/groups/groupSlice";
 import DefaultAvatar from "../../../../assets/images/avatar.jpg";
 
 export default function AddMembers({ id, userAvatar, username }) {

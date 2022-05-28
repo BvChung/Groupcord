@@ -4,9 +4,9 @@ import { useDispatch } from "react-redux";
 import {
 	logoutUser,
 	resetState,
-} from "../../../features/authentication/authSlice";
-import { resetMessageState } from "../../../features/messages/messageSlice";
-import { resetGroupState } from "../../../features/groups/groupSlice";
+} from "../../../reducers/authentication/authSlice";
+import { resetMessageState } from "../../../reducers/messages/messageSlice";
+import { resetGroupState } from "../../../reducers/groups/groupSlice";
 import PropTypes from "prop-types";
 import MenuUnstyled from "@mui/base/MenuUnstyled";
 import MenuItemUnstyled, {

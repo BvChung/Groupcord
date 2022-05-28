@@ -2,7 +2,7 @@ import { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import { useSelector, useDispatch } from "react-redux";
-import { createChatGroups } from "../../../../features/groups/groupSlice";
+import { createChatGroups } from "../../../../reducers/groups/groupSlice";
 import { toast } from "react-toastify";
 import { UserGroupIcon } from "@heroicons/react/solid";
 

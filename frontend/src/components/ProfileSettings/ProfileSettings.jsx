@@ -7,7 +7,7 @@ import {
 	updateAccountAvatar,
 	resetSuccessState,
 	resetErrorState,
-} from "../../features/authentication/authSlice";
+} from "../../reducers/authentication/authSlice";
 import { toast } from "react-toastify";
 import EditEmail from "./EditEmail/EditEmail";
 import EditAvatar from "./EditAvatar/EditAvatar";

@@ -3,11 +3,11 @@ import {
 	removeGroupMembers,
 	leaveGroup,
 	hideGroupMemberDisplay,
-} from "../../../../features/groups/groupSlice";
+} from "../../../../reducers/groups/groupSlice";
 import {
 	hideTextInput,
 	clearChatMessages,
-} from "../../../../features/messages/messageSlice";
+} from "../../../../reducers/messages/messageSlice";
 import { KeyIcon, MinusCircleIcon } from "@heroicons/react/solid";
 import { LogoutIcon } from "@heroicons/react/outline";
 import DefaultAvatar from "../../../../assets/images/avatar.jpg";

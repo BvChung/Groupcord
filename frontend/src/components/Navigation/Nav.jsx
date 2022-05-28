@@ -2,7 +2,7 @@ import { useState, useContext } from "react";
 import { MoonIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { SunIcon, UsersIcon, ArrowLeftIcon } from "@heroicons/react/solid";
 import { useSelector, useDispatch } from "react-redux";
-import { changeTheme } from "../../features/theme/themeSlice";
+import { changeTheme } from "../../reducers/theme/themeSlice";
 import MemberList from "./DisplayMembers/DisplayMembersModal";
 import NavMenu from "./NavMenu/NavMenu";
 import { Tooltip } from "@mui/material";

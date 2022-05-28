@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { UserGroupIcon } from "@heroicons/react/solid";
-import { updateActiveGroup } from "../../../../features/groups/groupSlice";
+import { updateActiveGroup } from "../../../../reducers/groups/groupSlice";
 import GroupSettings from "../GroupSettings/GroupSettings";
 import { DotsVerticalIcon } from "@heroicons/react/outline";
 import Tooltip from "@mui/material/Tooltip";

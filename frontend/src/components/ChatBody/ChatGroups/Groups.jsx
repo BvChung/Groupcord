@@ -8,7 +8,7 @@ import GroupItem from "./GroupItem/GroupItem";
 import {
 	updateActiveGroup,
 	getChatGroups,
-} from "../../../features/groups/groupSlice";
+} from "../../../reducers/groups/groupSlice";
 import CreateGroupModal from "./CreateGroup/CreateGroupModal";
 import { MenuContext } from "../../../appContext/menuContext";
 import Spinner from "../../Spinner/Spinner";

@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import {
 	loginUser,
 	resetErrorState,
-} from "../features/authentication/authSlice";
+} from "../reducers/authentication/authSlice";
 import { Checkbox, FormControlLabel } from "@mui/material";
 
 export default function LoginPage() {

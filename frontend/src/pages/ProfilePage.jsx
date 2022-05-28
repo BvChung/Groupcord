@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import Nav from "../components/Navigation/Nav";
 import ProfileSettings from "../components/ProfileSettings/ProfileSettings";
 import { useSelector, useDispatch } from "react-redux";
-import { logoutUser, resetState } from "../features/authentication/authSlice";
-import { resetMessageState } from "../features/messages/messageSlice";
-import { resetGroupState } from "../features/groups/groupSlice";
+import { logoutUser, resetState } from "../reducers/authentication/authSlice";
+import { resetMessageState } from "../reducers/messages/messageSlice";
+import { resetGroupState } from "../reducers/groups/groupSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 

@@ -8,11 +8,11 @@ import {
 	hideGroupMemberDisplay,
 	resetErrorState,
 	resetSuccessState,
-} from "../../../../features/groups/groupSlice";
+} from "../../../../reducers/groups/groupSlice";
 import {
 	clearChatMessages,
 	hideTextInput,
-} from "../../../../features/messages/messageSlice";
+} from "../../../../reducers/messages/messageSlice";
 import { toast } from "react-toastify";
 import { PencilIcon, TrashIcon } from "@heroicons/react/solid";
 import DefaultAvatar from "../../../../assets/images/avatar.jpg";

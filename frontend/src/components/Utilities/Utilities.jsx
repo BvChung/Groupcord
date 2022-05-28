@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { MoonIcon } from "@heroicons/react/outline";
 import { SunIcon } from "@heroicons/react/solid";
 import { useSelector, useDispatch } from "react-redux";
-import { changeTheme } from "../../features/theme/themeSlice";
+import { changeTheme } from "../../reducers/theme/themeSlice";
 import { Tooltip } from "@mui/material";
 
 function Utilities() {

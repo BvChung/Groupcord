@@ -5,8 +5,8 @@ import {
 	getChatMessage,
 	resetTextInput,
 	resetMessageErrorState,
-} from "../../../features/messages/messageSlice";
-import { resetGroupMemberDisplay } from "../../../features/groups/groupSlice";
+} from "../../../reducers/messages/messageSlice";
+import { resetGroupMemberDisplay } from "../../../reducers/groups/groupSlice";
 import { SocketContext } from "../../../appContext/socketContext";
 import { useSendMessageData } from "../../../hooks/webSocket/useSendMessageData";
 import { useSendProfileData } from "../../../hooks/webSocket/useSendProfileData";

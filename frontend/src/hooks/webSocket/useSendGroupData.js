@@ -6,11 +6,11 @@ import {
 	socketDataUpdateGroupIcon,
 	socketDataDeleteGroup,
 	hideGroupMemberDisplay,
-} from "../../features/groups/groupSlice";
+} from "../../reducers/groups/groupSlice";
 import {
 	clearChatMessages,
 	hideTextInput,
-} from "../../features/messages/messageSlice";
+} from "../../reducers/messages/messageSlice";
 import { toast } from "react-toastify";
 
 export function useSendGroupData() {

@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {
 	socketDataUpdateMessageUsername,
 	socketDataUpdateMessageAvatar,
-} from "../../features/messages/messageSlice";
-import { socketDataUpdateMembersPersonalInfo } from "../../features/groups/groupSlice";
+} from "../../reducers/messages/messageSlice";
+import { socketDataUpdateMembersPersonalInfo } from "../../reducers/groups/groupSlice";
 import { SocketContext } from "../../appContext/socketContext";
 
 export function useSendProfileData() {

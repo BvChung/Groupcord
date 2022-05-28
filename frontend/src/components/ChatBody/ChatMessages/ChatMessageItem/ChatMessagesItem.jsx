@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { deleteChatMessage } from "../../../../features/messages/messageSlice";
+import { deleteChatMessage } from "../../../../reducers/messages/messageSlice";
 import { TrashIcon } from "@heroicons/react/solid";
 import Tooltip from "@mui/material/Tooltip";
 import DefaultAvatar from "../../../../assets/images/avatar.jpg";

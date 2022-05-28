@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
 	socketDataAddMessage,
 	socketDataRemoveDeletedMessage,
-} from "../../features/messages/messageSlice";
+} from "../../reducers/messages/messageSlice";
 import { SocketContext } from "../../appContext/socketContext";
 
 export function useSendMessageData() {
