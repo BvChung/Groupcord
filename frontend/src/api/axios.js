@@ -1,5 +1,5 @@
 import axios from "axios";
-import { refreshAccessToken } from "../features/authentication/authSlice";
+import { refreshAccessToken } from "../reducers/authentication/authSlice";
 const BASE_URL = "http://localhost:3001";
 
 // 1) There can be only a single Redux store import per app => *In root of app: index.js
