@@ -10,10 +10,10 @@ import {
 	REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import authReducer from "../features/authentication/authSlice";
-import messageReducer from "../features/messages/messageSlice";
-import themeReducer from "../features/theme/themeSlice";
-import groupReducer from "../features/groups/groupSlice";
+import authReducer from "../reducers/authentication/authSlice";
+import messageReducer from "../reducers/messages/messageSlice";
+import themeReducer from "../reducers/theme/themeSlice";
+import groupReducer from "../reducers/groups/groupSlice";
 
 const appReducer = combineReducers({
 	auth: authReducer,
