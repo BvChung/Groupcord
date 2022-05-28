@@ -8,6 +8,7 @@ import { resetGroupState } from "../features/groups/groupSlice";
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from "../appContext/socketContext";
 import { MenuContext } from "../appContext/menuContext";
+import { toast } from "react-toastify";
 
 export default function ChatPage() {
 	const socket = useContext(SocketContext);
@@ -40,6 +41,7 @@ export default function ChatPage() {
 			dispatch(resetGroupState());
 			dispatch(resetState());
 			navigate("/");
+			toast.info("Your session has expired. Please log in again.");
 		}
 	}, [expiredRefreshJWT, dispatch, navigate]);
 

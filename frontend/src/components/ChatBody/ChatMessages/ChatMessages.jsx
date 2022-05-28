@@ -82,7 +82,7 @@ export default function Chat() {
 
 	// Error display -----------------------------------------
 	const displayError = useCallback(() => {
-		if (isError) {
+		if (isError && errorMessage !== "") {
 			dispatch(resetMessageErrorState());
 			return toast.error(errorMessage);
 		}

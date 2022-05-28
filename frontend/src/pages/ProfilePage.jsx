@@ -6,6 +6,7 @@ import { logoutUser, resetState } from "../features/authentication/authSlice";
 import { resetMessageState } from "../features/messages/messageSlice";
 import { resetGroupState } from "../features/groups/groupSlice";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function ProfilePage() {
 	const dispatch = useDispatch();
@@ -20,6 +21,7 @@ export default function ProfilePage() {
 			dispatch(resetGroupState());
 			dispatch(resetState());
 			navigate("/");
+			toast.info("Your session has expired. Please log in again.");
 		}
 	}, [expiredRefreshJWT, dispatch, navigate]);
 
