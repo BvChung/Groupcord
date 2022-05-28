@@ -5,7 +5,7 @@ const { generateAccessToken } = require("../../helper/JWTGeneration");
 
 // @desc Issue new access tokens
 // @route GET /api/refresh
-// @access Private
+// @access Public
 const handleRefreshToken = asyncHandler(async (req, res) => {
 	try {
 		const cookies = req.cookies;
