@@ -114,7 +114,9 @@ export const messageSlice = createSlice({
 		});
 		builder.addCase(createChatMessage.rejected, (state, action) => {
 			state.isError = true;
-			state.errorMessage = action.payload;
+			if (!action.payload.includes("accessToken")) {
+				state.errorMessage = action.payload;
+			}
 		});
 		builder.addCase(getChatMessage.pending, (state) => {
 			state.isLoading = true;
@@ -130,7 +132,9 @@ export const messageSlice = createSlice({
 		});
 		builder.addCase(getChatMessage.rejected, (state, action) => {
 			state.isLoading = false;
-			state.errorMessage = action.payload;
+			if (!action.payload.includes("accessToken")) {
+				state.errorMessage = action.payload;
+			}
 		});
 		builder.addCase(deleteChatMessage.fulfilled, (state, action) => {
 			state.userMessages.groupMessages = deleteMessageData(

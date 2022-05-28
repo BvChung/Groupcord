@@ -11,14 +11,14 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import authReducer from "../features/authentication/authSlice";
-import messagesReducer from "../features/messages/messageSlice";
+import messageReducer from "../features/messages/messageSlice";
 import themeReducer from "../features/theme/themeSlice";
 import groupReducer from "../features/groups/groupSlice";
 
 const appReducer = combineReducers({
 	auth: authReducer,
 	conversations: groupReducer,
-	messages: messagesReducer,
+	messages: messageReducer,
 	theme: themeReducer,
 });
 

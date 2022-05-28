@@ -1,7 +1,7 @@
 import App from "./App";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { store, persistor } from "./reduxStore/store";
+import { store, persistor } from "./store/store";
 import { injectStore } from "./api/axios";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
