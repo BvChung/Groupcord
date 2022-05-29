@@ -2,7 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
 const http = require("http");
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 const path = require("path");
 const { Server } = require("socket.io");
 const colors = require("colors");
@@ -17,7 +17,11 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
 	cors: {
-		origin: ["http://localhost:3000", "https://groupcord.herokuapp.com/"],
+		origin: [
+			"http://localhost:3000",
+			"http://127.0.0.1:5500",
+			"https://groupcord.herokuapp.com/",
+		],
 		methods: ["GET", "POST"],
 	},
 });
@@ -31,7 +35,11 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(
 	cors({
-		origin: ["http://localhost:3000", "https://groupcord.herokuapp.com/"],
+		origin: [
+			"http://localhost:3000",
+			" http://127.0.0.1:5500",
+			"https://groupcord.herokuapp.com/",
+		],
 		credentials: true,
 		optionSuccessStatus: 200,
 	})
