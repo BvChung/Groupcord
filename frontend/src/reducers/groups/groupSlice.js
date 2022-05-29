@@ -9,7 +9,6 @@ import { errorMessage } from "../helperFunctions/helperFunctions";
 import {
 	filterUsers,
 	updateData,
-	findGroupData,
 	removeMemberFromGroup,
 	deleteGroupData,
 } from "../helperFunctions/groupFunctions";
@@ -198,18 +197,13 @@ export const groupSlice = createSlice({
 			state.loadingGroups = false;
 			state.loadCompleted = true;
 			state.groups = action.payload;
-
-			if (state.activeGroupInfo.groupId !== "Global") {
-				state.activeGroupInfo.members = findGroupData(
-					state.activeGroupInfo,
-					action.payload
-				);
-			}
 		});
 		builder.addCase(getChatGroups.rejected, (state, action) => {
 			state.loadingGroups = false;
 			state.isError = true;
-			state.errorMessage = action.payload;
+			if (!action.payload.includes("accessToken")) {
+				state.errorMessage = action.payload;
+			}
 		});
 		builder.addCase(deleteChatGroup.fulfilled, (state, action) => {
 			state.isSuccess = true;
@@ -268,7 +262,9 @@ export const groupSlice = createSlice({
 		});
 		builder.addCase(updateChatGroupName.rejected, (state, action) => {
 			state.isError = true;
-			state.errorMessage = action.payload;
+			if (!action.payload.includes("accessToken")) {
+				state.errorMessage = action.payload;
+			}
 		});
 		builder.addCase(updateChatGroupIcon.fulfilled, (state, action) => {
 			state.isSuccess = true;
@@ -278,7 +274,9 @@ export const groupSlice = createSlice({
 		});
 		builder.addCase(updateChatGroupIcon.rejected, (state, action) => {
 			state.isError = true;
-			state.errorMessage = action.payload;
+			if (!action.payload.includes("accessToken")) {
+				state.errorMessage = action.payload;
+			}
 		});
 	},
 });

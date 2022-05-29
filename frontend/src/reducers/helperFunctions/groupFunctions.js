@@ -14,14 +14,6 @@ export const updateData = (state, payload) => {
 	});
 };
 
-export const findGroupData = (state, payload) => {
-	const currentGroup = payload.find((groupData) => {
-		return groupData._id === current(state).groupId;
-	});
-
-	return currentGroup.members;
-};
-
 export const addMemberToGroup = (state, payload) => {
 	const { groupData } = payload;
 

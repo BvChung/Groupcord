@@ -1,6 +1,7 @@
 import axios from "axios";
 import { refreshAccessToken } from "../reducers/authentication/authSlice";
-// Remove BASE_URL for Heroku Deployment
+
+// Remove BASE_URL for Heroku Deployment => BASE_URL for development
 // const BASE_URL = process.env.REACT_APP_CHAT_API;
 
 // 1) There can be only a single Redux store import per app => *In root of app: index.js
