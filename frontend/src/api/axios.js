@@ -1,6 +1,7 @@
 import axios from "axios";
 import { refreshAccessToken } from "../reducers/authentication/authSlice";
-const BASE_URL = process.env.REACT_APP_CHAT_API;
+// Remove BASE_URL for Heroku Deployment
+// const BASE_URL = process.env.REACT_APP_CHAT_API;
 
 // 1) There can be only a single Redux store import per app => *In root of app: index.js
 // 2) injectStore() allows this file to have access to the Redux store without causing
@@ -11,9 +12,11 @@ export const injectStore = (_store) => {
 };
 
 export const axiosPublic = axios.create({
+	// baseURL: BASE_URL,
 	withCredentials: true,
 });
 export const axiosPrivate = axios.create({
+	// baseURL: BASE_URL,
 	headers: { "Content-Type": "application/json" },
 	withCredentials: true,
 });
