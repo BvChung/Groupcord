@@ -1,4 +1,4 @@
-# [Mock Stocks Trading Platform](https://groupcord.herokuapp.com/)
+# [Groupcord](https://groupcord.herokuapp.com/)
 
 ## Overview
 
