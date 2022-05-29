@@ -17,6 +17,7 @@ import EditPassword from "./EditPassword/EditPassword";
 export default function ProfileSettings() {
 	const dispatch = useDispatch();
 	const imageRef = useRef();
+	console.log(process.env);
 
 	const { user, isError, errorMessage, isSuccess } = useSelector(
 		(state) => state.auth

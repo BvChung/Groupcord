@@ -1,6 +1,6 @@
 import axios from "axios";
 import { refreshAccessToken } from "../reducers/authentication/authSlice";
-const BASE_URL = "http://localhost:3001";
+const BASE_URL = process.env.REACT_APP_CHAT_API;
 
 // 1) There can be only a single Redux store import per app => *In root of app: index.js
 // 2) injectStore() allows this file to have access to the Redux store without causing
