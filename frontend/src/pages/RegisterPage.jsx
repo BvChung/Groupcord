@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import {
 	registerUser,
 	resetErrorState,
+	resetJWT,
 } from "../reducers/authentication/authSlice";
 import { Checkbox, FormControlLabel } from "@mui/material";
 
@@ -63,13 +64,17 @@ export default function RegisterPage() {
 
 	useEffect(() => {
 		if (isSuccess || user) {
+			// Reset JWT when user reopens closed app but w/ an expired refresh token
+			// User is logged out => expiredRefreshToken = true => login => expiredRefreshToken = false
+			dispatch(resetJWT());
+
 			navigate("/chat");
 		}
 
 		return () => {
 			resetAfterRegister();
 		};
-	}, [user, isSuccess, resetAfterRegister, navigate]);
+	}, [user, isSuccess, dispatch, resetAfterRegister, navigate]);
 
 	return (
 		<div

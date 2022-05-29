@@ -41,6 +41,7 @@ export default function ChatPage() {
 			dispatch(resetGroupState());
 			dispatch(resetState());
 			navigate("/");
+			console.log(expiredRefreshJWT);
 			toast.info("Your session has expired. Please log in again.");
 		}
 	}, [expiredRefreshJWT, dispatch, navigate]);

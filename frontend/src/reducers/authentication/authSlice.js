@@ -118,6 +118,9 @@ export const authSlice = createSlice({
 	initialState,
 	reducers: {
 		resetState: (state) => initialState,
+		resetJWT: (state) => {
+			state.expiredRefreshJWT = false;
+		},
 		resetSuccessState: (state) => {
 			state.isSuccess = false;
 		},
@@ -213,6 +216,6 @@ export const authSlice = createSlice({
 	},
 });
 
-export const { resetState, resetSuccessState, resetErrorState } =
+export const { resetState, resetJWT, resetSuccessState, resetErrorState } =
 	authSlice.actions;
 export default authSlice.reducer;

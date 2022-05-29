@@ -153,7 +153,7 @@ export default function ProfileSettings() {
 	}, [isSuccess, dispatch]);
 
 	const displayError = useCallback(() => {
-		if (isError) {
+		if (isError && errorMessage !== "") {
 			if (errorMessage === "File too large") {
 				dispatch(resetErrorState());
 				return toast.error(

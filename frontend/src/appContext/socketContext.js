@@ -1,9 +1,6 @@
 import { createContext } from "react";
 import { io } from "socket.io-client";
 
-export const socket = io.connect("https://groupcord.herokuapp.com/");
-
-// Remove localhost for Heroku Deployment => localhost for development
-// export const socket = io.connect("http://localhost:3001/");
+export const socket = io.connect(process.env.REACT_APP_CHAT_API);
 
 export const SocketContext = createContext({});

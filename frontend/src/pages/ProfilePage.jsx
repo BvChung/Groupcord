@@ -2,7 +2,11 @@ import { useEffect } from "react";
 import Nav from "../components/Navigation/Nav";
 import ProfileSettings from "../components/ProfileSettings/ProfileSettings";
 import { useSelector, useDispatch } from "react-redux";
-import { logoutUser, resetState } from "../reducers/authentication/authSlice";
+import {
+	logoutUser,
+	resetState,
+	refreshAccessToken,
+} from "../reducers/authentication/authSlice";
 import { resetMessageState } from "../reducers/messages/messageSlice";
 import { resetGroupState } from "../reducers/groups/groupSlice";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +19,9 @@ export default function ProfilePage() {
 	// Logout user if invalid token is present
 	const { expiredRefreshJWT } = useSelector((state) => state.auth);
 	useEffect(() => {
+		// Checks refresh token
+		dispatch(refreshAccessToken());
+
 		if (expiredRefreshJWT) {
 			dispatch(logoutUser());
 			dispatch(resetMessageState());

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
 	loginUser,
+	resetJWT,
 	resetErrorState,
 } from "../reducers/authentication/authSlice";
 import { Checkbox, FormControlLabel } from "@mui/material";
@@ -47,8 +48,8 @@ export default function LoginPage() {
 		setForm(() => {
 			return {
 				guestAccount: true,
-				email: "guestaccount@gmail.com",
-				password: "guestaccount",
+				email: process.env.REACT_APP_GUEST_EMAIL,
+				password: process.env.REACT_APP_GUEST_PASSWORD,
 			};
 		});
 	}
@@ -62,13 +63,17 @@ export default function LoginPage() {
 
 	useEffect(() => {
 		if (loggedIn || user) {
+			// Reset JWT when user reopens closed app but w/ an expired refresh token
+			// User is logged out => expiredRefreshToken = true => login => expiredRefreshToken = false
+			dispatch(resetJWT());
+
 			navigate("/chat");
 		}
 
 		return () => {
 			resetAfterLogin();
 		};
-	}, [user, loggedIn, navigate, resetAfterLogin]);
+	}, [user, loggedIn, dispatch, navigate, resetAfterLogin]);
 
 	useEffect(() => {
 		if (isError) {
