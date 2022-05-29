@@ -211,7 +211,6 @@ io.on("connection", (socket) => {
 	});
 });
 
-// Remove for Heroku Deployment
-// server.listen(port, () => {
-// 	console.log(`Server started on port: ${port}`.brightWhite);
-// });
+server.listen(port, () => {
+	console.log(`Server started on port: ${port}`.brightWhite);
+});
