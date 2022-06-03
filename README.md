@@ -8,6 +8,7 @@ Groupcord is an group chat application that uses the [MERN](https://www.mongodb.
 
 - [Tech](#tech)<br/>
 - [Development](#development)<br/>
+- [Authentication](#authentication)<br/>
 - [Demos](#demo-gifs)<br/>
 
 ## Tech
@@ -16,6 +17,7 @@ Groupcord is an group chat application that uses the [MERN](https://www.mongodb.
 
 - [React](https://reactjs.org/)
 - [Redux](https://redux.js.org/)
+- [Redux Toolkit](https://redux-toolkit.js.org/)
 - [TailwindCSS](https://tailwindcss.com/)
 
 ### Back-End
@@ -24,14 +26,11 @@ Groupcord is an group chat application that uses the [MERN](https://www.mongodb.
 - [Express.JS](https://expressjs.com/)
 - [Mongoose.JS](https://mongoosejs.com/)
 - [Socket.IO](https://socket.io/)
+- [JSON Web Tokens](https://jwt.io/)
 
 ### Database
 
 - [MongoDB](https://www.mongodb.com/)
-
-### Authentication
-
-- [JSON Web Tokens](https://jwt.io/)
 
 ## Development
 
@@ -56,16 +55,10 @@ PORT = 3001
 # Connect your mongoDB cluster using the url from your mongo account
 MONGO_URI = mongoDB_cluster_connection
 
-JWT_ACCESS_SECRET = base64_encoded_string
+# Any value can be provided in order to generate JWTs
+JWT_ACCESS_SECRET = your_value_one
 
-JWT_REFRESH_SECRET = base64_encoded_string
-```
-
-Base 64 encoded strings can be generated using the crypto module from nodejs.
-
-```bash
-# Quotes generated do not need to be inputted into the env
-require('crypto').randomBytes(64).toString('hex')
+JWT_REFRESH_SECRET = your_value_two
 ```
 
 3. Starting backend server with nodemon
@@ -87,11 +80,13 @@ npm i
 2. Set up `.env` **(.env will be in .gitignore)**
 
 ```bash
-# Access to the image folder in the backend used for avatars and icons.
-REACT_APP_PUBLIC_FOLDER = http://localhost:3001/images/
+# PORT is your respective port value from the backend
 
-# Base url for axios api
-REACT_APP_CHAT_API = http://localhost:3001
+# Access to the image folder in the backend used for avatars and icons.
+REACT_APP_PUBLIC_FOLDER = http://localhost:PORT/images/
+
+# Url for Axios and Socket.IO connection to backend
+REACT_APP_CHAT_API = http://localhost:PORT
 
 # Create demo guest account information in mongoDB (these values can be changed)
 REACT_APP_GUEST_EMAIL = guestaccount@gmail.com
@@ -99,13 +94,13 @@ REACT_APP_GUEST_EMAIL = guestaccount@gmail.com
 REACT_APP_GUEST_PASSWORD = guestaccount
 ```
 
-3. In frontend in **api/axios.js** uncomment the BASE_URL to make a connection with axios and your backend.
+3. In frontend in [api/axios.js](https://github.com/BvChung/groupcord/blob/main/frontend/src/api/axios.js) uncomment the BASE_URL to make a connection with axios and your backend.
 
 ```bash
-const BASE_URL = process.env.REACT_APP_CHAT_API;
+const BASE_URL = process.env.REACT_APP_CHAT_API
 
 # In public and private axios
-baseURL: BASE_URL,
+baseURL: BASE_URL
 ```
 
 4. Starting frontend
@@ -121,3 +116,37 @@ Both frontend and backend can be run at the same time in the same terminal using
 ```
 npm run dev
 ```
+
+## Authentication
+
+### Axios interceptors
+
+- User login, registering, logout and issuing new access JWTs do not have interceptors.
+- All http methods involving messages, groups, group members, and changing account information will be subjected to interceptors.
+
+### User Login/Register
+
+**Response from backend**
+
+1. A HTTP only cookie containing a refresh JWT **(1 day expiration)** is granted and JWT value is stored in mongoDB.
+2. A short lived access JWT **(30 min. expiration)** is granted through JSON.
+
+### Making requests
+
+1. Specific HTTP methods that the user performs require an valid access JWT sent through request headers.
+2. Validity of the access JWT is authenticated using [middleware](https://github.com/BvChung/Groupcord/blob/main/backend/middleware/authJWT.js).
+
+### Handling expired access tokens
+
+1. Requests made with expired access tokens will be rejected with a 403.
+2. [Axios interceptors](https://github.com/BvChung/Groupcord/blob/main/frontend/src/api/axios.js) will be used to make a request to the
+   [/api/refresh](https://github.com/BvChung/Groupcord/blob/main/backend/controller/refresh/refreshTokenController.js) endpoint to grant a new access token using the refresh token to retry the request.
+3. The refresh JWT sent as a HTTP only cookie is authenticated.
+   1. If the refresh JWT is valid a new access token will be returned and the rejected request will be made again.
+   2. If the refresh JWT is invalid then the **user will be logged out**.
+
+### User Logout
+
+1. With user logout the HTTP only cookie will be cleared and removed from the database.
+
+## Demo GIFs
