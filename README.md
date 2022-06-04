@@ -2,7 +2,7 @@
 
 ## Overview
 
-Groupcord is an group chat application that uses the [MERN](https://www.mongodb.com/mern-stack) stack. Real time chat messaging and group creation is implemented using [Socket.IO](https://socket.io/).
+Groupcord is an group chat application that uses the [MERN](https://www.mongodb.com/mern-stack) stack. Real time chat messaging and group creation/editing is implemented using [Socket.IO](https://socket.io/).
 
 ## Table of Contents
 
@@ -73,7 +73,6 @@ npm run server
 
 ```
 cd frontend
-
 npm i
 ```
 
@@ -133,7 +132,7 @@ npm run dev
 
 ### Making requests
 
-1. Specific HTTP methods that the user performs require an valid access JWT sent through request headers.
+1. Specific HTTP methods that the user performs require an valid access JWT are sent through request headers.
 2. Validity of the access JWT is authenticated using [middleware](https://github.com/BvChung/Groupcord/blob/main/backend/middleware/authJWT.js).
 
 ### Handling expired access tokens
