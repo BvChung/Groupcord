@@ -18,7 +18,7 @@ export default function ProfileSettings() {
 	const dispatch = useDispatch();
 	const imageRef = useRef();
 
-	const { user, isError, errorMessage, isSuccess } = useSelector(
+	const { user, isError, errorMessage, isSuccess, isLoading } = useSelector(
 		(state) => state.auth
 	);
 	const [formData, setFormData] = useState({
@@ -144,9 +144,25 @@ export default function ProfileSettings() {
 	}
 
 	// Success/Error functions ---------------------------------------
+	const displayLoad = useCallback(() => {
+		if (isLoading) {
+			toast.loading("Updating your account...", {
+				type: "info",
+				toastId: "updateAccount",
+			});
+		}
+	}, [isLoading]);
+
 	const displaySuccess = useCallback(() => {
 		if (isSuccess) {
-			toast.success("Your account has been updated.");
+			toast.update("updateAccount", {
+				render: "Your account has been updated.",
+				type: "success",
+				isLoading: false,
+				autoClose: 1500,
+				draggable: true,
+				closeOnClick: true,
+			});
 
 			dispatch(resetSuccessState());
 		}
@@ -156,12 +172,26 @@ export default function ProfileSettings() {
 		if (isError && errorMessage !== "") {
 			if (errorMessage === "File too large") {
 				dispatch(resetErrorState());
-				return toast.error(
-					errorMessage + " to upload. Maximum image size is 1 MB."
-				);
+				return toast.update("updateAccount", {
+					render: errorMessage + " to upload. Maximum image size is 1 MB.",
+					type: "error",
+					isLoading: false,
+					autoClose: 1500,
+					draggable: true,
+					closeOnClick: true,
+					delay: 500,
+				});
 			} else {
 				dispatch(resetErrorState());
-				return toast.error(errorMessage);
+				return toast.update("updateAccount", {
+					render: errorMessage,
+					type: "error",
+					isLoading: false,
+					autoClose: 1500,
+					draggable: true,
+					closeOnClick: true,
+					delay: 500,
+				});
 			}
 		}
 	}, [errorMessage, isError, dispatch]);
@@ -172,13 +202,14 @@ export default function ProfileSettings() {
 	}, [dispatch]);
 
 	useEffect(() => {
+		displayLoad();
 		displaySuccess();
 		displayError();
 
 		return () => {
 			resetWithUnmount();
 		};
-	}, [displaySuccess, displayError, resetWithUnmount]);
+	}, [displayLoad, displaySuccess, displayError, resetWithUnmount]);
 
 	// Css styles ----------------------------------------------------------
 	const iconStyle = "dark:text-gray-200 text-gray-700";

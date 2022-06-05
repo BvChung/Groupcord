@@ -101,48 +101,53 @@ export const messageSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		builder.addCase(createChatMessage.pending, (state) => {
-			state.newMessageToSocket = {};
-		});
-		builder.addCase(createChatMessage.fulfilled, (state, action) => {
-			state.isSuccess = true;
-			state.userMessages.groupMessages = addDateLabelToNewMessages(
-				state.userMessages.groupMessages,
-				action.payload
-			);
-			state.newMessageToSocket = action.payload;
-		});
-		builder.addCase(createChatMessage.rejected, (state, action) => {
-			state.isError = true;
-			if (!action.payload.includes("accessToken")) {
-				state.errorMessage = action.payload;
-			}
-		});
-		builder.addCase(getChatMessage.pending, (state) => {
-			state.isLoading = true;
-			state.loadInitialMessages = false;
-		});
-		builder.addCase(getChatMessage.fulfilled, (state, action) => {
-			state.isLoading = false;
-			state.loadInitialMessages = true;
-			state.userMessages = action.payload;
-			state.userMessages.groupMessages = createDateLabelForDatabaseMessages(
-				action.payload.groupMessages
-			);
-		});
-		builder.addCase(getChatMessage.rejected, (state, action) => {
-			state.isLoading = false;
-			if (!action.payload.includes("accessToken")) {
-				state.errorMessage = action.payload;
-			}
-		});
-		builder.addCase(deleteChatMessage.fulfilled, (state, action) => {
-			state.userMessages.groupMessages = deleteMessageData(
-				state.userMessages.groupMessages,
-				action.payload
-			);
-			state.deletedMessageToSocket = action.payload;
-		});
+		builder
+			.addCase(getChatMessage.pending, (state) => {
+				state.isLoading = true;
+				state.loadInitialMessages = false;
+			})
+			.addCase(getChatMessage.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.loadInitialMessages = true;
+				state.userMessages = action.payload;
+				state.userMessages.groupMessages = createDateLabelForDatabaseMessages(
+					action.payload.groupMessages
+				);
+			})
+			.addCase(getChatMessage.rejected, (state, action) => {
+				state.isLoading = false;
+
+				// Prevent display of invalid access JWT
+				if (!action.payload.includes("accessToken")) {
+					state.errorMessage = action.payload;
+				}
+			})
+			.addCase(createChatMessage.pending, (state) => {
+				state.newMessageToSocket = {};
+			})
+			.addCase(createChatMessage.fulfilled, (state, action) => {
+				state.isSuccess = true;
+				state.userMessages.groupMessages = addDateLabelToNewMessages(
+					state.userMessages.groupMessages,
+					action.payload
+				);
+				state.newMessageToSocket = action.payload;
+			})
+			.addCase(createChatMessage.rejected, (state, action) => {
+				state.isError = true;
+
+				// Prevent display of invalid access JWT
+				if (!action.payload.includes("accessToken")) {
+					state.errorMessage = action.payload;
+				}
+			})
+			.addCase(deleteChatMessage.fulfilled, (state, action) => {
+				state.userMessages.groupMessages = deleteMessageData(
+					state.userMessages.groupMessages,
+					action.payload
+				);
+				state.deletedMessageToSocket = action.payload;
+			});
 	},
 });
 

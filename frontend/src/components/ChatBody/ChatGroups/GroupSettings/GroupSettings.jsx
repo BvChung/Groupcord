@@ -27,11 +27,9 @@ export default function GroupSettings({
 }) {
 	const dispatch = useDispatch();
 	const imageRef = useRef();
-	const imageEnvPath = process.env.REACT_APP_PUBLIC_FOLDER;
 
-	const { isSuccess, isError, errorMessage } = useSelector(
-		(state) => state?.conversations
-	);
+	const { isSuccess, isError, errorMessage, updatingGroupSettings } =
+		useSelector((state) => state?.conversations);
 	const { darkMode } = useSelector((state) => state.theme);
 	const [showChangeIcon, setShowChangeIcon] = useState(false);
 	const [imageUpload, setImageUpload] = useState(null);
@@ -84,9 +82,26 @@ export default function GroupSettings({
 	}
 
 	// Success/Error functions ---------------------------------------
+	const displayLoad = useCallback(() => {
+		if (updatingGroupSettings) {
+			toast.loading("Updating group...", {
+				type: "info",
+				toastId: "updateGroup",
+			});
+		}
+	}, [updatingGroupSettings]);
+
 	const displaySuccess = useCallback(() => {
 		if (isSuccess) {
-			toast.success(`${groupName} has been updated.`);
+			toast.update("updateGroup", {
+				render: `${groupName} has been updated.`,
+				type: "success",
+				isLoading: false,
+				autoClose: 1500,
+				draggable: true,
+				closeOnClick: true,
+			});
+
 			dispatch(resetSuccessState());
 		}
 	}, [isSuccess, groupName, dispatch]);
@@ -95,12 +110,26 @@ export default function GroupSettings({
 		if (isError && errorMessage !== "") {
 			if (errorMessage === "File too large") {
 				dispatch(resetErrorState());
-				return toast.error(
-					errorMessage + " to upload. Maximum image size is 1 MB."
-				);
+				return toast.update("updateGroup", {
+					render: errorMessage + " to upload. Maximum image size is 1 MB.",
+					type: "error",
+					isLoading: false,
+					autoClose: 1500,
+					draggable: true,
+					closeOnClick: true,
+					delay: 500,
+				});
 			} else {
 				dispatch(resetErrorState());
-				return toast.error(errorMessage);
+				return toast.update("updateGroup", {
+					render: errorMessage,
+					type: "error",
+					isLoading: false,
+					autoClose: 1500,
+					draggable: true,
+					closeOnClick: true,
+					delay: 500,
+				});
 			}
 		}
 	}, [errorMessage, isError, dispatch]);
@@ -111,13 +140,14 @@ export default function GroupSettings({
 	}, [dispatch]);
 
 	useEffect(() => {
+		displayLoad();
 		displaySuccess();
 		displayError();
 
 		return () => {
 			resetWithUnmount();
 		};
-	}, [displaySuccess, displayError, resetWithUnmount]);
+	}, [displayLoad, displaySuccess, displayError, resetWithUnmount]);
 
 	// CSS styles ---------------------------------------
 
@@ -176,11 +206,7 @@ export default function GroupSettings({
 								}}
 							>
 								<img
-									src={
-										groupIcon !== ""
-											? `${imageEnvPath}${groupIcon}`
-											: DefaultAvatar
-									}
+									src={groupIcon !== "" ? groupIcon : DefaultAvatar}
 									className="object-fill w-24 h-24"
 									alt="Icon"
 									loading="lazy"

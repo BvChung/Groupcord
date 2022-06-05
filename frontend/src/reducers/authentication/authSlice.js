@@ -134,20 +134,11 @@ export const authSlice = createSlice({
 	// Extrareducers update the state like function in useState()
 	extraReducers: (builder) => {
 		builder
-			.addCase(registerUser.pending, (state) => {
-				state.isLoading = true;
+			.addCase(refreshAccessToken.fulfilled, (state, action) => {
+				state.user = { ...state.user, accessToken: action.payload.accessToken };
 			})
-			.addCase(registerUser.fulfilled, (state, action) => {
-				state.isLoading = false;
-				state.loggedIn = true;
-				state.isSuccess = true;
-				state.user = action.payload;
-			})
-			.addCase(registerUser.rejected, (state, action) => {
-				state.isLoading = false;
-				state.isError = true;
-				state.errorMessage = action.payload;
-				state.user = null;
+			.addCase(refreshAccessToken.rejected, (state) => {
+				state.expiredRefreshJWT = true;
 			})
 			.addCase(loginUser.pending, (state) => {
 				state.isLoading = true;
@@ -163,20 +154,28 @@ export const authSlice = createSlice({
 				state.errorMessage = action.payload;
 				state.user = null;
 			})
-			.addCase(updateAccountAvatar.fulfilled, (state, action) => {
-				state.isSuccess = true;
-				state.user = action.payload;
-				state.updatedAvatarToSocket = {
-					_id: action.payload._id,
-					username: action.payload.username,
-					userAvatar: action.payload.userAvatar,
-				};
+			.addCase(registerUser.pending, (state) => {
+				state.isLoading = true;
 			})
-			.addCase(updateAccountAvatar.rejected, (state, action) => {
+			.addCase(registerUser.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.loggedIn = true;
+				state.user = action.payload;
+			})
+			.addCase(registerUser.rejected, (state, action) => {
+				state.isLoading = false;
 				state.isError = true;
 				state.errorMessage = action.payload;
+				state.user = null;
+			})
+			.addCase(logoutUser.fulfilled, (state) => {
+				state.loggedIn = false;
+			})
+			.addCase(updateAccountUsername.pending, (state) => {
+				state.isLoading = true;
 			})
 			.addCase(updateAccountUsername.fulfilled, (state, action) => {
+				state.isLoading = false;
 				state.isSuccess = true;
 				state.user = action.payload;
 				state.updatedUsernameToSocket = {
@@ -186,32 +185,52 @@ export const authSlice = createSlice({
 				};
 			})
 			.addCase(updateAccountUsername.rejected, (state, action) => {
+				state.isLoading = false;
 				state.isError = true;
 				state.errorMessage = action.payload;
 			})
+			.addCase(updateAccountEmail.pending, (state) => {
+				state.isLoading = true;
+			})
 			.addCase(updateAccountEmail.fulfilled, (state, action) => {
+				state.isLoading = false;
 				state.isSuccess = true;
 				state.user = action.payload;
 			})
 			.addCase(updateAccountEmail.rejected, (state, action) => {
+				state.isLoading = false;
 				state.isError = true;
 				state.errorMessage = action.payload;
 			})
+			.addCase(updateAccountPassword.pending, (state) => {
+				state.isLoading = true;
+			})
 			.addCase(updateAccountPassword.fulfilled, (state, action) => {
+				state.isLoading = false;
 				state.isSuccess = true;
 			})
 			.addCase(updateAccountPassword.rejected, (state, action) => {
+				state.isLoading = false;
 				state.isError = true;
 				state.errorMessage = action.payload;
 			})
-			.addCase(refreshAccessToken.fulfilled, (state, action) => {
-				state.user = { ...state.user, accessToken: action.payload.accessToken };
+			.addCase(updateAccountAvatar.pending, (state) => {
+				state.isLoading = true;
 			})
-			.addCase(refreshAccessToken.rejected, (state) => {
-				state.expiredRefreshJWT = true;
+			.addCase(updateAccountAvatar.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.isSuccess = true;
+				state.user = action.payload;
+				state.updatedAvatarToSocket = {
+					_id: action.payload._id,
+					username: action.payload.username,
+					userAvatar: action.payload.userAvatar,
+				};
 			})
-			.addCase(logoutUser.fulfilled, (state) => {
-				state.loggedIn = false;
+			.addCase(updateAccountAvatar.rejected, (state, action) => {
+				state.isLoading = false;
+				state.isError = true;
+				state.errorMessage = action.payload;
 			});
 	},
 });

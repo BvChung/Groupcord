@@ -30,6 +30,7 @@ const initialState = {
 	updatedGroupIconToSocket: {},
 	hideGroupMemberDisplay: false,
 	isLoading: false,
+	updatingGroupSettings: false,
 	loadingGroups: false,
 	loadCompleted: false,
 	isSuccess: false,
@@ -181,103 +182,118 @@ export const groupSlice = createSlice({
 		},
 	},
 	extraReducers: (builder) => {
-		builder.addCase(createChatGroups.fulfilled, (state, action) => {
-			state.isLoading = false;
-			state.groups.push(action.payload);
-		});
-		builder.addCase(createChatGroups.rejected, (state) => {
-			state.isLoading = false;
-			state.isError = true;
-		});
-		builder.addCase(getChatGroups.pending, (state) => {
-			state.loadingGroups = true;
-			state.loadCompleted = false;
-		});
-		builder.addCase(getChatGroups.fulfilled, (state, action) => {
-			state.loadingGroups = false;
-			state.loadCompleted = true;
-			state.groups = action.payload;
-		});
-		builder.addCase(getChatGroups.rejected, (state, action) => {
-			state.loadingGroups = false;
-			state.isError = true;
-			if (!action.payload.includes("accessToken")) {
-				state.errorMessage = action.payload;
-			}
-		});
-		builder.addCase(deleteChatGroup.fulfilled, (state, action) => {
-			state.isSuccess = true;
-			state.groups = action.payload.allGroups;
-			state.groupDeletedToSocket = action.payload.deletedGroup;
-		});
-		builder.addCase(addGroupMembers.fulfilled, (state, action) => {
-			// Update current group info
-			state.activeGroupInfo.members = action.payload.updatedMembers.members;
+		builder
+			.addCase(getChatGroups.pending, (state) => {
+				state.loadingGroups = true;
+				state.loadCompleted = false;
+			})
+			.addCase(getChatGroups.fulfilled, (state, action) => {
+				state.loadingGroups = false;
+				state.loadCompleted = true;
+				state.groups = action.payload;
+			})
+			.addCase(getChatGroups.rejected, (state, action) => {
+				state.loadingGroups = false;
+				state.isError = true;
+				if (!action.payload.includes("accessToken")) {
+					state.errorMessage = action.payload;
+				}
+			})
+			.addCase(createChatGroups.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.groups.push(action.payload);
+			})
+			.addCase(createChatGroups.rejected, (state) => {
+				state.isLoading = false;
+				state.isError = true;
+			})
+			.addCase(deleteChatGroup.fulfilled, (state, action) => {
+				state.isSuccess = true;
+				state.groups = action.payload.allGroups;
+				state.groupDeletedToSocket = action.payload.deletedGroup;
+			})
+			.addCase(getRegisteredMembers.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(getRegisteredMembers.fulfilled, (state, action) => {
+				state.isLoading = false;
 
-			// Update groups
-			state.groups = updateData(state.groups, action.payload.updatedMembers);
+				state.registeredMembers = action.payload;
 
-			state.membersAvailableToAddToGroup = filterUsers(
-				state.registeredMembers,
-				state.activeGroupInfo.members
-			);
+				state.membersAvailableToAddToGroup = filterUsers(
+					state.registeredMembers,
+					state.activeGroupInfo.members
+				);
+			})
+			.addCase(addGroupMembers.fulfilled, (state, action) => {
+				// Update current group info
+				state.activeGroupInfo.members = action.payload.updatedMembers.members;
 
-			state.addedMemberToSocket = {
-				id: nanoid(),
-				groupData: action.payload.updatedMembers,
-				memberChanged: action.payload.memberChanged,
-			};
-		});
-		builder.addCase(removeGroupMembers.fulfilled, (state, action) => {
-			state.activeGroupInfo.members = action.payload.updatedMembers.members;
+				// Update groups
+				state.groups = updateData(state.groups, action.payload.updatedMembers);
 
-			state.groups = updateData(state.groups, action.payload.updatedMembers);
+				state.membersAvailableToAddToGroup = filterUsers(
+					state.registeredMembers,
+					state.activeGroupInfo.members
+				);
 
-			state.removedMemberToSocket = {
-				id: nanoid(),
-				groupData: action.payload.updatedMembers,
-				memberChanged: action.payload.memberChanged,
-			};
-		});
-		builder.addCase(getRegisteredMembers.pending, (state) => {
-			state.isLoading = true;
-		});
-		builder.addCase(getRegisteredMembers.fulfilled, (state, action) => {
-			state.isLoading = false;
+				state.addedMemberToSocket = {
+					id: nanoid(),
+					groupData: action.payload.updatedMembers,
+					memberChanged: action.payload.memberChanged,
+				};
+			})
+			.addCase(removeGroupMembers.fulfilled, (state, action) => {
+				state.activeGroupInfo.members = action.payload.updatedMembers.members;
 
-			state.registeredMembers = action.payload;
+				state.groups = updateData(state.groups, action.payload.updatedMembers);
 
-			state.membersAvailableToAddToGroup = filterUsers(
-				state.registeredMembers,
-				state.activeGroupInfo.members
-			);
-		});
-		builder.addCase(updateChatGroupName.fulfilled, (state, action) => {
-			state.isSuccess = true;
+				state.removedMemberToSocket = {
+					id: nanoid(),
+					groupData: action.payload.updatedMembers,
+					memberChanged: action.payload.memberChanged,
+				};
+			})
+			.addCase(updateChatGroupName.pending, (state) => {
+				state.updatingGroupSettings = true;
+			})
+			.addCase(updateChatGroupName.fulfilled, (state, action) => {
+				state.updatingGroupSettings = false;
+				state.isSuccess = true;
 
-			state.activeGroupInfo.groupName =
-				action.payload.updatedGroupName.groupName;
-			state.groups = action.payload.allGroups;
-			state.updatedGroupNameToSocket = action.payload.updatedGroupName;
-		});
-		builder.addCase(updateChatGroupName.rejected, (state, action) => {
-			state.isError = true;
-			if (!action.payload.includes("accessToken")) {
-				state.errorMessage = action.payload;
-			}
-		});
-		builder.addCase(updateChatGroupIcon.fulfilled, (state, action) => {
-			state.isSuccess = true;
+				state.activeGroupInfo.groupName =
+					action.payload.updatedGroupName.groupName;
+				state.groups = action.payload.allGroups;
+				state.updatedGroupNameToSocket = action.payload.updatedGroupName;
+			})
+			.addCase(updateChatGroupName.rejected, (state, action) => {
+				state.updatingGroupSettings = false;
+				state.isError = true;
 
-			state.groups = updateData(state.groups, action.payload);
-			state.updatedGroupIconToSocket = action.payload;
-		});
-		builder.addCase(updateChatGroupIcon.rejected, (state, action) => {
-			state.isError = true;
-			if (!action.payload.includes("accessToken")) {
-				state.errorMessage = action.payload;
-			}
-		});
+				// Prevent display of invalid access JWT
+				if (!action.payload.includes("accessToken")) {
+					state.errorMessage = action.payload;
+				}
+			})
+			.addCase(updateChatGroupIcon.pending, (state) => {
+				state.updatingGroupSettings = true;
+			})
+			.addCase(updateChatGroupIcon.fulfilled, (state, action) => {
+				state.updatingGroupSettings = false;
+				state.isSuccess = true;
+
+				state.groups = updateData(state.groups, action.payload);
+				state.updatedGroupIconToSocket = action.payload;
+			})
+			.addCase(updateChatGroupIcon.rejected, (state, action) => {
+				state.updatingGroupSettings = false;
+				state.isError = true;
+
+				// Prevent display of invalid access JWT
+				if (!action.payload.includes("accessToken")) {
+					state.errorMessage = action.payload;
+				}
+			});
 	},
 });
 
