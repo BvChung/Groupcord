@@ -14,7 +14,6 @@ export default function GroupItem({
 	groupIcon,
 }) {
 	const dispatch = useDispatch();
-	const imageEnvPath = process.env.REACT_APP_PUBLIC_FOLDER;
 
 	const [open, setOpen] = useState(false);
 	const handleClickOpen = () => {
@@ -58,7 +57,7 @@ export default function GroupItem({
 					{groupIcon !== "" ? (
 						<div className="relative rounded-full overflow-hidden">
 							<img
-								src={`${imageEnvPath}${groupIcon}`}
+								src={groupIcon}
 								className="object-fill w-12 h-w-12"
 								alt="Avatar"
 								loading="lazy"

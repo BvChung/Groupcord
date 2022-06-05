@@ -21,7 +21,6 @@ export default function MemberList({ id, username, userAvatar, handleClose }) {
 	const { groupOwner, groupId } = useSelector(
 		(state) => state.conversations.activeGroupInfo
 	);
-	const imageEnvPath = process.env.REACT_APP_PUBLIC_FOLDER;
 
 	return (
 		<div
@@ -31,14 +30,12 @@ export default function MemberList({ id, username, userAvatar, handleClose }) {
 		>
 			<div className="flex items-center">
 				<img
-					src={
-						userAvatar !== "" ? `${imageEnvPath}${userAvatar}` : DefaultAvatar
-					}
-					className="object-fill w-12 h-12 mr-4 rounded-full"
+					src={userAvatar !== "" ? userAvatar : DefaultAvatar}
+					className="object-fill w-12 h-12 sm:w-14 sm:h-14 mr-4 rounded-full"
 					alt="Avatar"
 					loading="lazy"
 				/>
-				<span className="max-w-[140px] sm:max-w-[195px] overflow-hidden text-ellipsis">
+				<span className="max-w-[140px] sm:max-w-[195px] font-medium overflow-hidden text-ellipsis">
 					{username}
 				</span>
 				{id === groupOwner && (

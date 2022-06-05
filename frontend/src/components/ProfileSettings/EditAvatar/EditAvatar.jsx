@@ -16,7 +16,6 @@ export default function EditAvatar({
 	setEditPassword,
 	resetPasswordForm,
 }) {
-	const imageEnvPath = process.env.REACT_APP_PUBLIC_FOLDER;
 	const [showChangeAvatar, setShowChangeAvatar] = useState(false);
 
 	return (
@@ -26,7 +25,7 @@ export default function EditAvatar({
 					Avatar
 				</p>
 			</div>
-			<div className="flex items-center mb-2 sm:mb-0">
+			<div className="flex items-center mb-4 sm:mb-0">
 				{!imageUpload ? (
 					<div className="relative w-fit rounded-full overflow-hidden shadow-xl">
 						<label
@@ -54,11 +53,7 @@ export default function EditAvatar({
 							}}
 						>
 							<img
-								src={
-									user.userAvatar !== ""
-										? `${imageEnvPath}${user.userAvatar}`
-										: DefaultAvatar
-								}
+								src={user.userAvatar !== "" ? user.userAvatar : DefaultAvatar}
 								className="object-fill w-32 h-32"
 								alt="Avatar"
 								loading="lazy"

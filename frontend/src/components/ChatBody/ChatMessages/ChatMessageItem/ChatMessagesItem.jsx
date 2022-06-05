@@ -17,7 +17,6 @@ export default function ChatItem({
 }) {
 	const dispatch = useDispatch();
 	const { user } = useSelector((state) => state.auth);
-	const imageEnvPath = process.env.REACT_APP_PUBLIC_FOLDER;
 
 	const messagePosition = userId === user._id ? "justify-end" : "";
 	const messageStyle =
@@ -44,11 +43,7 @@ export default function ChatItem({
 				>
 					{userId !== user._id && (
 						<img
-							src={
-								userAvatar !== ""
-									? `${imageEnvPath}${userAvatar}`
-									: DefaultAvatar
-							}
+							src={userAvatar !== "" ? userAvatar : DefaultAvatar}
 							className="object-fill w-12 h-12 sm:w-14 sm:h-14 mr-3 sm:mr-4 rounded-full"
 							alt="Avatar"
 							loading="lazy"
@@ -93,11 +88,7 @@ export default function ChatItem({
 					</div>
 					{userId === user._id && (
 						<img
-							src={
-								userAvatar !== ""
-									? `${imageEnvPath}${userAvatar}`
-									: DefaultAvatar
-							}
+							src={userAvatar !== "" ? userAvatar : DefaultAvatar}
 							className="object-fill w-12 h-12 sm:w-14 sm:h-14 ml-3 sm:ml-4 rounded-full"
 							alt="Avatar"
 							loading="lazy"

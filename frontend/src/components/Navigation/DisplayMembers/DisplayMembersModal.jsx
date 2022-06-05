@@ -36,14 +36,14 @@ export default function DisplayMembers({ open, handleClose }) {
 		<Dialog
 			open={open}
 			fullWidth={true}
-			maxWidth="xs"
+			maxWidth="sm"
 			onClose={() => {
 				handleClose();
 				setSwitchMemberDisplay(false);
 				setSearchText("");
 			}}
 		>
-			<div className={`w-full p-3 sm:p-6 ${bgStyle}`}>
+			<div className={`w-full p-4 sm:p-6 ${bgStyle}`}>
 				<div
 					className={`flex items-center justify-between mb-7 pb-4 ${titleStyle} `}
 				>
