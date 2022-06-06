@@ -24,7 +24,7 @@ const convertFile = asyncHandler(async (req, res, next) => {
 			return next(err);
 		}
 
-		req.file.originalname = Date.now() + req.file.originalname;
+		req.file.originalname = Date.now() + req.file.originalname.split(".")[0];
 
 		const convertFileBuffer = parser.format(
 			req.file.originalname,

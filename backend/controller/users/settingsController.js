@@ -1,10 +1,9 @@
-const fs = require("fs");
-const path = "backend/uploads/images/";
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../../models/userModel");
 const Messages = require("../../models/messageModel");
 const Conversation = require("../../models/conversationModel");
+const cloudinary = require("../../cloudinary/cloudinaryConfig");
 
 // For schema data:
 // .id => 6278dd9dadc7cdbc6f7ec28c
@@ -60,7 +59,7 @@ const updateUsername = asyncHandler(async (req, res) => {
 	return res.status(200).json({
 		_id: currentUser.id,
 		name: currentUser.name,
-		username: username ? username : currentUser.username,
+		username: username,
 		email: currentUser.email,
 		userAvatar: currentUser.userAvatar,
 	});
@@ -99,7 +98,7 @@ const updateEmail = asyncHandler(async (req, res) => {
 		_id: currentUser.id,
 		name: currentUser.name,
 		username: currentUser.username,
-		email: email ? email : currentUser.email,
+		email: email,
 		userAvatar: currentUser.userAvatar,
 	});
 });
@@ -135,11 +134,11 @@ const updatePassword = asyncHandler(async (req, res) => {
 	const salt = await bcrypt.genSalt(10);
 	const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-	// Update user information
+	// Update password
 	await User.findByIdAndUpdate(
 		req.user._id,
 		{
-			password: hashedPassword ? hashedPassword : currentUser.password,
+			password: hashedPassword,
 		},
 		{
 			new: true,
@@ -158,57 +157,59 @@ const updatePassword = asyncHandler(async (req, res) => {
 // @desc Update avatar
 // @route PUT /api/account/avatar
 // @access Private
+// default userAvatar and userAvatarCloudId === ""
 const updateAvatar = asyncHandler(async (req, res) => {
 	const currentUser = await User.findById(req.user._id);
 
+	// Upload avatar image to Cloudinary
+	const uploadedImage = await cloudinary.uploader.upload(req.body.content, {
+		upload_preset: process.env.CLOUDINARY_AVATAR_UPLOAD,
+		public_id: req.file.originalname,
+	});
+
+	// Remove old avatar image from Cloudinary if default avatar not present
+	if (currentUser.userAvatarCloudId !== "") {
+		await cloudinary.uploader.destroy(currentUser.userAvatarCloudId);
+	}
+
+	// Secure url => src={url} for image from Cloudinary to display on frontend
+	// Public_id => used to remove images from Cloudinary when updated
 	await User.findByIdAndUpdate(
 		req.user._id,
 		{
-			userAvatar: req.file ? req.file.filename : currentUser.userAvatar,
+			userAvatar: uploadedImage.secure_url,
+			userAvatarCloudId: uploadedImage.public_id,
 		},
 		{
 			new: true,
 		}
 	);
 
-	if (req.file !== currentUser.userAvatar) {
-		// Find messages in Message schema with user id then update avatar
-		await Messages.updateMany(
-			{ user: currentUser.id },
-			{ userAvatar: req.file.filename }
-		);
+	// Find messages in Message schema with user id then update with new avatar
+	await Messages.updateMany(
+		{ user: currentUser.id },
+		{ userAvatar: uploadedImage.secure_url }
+	);
 
-		// Update member list in Group Schema with new avatar
-		await Conversation.updateMany(
-			{
-				members: {
-					$elemMatch: {
-						_id: currentUser.id,
-						userAvatar: currentUser.userAvatar,
-					},
+	// Find member list in Group Schema then update with new avatar
+	await Conversation.updateMany(
+		{
+			members: {
+				$elemMatch: {
+					_id: currentUser.id,
+					userAvatar: currentUser.userAvatar,
 				},
 			},
-			{ $set: { "members.$.userAvatar": req.file.filename } }
-		);
-	}
-
-	// Remove old image file if image req is successful and !default avatar
-	if (req.file && currentUser.userAvatar !== "") {
-		fs.unlink(`${path}${currentUser.userAvatar}`, (err) => {
-			if (err) {
-				console.error(`${currentUser.userAvatar} does not exist.`);
-			}
-
-			console.log(`${currentUser.userAvatar} was deleted`);
-		});
-	}
+		},
+		{ $set: { "members.$.userAvatar": uploadedImage.secure_url } }
+	);
 
 	return res.status(200).json({
 		_id: currentUser.id,
 		name: currentUser.name,
 		username: currentUser.username,
 		email: currentUser.email,
-		userAvatar: req.file.filename,
+		userAvatar: uploadedImage.secure_url,
 	});
 });
 

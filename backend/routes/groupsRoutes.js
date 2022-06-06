@@ -14,7 +14,7 @@ const {
 } = require("../controller/groups/membersController");
 
 const { verifyJWT } = require("../middleware/authJWT");
-const { uploadFile } = require("../middleware/uploadFile");
+const { convertFile } = require("../middleware/convertFile");
 
 router
 	.route("/")
@@ -22,7 +22,7 @@ router
 	.post(verifyJWT, createChatGroup);
 router.route("/:groupId").delete(verifyJWT, deleteChatGroup);
 router.route("/name/:groupId").put(verifyJWT, updateChatGroupName);
-router.route("/icon/:groupId").put([verifyJWT, uploadFile], updateIcon);
+router.route("/icon/:groupId").put([verifyJWT, convertFile], updateIcon);
 
 router.route("/members").get(verifyJWT, getMembers);
 router.route("/members/add/:groupId").put(verifyJWT, addGroupMembers);

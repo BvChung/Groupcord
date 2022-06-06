@@ -1,8 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Conversation = require("../../models/conversationModel");
 const Messages = require("../../models/messageModel");
-const fs = require("fs");
-const path = "backend/uploads/images/";
+const cloudinary = require("../../cloudinary/cloudinaryConfig");
 
 // @desc Get chat groups based on user
 // @route Get /api/groups/
@@ -40,19 +39,13 @@ const deleteChatGroup = asyncHandler(async (req, res) => {
 	// Delete group
 	const deletedGroup = await Conversation.findByIdAndDelete(req.params.groupId);
 
+	// Delete old groupIcon from Cloudinary if default icon not present
+	if (deletedGroup.groupIconCloudId !== "") {
+		await cloudinary.uploader.destroy(deletedGroup.groupIconCloudId);
+	}
+
 	// Delete all messages associated with group in database
 	await Messages.deleteMany({ groupId: req.params.groupId });
-
-	// Remove image file with group deletion
-	if (deletedGroup.groupIcon !== "") {
-		fs.unlink(`${path}${deletedGroup.groupIcon}`, (err) => {
-			if (err) {
-				console.error(`${deletedGroup.groupIcon} does not exist.`);
-			}
-
-			console.log(`${deletedGroup.groupIcon} was deleted`);
-		});
-	}
 
 	const allGroups = await Conversation.find({ membersId: req.user.id });
 	return res.status(200).json({
@@ -90,26 +83,29 @@ const updateIcon = asyncHandler(async (req, res) => {
 
 	const currentGroup = await Conversation.findById(groupId);
 
+	// Upload image to Cloudinary
+	const uploadedImage = await cloudinary.uploader.upload(req.body.content, {
+		upload_preset: process.env.CLOUDINARY_ICON_UPLOAD,
+		public_id: req.file.originalname,
+	});
+
+	// Delete old groupIcon from Cloudinary if default icon not present
+	if (currentGroup.groupIconCloudId !== "") {
+		await cloudinary.uploader.destroy(currentGroup.groupIconCloudId);
+	}
+
+	// Secure url => src={url} for image from Cloudinary to display on frontend
+	// Public_id => used to remove images from Cloudinary when updated
 	const updatedGroup = await Conversation.findByIdAndUpdate(
 		groupId,
 		{
-			groupIcon: req.file ? req.file.filename : currentGroup.groupIcon,
+			groupIcon: uploadedImage.secure_url,
+			groupIconCloudId: uploadedImage.public_id,
 		},
 		{
 			new: true,
 		}
 	);
-
-	// Remove old image file if image req is successful and !default avatar
-	if (req.file && currentGroup.groupIcon !== "") {
-		fs.unlink(`${path}${currentGroup.groupIcon}`, (err) => {
-			if (err) {
-				console.error(`${currentGroup.groupIcon} does not exist.`);
-			}
-
-			console.log(`${currentGroup.groupIcon} was deleted`);
-		});
-	}
 
 	return res.status(200).json(updatedGroup);
 });
@@ -117,7 +113,7 @@ const updateIcon = asyncHandler(async (req, res) => {
 module.exports = {
 	getChatGroups,
 	createChatGroup,
+	deleteChatGroup,
 	updateChatGroupName,
 	updateIcon,
-	deleteChatGroup,
 };
