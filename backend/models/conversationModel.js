@@ -13,8 +13,13 @@ const conversationSchema = mongoose.Schema(
 		groupName: {
 			type: String,
 			required: true,
+			required: [true, "Group name is required"],
 		},
 		groupIcon: {
+			type: String,
+			default: "",
+		},
+		groupIconCloudId: {
 			type: String,
 			default: "",
 		},

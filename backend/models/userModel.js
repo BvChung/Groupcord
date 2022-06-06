@@ -4,23 +4,31 @@ const userSchema = mongoose.Schema(
 	{
 		name: {
 			type: String,
-			required: [true, "Please add a name"],
+			required: [true, "Name is required"],
+			default: "",
 		},
 		username: {
 			type: String,
-			required: [true, "Please add a username"],
+			required: [true, "Username is required"],
 			unique: true,
+			default: "",
 		},
 		email: {
 			type: String,
-			required: [true, "Please add an email"],
+			required: [true, "Email is required"],
 			unique: true,
+			default: "",
 		},
 		password: {
 			type: String,
-			required: [true, "Please add a password"],
+			required: [true, "Password is required"],
+			default: "",
 		},
 		userAvatar: {
+			type: String,
+			default: "",
+		},
+		userAvatarCloudId: {
 			type: String,
 			default: "",
 		},

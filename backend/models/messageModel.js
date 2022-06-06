@@ -11,7 +11,6 @@ const messageSchema = mongoose.Schema(
 		},
 		username: {
 			type: String,
-			required: [true, "Please add a username"],
 			ref: "User",
 		},
 		userAvatar: {
@@ -21,24 +20,21 @@ const messageSchema = mongoose.Schema(
 		},
 		groupId: {
 			type: String,
-			required: [true, "Please add a groupId value"],
+			required: [true, "GroupId is required"],
 			ref: "Conversation",
 		},
 		message: {
 			type: String,
-			required: [true, "Please add a text value"],
+			required: [true, "Message is required"],
 		},
 		fullDate: {
 			type: String,
-			required: [true, "Please add when message was created"],
 		},
 		dateCreated: {
 			type: String,
-			required: [true, "Please add when message was created"],
 		},
 		timeCreated: {
 			type: String,
-			required: [true, "Please add when message was created"],
 		},
 	},
 	{

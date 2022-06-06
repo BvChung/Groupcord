@@ -7,8 +7,8 @@ const {
 } = require("../../helper/JWTGeneration");
 
 // For schema data:
-// .id => 6278dd9dadc7cdbc6f7ec28c
 // ._id => new ObjectId("6278dd9dadc7cdbc6f7ec28c")
+// .id => 6278dd9dadc7cdbc6f7ec28c
 
 // @desc Login user
 // @route POST /api/user/login
@@ -19,8 +19,8 @@ const loginUser = asyncHandler(async (req, res) => {
 	// Check for user based on email
 	const foundUser = await User.findOne({ email });
 
-	// bcrypt.compare() compares password from request and hashed password from database schema
 	if (foundUser && (await bcrypt.compare(password, foundUser.password))) {
+		// bcrypt.compare() compares password from request and hashed password from database schema
 		// Create JWT refresh token
 		const refreshToken = generateRefreshToken(foundUser._id);
 
