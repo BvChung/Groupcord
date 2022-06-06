@@ -9,7 +9,7 @@ import {
 	updateActiveGroup,
 	getChatGroups,
 } from "../../../reducers/groups/groupSlice";
-import CreateGroupModal from "./CreateGroup/CreateGroupModal";
+import CreateGroupModal from "./CreateGroup/CreateGroup";
 import { MenuContext } from "../../../appContext/menuContext";
 import Spinner from "../../Spinner/Spinner";
 
@@ -77,9 +77,9 @@ export default function Groups() {
 						name="searchText"
 						value={searchText}
 						type="text"
-						placeholder="Search for group chat"
+						placeholder="Search for groups"
 						onChange={(e) => setSearchText(e.target.value)}
-						className="text-gray1 dark:text-white outline-none bg-transparent w-11/12 px-2 placeholder:text-gray-500 dark:placeholder:text-gray-600"
+						className="text-gray1 dark:text-white outline-none bg-transparent w-11/12 px-2 placeholder:text-gray-500 dark:placeholder:text-gray-400"
 					></input>
 					<SearchIcon className="w-7 h-7 text-white bg-sky-600 dark:bg-sky-700 rounded-full p-1" />
 				</div>
@@ -113,7 +113,9 @@ export default function Groups() {
 							<div className="rounded-full overflow-hidden">
 								<GlobeIcon className="h-12 w-12 text-sky-600 dark:text-sky-700" />
 							</div>
-							<span className="text-gray1 dark:text-white">Global</span>
+							<span className="text-gray1 dark:text-white font-medium">
+								Global
+							</span>
 						</div>
 
 						{loadCompleted &&

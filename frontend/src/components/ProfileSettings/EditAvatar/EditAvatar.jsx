@@ -54,17 +54,17 @@ export default function EditAvatar({
 						>
 							<img
 								src={user.userAvatar !== "" ? user.userAvatar : DefaultAvatar}
-								className="object-fill w-32 h-32"
+								className="object-fill w-28 h-28 sm:w-32 sm:h-32"
 								alt="Avatar"
 								loading="lazy"
 							/>
 							{showChangeAvatar && (
-								<div className="absolute bg-gray-900 w-full h-full bg-opacity-40 z-[100]">
-									<div className="z-20 absolute flex flex-col items-center justify-center top-[38%] left-[27%] text-lg text-gray-800">
-										<strong className="text-white text-center text-sm uppercase">
+								<div className="absolute bg-gray-900 w-full h-full bg-opacity-50 z-[100]">
+									<div className="z-20 absolute flex flex-col items-center justify-center top-[38%] left-[27%] sm:top-[38%] sm:left-[27%] text-lg text-gray-800">
+										<strong className="text-white text-center text-xs sm:text-sm uppercase">
 											Change
 										</strong>
-										<strong className="text-white text-center text-sm uppercase">
+										<strong className="text-white text-center text-xs sm:text-sm uppercase">
 											Avatar
 										</strong>
 									</div>
@@ -86,16 +86,16 @@ export default function EditAvatar({
 						>
 							<img
 								src={URL.createObjectURL(imageUpload)}
-								className="object-fill w-32 h-32"
+								className="object-fill w-28 h-28 sm:w-32 sm:h-32"
 								alt="Avatar"
 							/>
 							{showChangeAvatar && (
-								<div className="absolute bg-gray-900 w-full h-full bg-opacity-40 z-[100]">
-									<div className="z-20 absolute flex flex-col items-center justify-center top-[38%] left-[27%] text-lg text-gray-800">
-										<strong className="text-white text-center text-sm uppercase">
+								<div className="absolute bg-gray-900 w-full h-full bg-opacity-50 z-[100]">
+									<div className="z-20 absolute flex flex-col items-center justify-center top-[38%] left-[27%] sm:top-[38%] sm:left-[27%] text-lg text-gray-800">
+										<strong className="text-white text-center text-xs sm:text-sm uppercase">
 											Change
 										</strong>
-										<strong className="text-white text-center text-sm uppercase">
+										<strong className="text-white text-center text-xs sm:text-sm uppercase">
 											Avatar
 										</strong>
 									</div>
@@ -121,7 +121,7 @@ export default function EditAvatar({
 			<div className="flex flex-col justify-center gap-2  sm:w-auto">
 				<label htmlFor="image" className="cursor-pointer w-fit">
 					<div
-						className="text-white px-4 py-1 sm:px-4 sm:py-2 text-sm font-semibold rounded-sm 
+						className="text-white px-4 py-2 text-xs sm:text-sm font-semibold rounded-sm 
 									dark:bg-blue-700 dark:hover:bg-blue-600 dark:active:bg-blue-500
 									bg-blue-600 hover:bg-blue-700 active:bg-blue-800
 							 transition-all"
@@ -134,7 +134,7 @@ export default function EditAvatar({
 					className="text-sm font-medium break-words 
 							dark:text-gray-400 text-gray-700"
 				>
-					Must be JPG, PNG, or GIF and cannot exceed 1MB.
+					Must be JPG, JPEG, PNG, or GIF and cannot exceed 1MB.
 				</p>
 			</div>
 		</div>

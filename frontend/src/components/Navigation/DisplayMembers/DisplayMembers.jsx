@@ -26,7 +26,7 @@ export default function DisplayMembers({ open, handleClose }) {
 		? "bg-gray-800 border-gray-600 focus-within:border-sky-700"
 		: "bg-gray-100 border-gray-300 focus-within:border-sky-500";
 	const inputTextStyle = darkMode
-		? "text-white placeholder:text-gray-600 "
+		? "text-white placeholder:text-gray-400 "
 		: "text-gray1 placeholder:text-gray-500";
 	const titleStyle = darkMode
 		? "text-white border-b-[1px] border-gray-500 "
@@ -43,7 +43,7 @@ export default function DisplayMembers({ open, handleClose }) {
 				setSearchText("");
 			}}
 		>
-			<div className={`w-full p-4 sm:p-6 ${bgStyle}`}>
+			<div className={`w-full p-4 sm:p-7 ${bgStyle}`}>
 				<div
 					className={`flex items-center justify-between mb-7 pb-4 ${titleStyle} `}
 				>
@@ -93,9 +93,11 @@ export default function DisplayMembers({ open, handleClose }) {
 							name="searchText"
 							value={searchText}
 							type="text"
-							placeholder="Search for members"
+							placeholder={
+								switchMemberDisplay ? "Search for users" : "Search for members"
+							}
 							onChange={(e) => setSearchText(e.target.value)}
-							className={`${inputTextStyle} outline-none bg-transparent w-11/12 px-2 `}
+							className={`${inputTextStyle} outline-none bg-transparent w-11/12 pr-2`}
 						></input>
 						<SearchIcon
 							className={`w-7 h-7 text-white rounded-full p-1 ${

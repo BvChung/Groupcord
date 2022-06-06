@@ -325,7 +325,7 @@ export default function ProfileSettings() {
 									setImageUpload(null);
 								}
 							}}
-							className="bg-transparent text-gray1 hover:bg-gray-200 active:bg-gray-300 dark:text-white dark:hover:bg-gray-800 dark:active:bg-gray-900
+							className="bg-transparent text-gray1 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-800 
 							  	w-20 px-1 py-[.65rem] text-sm font-bold rounded-sm transition-all"
 							aria-label="Cancel"
 						>

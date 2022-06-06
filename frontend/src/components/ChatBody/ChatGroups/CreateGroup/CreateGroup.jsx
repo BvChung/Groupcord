@@ -57,6 +57,7 @@ export default function GroupCreation({
 		? "bg-menu text-white hover:bg-gray-800"
 		: "bg-white text-gray1 hover:bg-gray-200";
 	const textStyle = darkMode ? "text-white" : "text-gray1";
+	const iconStyle = darkMode ? "text-gray-200" : "text-gray-700";
 	const headerStyle = darkMode
 		? "border-b-[1px] border-gray-500 "
 		: "border-b-[1px] border-gray-300";
@@ -86,7 +87,7 @@ export default function GroupCreation({
 						<h1 className={`text-xl font-bold font-sans ${textStyle}`}>
 							Create Group
 						</h1>
-						<UserGroupIcon className="h-7 w-7 sm:h-8 sm:w-8" />
+						<UserGroupIcon className={`h-7 w-7 sm:h-8 sm:w-8 ${iconStyle}`} />
 					</div>
 
 					<div className={`flex mb-4 pb-7 ${formStyle}`}>

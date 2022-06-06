@@ -3,7 +3,7 @@ import { MoonIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { SunIcon, UsersIcon, ArrowLeftIcon } from "@heroicons/react/solid";
 import { useSelector, useDispatch } from "react-redux";
 import { changeTheme } from "../../reducers/theme/themeSlice";
-import MemberList from "./DisplayMembers/DisplayMembersModal";
+import MemberList from "./DisplayMembers/DisplayMembers";
 import NavMenu from "./NavMenu/NavMenu";
 import { Tooltip } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";

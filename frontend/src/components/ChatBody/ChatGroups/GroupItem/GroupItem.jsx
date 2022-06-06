@@ -68,7 +68,7 @@ export default function GroupItem({
 							<UserGroupIcon className={`h-12 w-12 ${groupOwnerStyle}`} />
 						</div>
 					)}
-					<div className="flex items-center max-w-[175px] gap-2 text-gray1 dark:text-white">
+					<div className="flex items-center max-w-[175px] gap-2 font-medium text-gray1 dark:text-white">
 						<span className="overflow-ellipsis overflow-hidden whitespace-nowrap">
 							{groupName}
 						</span>

@@ -212,7 +212,7 @@ export default function GroupSettings({
 									loading="lazy"
 								/>
 								{showChangeIcon && (
-									<div className="absolute bg-gray-900 w-full h-full bg-opacity-40 z-[100]">
+									<div className="absolute bg-gray-900 w-full h-full bg-opacity-50 z-[100]">
 										<div className="z-20 absolute flex flex-col items-center justify-center top-[38%] left-[23%]  text-gray-800">
 											<strong className="text-white text-center text-xs uppercase">
 												Change
@@ -243,7 +243,7 @@ export default function GroupSettings({
 									alt="Avatar"
 								/>
 								{showChangeIcon && (
-									<div className="absolute bg-gray-900 w-full h-full bg-opacity-40 z-[100]">
+									<div className="absolute bg-gray-900 w-full h-full bg-opacity-50 z-[100]">
 										<div className="z-20 absolute flex flex-col items-center justify-center top-[38%] left-[23%] text-lg text-gray-800">
 											<strong className="text-white text-center text-xs uppercase">
 												Change
@@ -269,7 +269,7 @@ export default function GroupSettings({
 							}}
 						>
 							<div
-								className={`text-white px-4 py-1 sm:px-4 sm:py-2 text-sm font-semibold rounded-sm ${
+								className={`text-white px-4 py-2 text-xs sm:text-sm font-semibold rounded-sm ${
 									darkMode
 										? "bg-blue-700 hover:bg-blue-600 active:bg-blue-500"
 										: "bg-blue-600 hover:bg-blue-700 active:bg-blue-800"
@@ -284,7 +284,7 @@ export default function GroupSettings({
 								darkMode ? "text-gray-400" : "text-gray-700"
 							} ${textStyle}`}
 						>
-							Must be JPG, PNG, or GIF and cannot exceed 1MB.
+							Must be JPG, JPEG, PNG, or GIF and cannot exceed 1MB.
 						</p>
 					</div>
 
@@ -371,8 +371,8 @@ export default function GroupSettings({
 							aria-label="Cancel"
 							className={`bg-transparent  ${
 								darkMode
-									? "text-white hover:bg-gray-800 active:bg-gray-900"
-									: "text-gray1 hover:bg-gray-200 active:bg-gray-300"
+									? "text-white hover:bg-gray-800"
+									: "text-gray1 hover:bg-gray-200"
 							} 
 							  	w-20 px-1 py-2 sm:py-[.65rem] text-sm font-semibold rounded-sm transition-all`}
 						>
