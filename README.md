@@ -26,14 +26,11 @@ Groupcord is an group chat application that uses the [MERN](https://www.mongodb.
 - [Express.JS](https://expressjs.com/)
 - [Mongoose.JS](https://mongoosejs.com/)
 - [Socket.IO](https://socket.io/)
+- [JSON Web Tokens](https://jwt.io/)
 
 ### Database
 
 - [MongoDB](https://www.mongodb.com/)
-
-### Authentication
-
-- [JSON Web Tokens](https://jwt.io/)
 
 ### Content delivery network (CDN)
 
