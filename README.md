@@ -2,7 +2,7 @@
 
 ## Overview
 
-Groupcord is an group chat application that uses the [MERN](https://www.mongodb.com/mern-stack) stack. Real time chat messaging and group creation/editing is implemented using [Socket.IO](https://socket.io/).
+Groupcord is an group chat application that uses the [MERN](https://www.mongodb.com/mern-stack) stack. Real time chat messaging, group creation/editing and account editing is implemented using [Socket.IO](https://socket.io/). User avatars and group icons are uploaded and retrieved using [Cloudinary](https://cloudinary.com/).
 
 ## Table of Contents
 
@@ -26,11 +26,18 @@ Groupcord is an group chat application that uses the [MERN](https://www.mongodb.
 - [Express.JS](https://expressjs.com/)
 - [Mongoose.JS](https://mongoosejs.com/)
 - [Socket.IO](https://socket.io/)
-- [JSON Web Tokens](https://jwt.io/)
 
 ### Database
 
 - [MongoDB](https://www.mongodb.com/)
+
+### Authentication
+
+- [JSON Web Tokens](https://jwt.io/)
+
+### Content delivery network (CDN)
+
+- [Cloudinary](https://cloudinary.com/)
 
 ## Development
 
@@ -56,9 +63,21 @@ PORT = 3001
 MONGO_URI = mongoDB_cluster_connection
 
 # Any value can be provided in order to generate JWTs
-JWT_ACCESS_SECRET = your_value_one
+JWT_ACCESS_SECRET = value1
 
-JWT_REFRESH_SECRET = your_value_two
+JWT_REFRESH_SECRET = value2
+
+# Connect your Cloudinary account configs
+CLOUDINARY_CLOUD_NAME = your_cloud_name
+
+CLOUDINARY_API_KEY = your_cloud_key
+
+CLOUDINARY_API_SECRET = your_cloud_secret
+
+# Connection to the respective upload folders for image upload/deletion
+CLOUDINARY_AVATAR_UPLOAD = folder1
+
+CLOUDINARY_ICON_UPLOAD = folder2
 ```
 
 3. Starting backend server with nodemon
@@ -80,9 +99,6 @@ npm i
 
 ```bash
 # PORT is your respective port value from the backend
-
-# Access to the image folder in the backend used for avatars and icons.
-REACT_APP_PUBLIC_FOLDER = http://localhost:PORT/images/
 
 # Url for Axios and Socket.IO connection to backend
 REACT_APP_CHAT_API = http://localhost:PORT
@@ -149,3 +165,19 @@ npm run dev
 1. With user logout the HTTP only cookie will be cleared and removed from the database.
 
 ## Demo GIFs
+
+**Messaging**
+
+![Messaging](./demoGifs/GroupCordMessaging.gif "Messaging")
+
+**Group Creation/Editing**
+
+![Groups](./demoGifs/GroupCordGroupEditing.gif "Groups")
+
+**Member Editing**
+
+![Members](./demoGifs/GroupCordMemberEditing.gif "Members")
+
+**Account Settings**
+
+![Settings](./demoGifs/GroupCordAccountEditing.gif "Settings")
