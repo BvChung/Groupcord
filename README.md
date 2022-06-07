@@ -168,16 +168,16 @@ npm run dev
 
 **Messaging**
 
-![Messaging](./demoGifs/GroupCordMessaging.gif "Messaging")
+![Messaging](https://github.com/BvChung/Groupcord/blob/main/demoGifs/GroupcordMessaging.gif)
 
 **Group Creation/Editing**
 
-![Groups](./demoGifs/GroupCordGroupEditing.gif "Groups")
+![Groups](https://github.com/BvChung/Groupcord/blob/main/demoGifs/GroupcordGroupEditing.gif)
 
 **Member Editing**
 
-![Members](./demoGifs/GroupCordMemberEditing.gif "Members")
+![Members](https://github.com/BvChung/Groupcord/blob/main/demoGifs/GroupcordMemberEditing.gif)
 
 **Account Settings**
 
-![Settings](./demoGifs/GroupCordAccountEditing.gif "Settings")
+![Settings](https://github.com/BvChung/Groupcord/blob/main/demoGifs/GroupcordAccountEditing.gif)
