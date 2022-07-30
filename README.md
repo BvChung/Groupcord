@@ -2,7 +2,7 @@
 
 ## Overview
 
-Groupcord is an group chat application that uses the [MERN](https://www.mongodb.com/mern-stack) stack. Real time chat messaging, group creation/editing and account editing is implemented using [Socket.IO](https://socket.io/). User avatars and group icons are uploaded and retrieved using [Cloudinary](https://cloudinary.com/).
+Groupcord is a group chat application that uses the [MERN](https://www.mongodb.com/mern-stack) stack. Real time chat messaging, group creation/editing and account editing is implemented using [Socket.IO](https://socket.io/). User avatars and group icons are uploaded and retrieved using [Cloudinary](https://cloudinary.com/).
 
 ## Table of Contents
 
