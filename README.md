@@ -1,4 +1,5 @@
-# [Groupcord](https://groupcord.herokuapp.com/) *Previously hosted on heroku, free deployment access is no longer available as of August 25, 2022 (https://blog.heroku.com/next-chapter)
+# [Groupcord](https://groupcord.herokuapp.com/)
+###  *Previously hosted on heroku, free deployment access is no longer available as of August 25, 2022 (https://blog.heroku.com/next-chapter)
 
 ## Overview
 
