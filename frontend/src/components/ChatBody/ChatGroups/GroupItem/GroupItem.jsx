@@ -5,6 +5,7 @@ import { updateActiveGroup } from "../../../../reducers/groups/groupSlice";
 import GroupSettings from "../GroupSettings/GroupSettings";
 import { DotsVerticalIcon } from "@heroicons/react/outline";
 import Tooltip from "@mui/material/Tooltip";
+import { authRole } from "../../../../accessRoles/roles";
 
 export default function GroupItem({
 	groupId,
@@ -15,15 +16,17 @@ export default function GroupItem({
 }) {
 	const dispatch = useDispatch();
 
-	const [open, setOpen] = useState(false);
-	const handleClickOpen = () => {
-		setOpen(true);
-	};
-	const handleClose = () => {
-		setOpen(false);
-	};
 	const { activeGroupInfo } = useSelector((state) => state.conversations);
 	const { user } = useSelector((state) => state.auth);
+	const adminAccess = user.authenticationRole === authRole["Admin"];
+
+	const [openSettings, setOpenSettings] = useState(false);
+	const handleClickOpen = () => {
+		setOpenSettings(true);
+	};
+	const handleClose = () => {
+		setOpenSettings(false);
+	};
 
 	const sendGroupInfo = {
 		groupId,
@@ -31,11 +34,11 @@ export default function GroupItem({
 		groupOwner,
 		members,
 	};
+
 	const activeStyle =
 		activeGroupInfo.groupId === groupId
 			? "bg-sky-100 dark:bg-slate-800 border-l-sky-500 border-l-[3px] dark:border-l-sky-500 "
 			: "border-l-[3px] border-l-gray-300 dark:border-l-gray-600 hover:border-l-gray-400 dark:hover:border-l-gray-400";
-
 	const groupOwnerStyle =
 		groupOwner === user._id
 			? "text-sky-500 dark:text-sky-600"
@@ -76,26 +79,27 @@ export default function GroupItem({
 				</div>
 			</Tooltip>
 
-			{groupOwner === user._id && activeGroupInfo.groupId === groupId && (
-				<>
-					<Tooltip placement="top" arrow describeChild title="Settings">
-						<button onClick={handleClickOpen}>
-							<DotsVerticalIcon
-								className="w-8 h-8 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 
+			{(groupOwner === user._id || adminAccess) &&
+				activeGroupInfo.groupId === groupId && (
+					<>
+						<Tooltip placement="top" arrow describeChild title="Settings">
+							<button onClick={handleClickOpen}>
+								<DotsVerticalIcon
+									className="w-8 h-8 text-gray-600 hover:text-gray-700 dark:text-gray-300 hover:dark:text-gray-400 
 									p-1 rounded-full border-[1px] border-transparent active:border-gray-500 dark:active:border-white 
 									hover:bg-gray-300 dark:hover:bg-gray-700 transition-all"
-							/>
-						</button>
-					</Tooltip>
-					<GroupSettings
-						open={open}
-						handleClose={handleClose}
-						groupId={groupId}
-						groupName={groupName}
-						groupIcon={groupIcon}
-					/>
-				</>
-			)}
+								/>
+							</button>
+						</Tooltip>
+						<GroupSettings
+							openSettings={openSettings}
+							handleClose={handleClose}
+							groupId={groupId}
+							groupName={groupName}
+							groupIcon={groupIcon}
+						/>
+					</>
+				)}
 		</div>
 	);
 }

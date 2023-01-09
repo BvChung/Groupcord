@@ -5,8 +5,8 @@ import {
 	deleteMessageData,
 	addDateLabelToNewMessages,
 	createDateLabelForDatabaseMessages,
-	updateAvatar,
-	updateUsername,
+	updateMessageAvatar,
+	updateMessageUsername,
 } from "../helperFunctions/messageFunctions";
 
 const initialState = {
@@ -76,13 +76,13 @@ export const messageSlice = createSlice({
 			state.userMessages.groupMessages = [];
 		},
 		socketDataUpdateMessageUsername: (state, action) => {
-			state.userMessages.groupMessages = updateUsername(
+			state.userMessages.groupMessages = updateMessageUsername(
 				state.userMessages.groupMessages,
 				action.payload
 			);
 		},
 		socketDataUpdateMessageAvatar: (state, action) => {
-			state.userMessages.groupMessages = updateAvatar(
+			state.userMessages.groupMessages = updateMessageAvatar(
 				state.userMessages.groupMessages,
 				action.payload
 			);

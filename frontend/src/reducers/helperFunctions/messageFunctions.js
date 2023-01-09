@@ -1,14 +1,16 @@
 import { current } from "@reduxjs/toolkit";
 import { nanoid } from "@reduxjs/toolkit";
 
-const timeNow = new Date();
-const currentDateFull = timeNow.toLocaleString("en-US", {
+const currentTime = new Date();
+const usersTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const currentDateFull = currentTime.toLocaleString("en-US", {
+	timeZone: usersTimeZone,
 	month: "long",
 	day: "numeric",
 	year: "numeric",
 });
 
-export const updateUsername = (state, payload) => {
+export const updateMessageUsername = (state, payload) => {
 	return current(state).map((msg) => {
 		if (msg.user === payload._id) {
 			return {
@@ -23,7 +25,7 @@ export const updateUsername = (state, payload) => {
 	});
 };
 
-export const updateAvatar = (state, payload) => {
+export const updateMessageAvatar = (state, payload) => {
 	return current(state).map((msg) => {
 		if (msg.user === payload._id) {
 			return {
@@ -71,7 +73,9 @@ export const addDateLabelToNewMessages = (state, payload) => {
 };
 
 export const createDateLabelForDatabaseMessages = (payload) => {
-	// Use reduce method to group messages in Object {date: [messages with same date]}
+	// Use reduce method to group messages in an object with
+	// {date: [messages]}
+
 	const groupMessagesByDate = payload.reduce((dateCreated, message) => {
 		const date = message.fullDate;
 		if (!dateCreated[date]) {
@@ -81,7 +85,7 @@ export const createDateLabelForDatabaseMessages = (payload) => {
 		return dateCreated;
 	}, {});
 
-	// Reduce method to concatenate all messages and provide the date
+	// Returns an array that combines & orders the date label with messages corresponding to date created
 	const messagesWithDateLabel = Object.values(groupMessagesByDate).reduce(
 		(accumulator, msgArrData) => {
 			return accumulator.concat([

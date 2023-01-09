@@ -139,7 +139,7 @@ export default function Groups() {
 								})}
 					</div>
 				) : (
-					<Spinner mt={3} />
+					<Spinner mt="mt-3" />
 				)}
 			</div>
 		</div>

@@ -10,7 +10,8 @@ import { resetGroupMemberDisplay } from "../../../reducers/groups/groupSlice";
 import { SocketContext } from "../../../appContext/socketContext";
 import { useSendMessageData } from "../../../hooks/webSocket/useSendMessageData";
 import { useSendProfileData } from "../../../hooks/webSocket/useSendProfileData";
-import ChatItem from "./ChatMessageItem/ChatMessagesItem";
+import UserMessage from "./MessageTypes/UserMessage";
+import DateLabel from "./MessageTypes/DateLabel";
 import { PaperAirplaneIcon } from "@heroicons/react/solid";
 import Spinner from "../../Spinner/Spinner";
 import { toast } from "react-toastify";
@@ -46,6 +47,7 @@ export default function Chat() {
 			};
 		});
 	}
+
 	function handleSubmit(e) {
 		e.preventDefault();
 
@@ -58,6 +60,7 @@ export default function Chat() {
 				groupId: groupId,
 			})
 		);
+
 		setUserMessage({
 			message: "",
 		});
@@ -114,20 +117,26 @@ export default function Chat() {
 					>
 						{loadInitialMessages &&
 							groupMessages?.map((message) => {
-								return (
-									<ChatItem
-										key={message._id}
-										type={message.type}
-										messageId={message._id}
-										userId={message.user}
-										username={message.username}
-										userAvatar={message.userAvatar}
-										message={message.message}
-										fullDate={message.fullDate}
-										timeCreated={message.timeCreated}
-										dateCreated={message.dateCreated}
-									/>
-								);
+								if (message.type === "newDateLabel") {
+									return (
+										<DateLabel
+											key={message.fullDate}
+											fullDate={message.fullDate}
+										/>
+									);
+								} else {
+									return (
+										<UserMessage
+											key={message._id}
+											messageId={message._id}
+											userId={message.user}
+											username={message.username}
+											userAvatar={message.userAvatar}
+											message={message.message}
+											createdAt={message.createdAt}
+										/>
+									);
+								}
 							})}
 						<div ref={messageRef}></div>
 					</div>
@@ -168,7 +177,7 @@ export default function Chat() {
 									${
 										textInputActive
 											? "-rotate-[-180] text-sky-500 dark:text-sky-600"
-											: "rotate-90 text-gray-400 "
+											: "rotate-90 text-gray-400"
 									} transition-all`}
 										/>
 									</button>
@@ -178,7 +187,7 @@ export default function Chat() {
 					</div>
 				</>
 			) : (
-				<Spinner mt={14} />
+				<Spinner mt="mt-28" />
 			)}
 		</div>
 	);

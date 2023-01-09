@@ -5,7 +5,7 @@ export default function Spinner({ mt }) {
 	const { darkMode } = useSelector((state) => state.theme);
 
 	return (
-		<div className={`flex justify-center items-center mt-${mt}`}>
+		<div className={`flex justify-center items-center ${mt}`}>
 			{darkMode ? (
 				<svg
 					className="animate-spin h-6 w-6 text-white "

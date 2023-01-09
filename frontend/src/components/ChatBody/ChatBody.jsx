@@ -1,7 +1,7 @@
 import Groups from "./ChatGroups/Groups";
 import Chat from "./ChatMessages/ChatMessages";
 
-function ChatBody() {
+export default function ChatBody() {
 	return (
 		<div className="flex flex-grow transition-transform h-full w-full">
 			<Groups />
@@ -9,5 +9,3 @@ function ChatBody() {
 		</div>
 	);
 }
-
-export default ChatBody;

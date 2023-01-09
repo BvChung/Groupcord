@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const storedTheme = JSON.parse(localStorage.getItem("theme"));
+const storedTheme = JSON.parse(localStorage.getItem("groupCordTheme"));
 
 const initialState = { darkMode: storedTheme ? storedTheme : false };
 
@@ -10,7 +10,7 @@ export const themeSlice = createSlice({
 	reducers: {
 		changeTheme: (state) => {
 			state.darkMode = !state.darkMode;
-			localStorage.setItem("theme", JSON.stringify(state.darkMode));
+			localStorage.setItem("groupCordTheme", JSON.stringify(state.darkMode));
 		},
 	},
 });

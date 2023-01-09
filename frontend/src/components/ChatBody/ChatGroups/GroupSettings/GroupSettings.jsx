@@ -20,7 +20,7 @@ import { Tooltip, TextField } from "@mui/material";
 
 export default function GroupSettings({
 	groupId,
-	open,
+	openSettings,
 	handleClose,
 	groupIcon,
 	groupName,
@@ -163,7 +163,7 @@ export default function GroupSettings({
 
 	return (
 		<Dialog
-			open={open}
+			open={openSettings}
 			fullWidth={true}
 			maxWidth="sm"
 			onClose={() => {
@@ -189,7 +189,7 @@ export default function GroupSettings({
 
 				<div className={`flex items-center mb-7 pb-6 ${borderStyle}`}>
 					{!imageUpload ? (
-						<div className="relative w-fit rounded-full overflow-hidden mr-6 shadow-xl">
+						<div className="relative w-fit rounded-full overflow-hidden mr-6 shadow-md">
 							<label
 								htmlFor="image"
 								className="relative flex items-center cursor-pointer"
@@ -213,7 +213,7 @@ export default function GroupSettings({
 								/>
 								{showChangeIcon && (
 									<div className="absolute bg-gray-900 w-full h-full bg-opacity-50 z-[100]">
-										<div className="z-20 absolute flex flex-col items-center justify-center top-[38%] left-[23%]  text-gray-800">
+										<div className="z-20 absolute flex flex-col items-center justify-center top-[38%] left-[23%] text-gray-800">
 											<strong className="text-white text-center text-xs uppercase">
 												Change
 											</strong>
@@ -262,6 +262,7 @@ export default function GroupSettings({
 						<label
 							htmlFor="image"
 							className="cursor-pointer w-fit"
+							aria-label="Upload image"
 							onClick={() => {
 								if (editGroupName) {
 									setEditGroupName(false);

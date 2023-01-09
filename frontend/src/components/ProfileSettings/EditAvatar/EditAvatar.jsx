@@ -27,7 +27,7 @@ export default function EditAvatar({
 			</div>
 			<div className="flex items-center mb-4 sm:mb-0">
 				{!imageUpload ? (
-					<div className="relative w-fit rounded-full overflow-hidden shadow-xl">
+					<div className="relative w-fit rounded-full overflow-hidden shadow-md">
 						<label
 							htmlFor="image"
 							className="relative flex items-center cursor-pointer"
@@ -73,7 +73,7 @@ export default function EditAvatar({
 						</label>
 					</div>
 				) : (
-					<div className="relative rounded-full overflow-hidden shadow-xl">
+					<div className="relative rounded-full overflow-hidden shadow-md">
 						<label
 							htmlFor="image"
 							className="relative flex items-center cursor-pointer"
