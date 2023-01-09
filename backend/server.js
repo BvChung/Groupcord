@@ -7,6 +7,7 @@ const path = require("path");
 const { Server } = require("socket.io");
 const colors = require("colors");
 const cookieParser = require("cookie-parser");
+const compression = require("compression");
 const { backendErrorHandler } = require("./middleware/errorMessage");
 const connectDatabase = require("./config/database");
 const { getPreviousRoom, createUser } = require("./helper/helperfunctions");
@@ -44,6 +45,8 @@ app.use(
 
 // Middleware for cookies
 app.use(cookieParser());
+// Middleware for text compression
+app.use(compression());
 
 // When front end reaches /api/chatlogs app looks into route folder to establish route
 app.use("/api/users", require("./routes/usersRoutes"));
