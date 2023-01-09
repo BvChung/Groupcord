@@ -7,7 +7,12 @@ const cloudinary = require("../../cloudinary/cloudinaryConfig");
 // @route Get /api/groups/
 // @access Private
 const getChatGroups = asyncHandler(async (req, res) => {
-	const userConversations = await Conversation.find({ membersId: req.user.id });
+	let userConversations;
+	if (req.user.authenticationRole === +process.env.ADMIN_ROLE) {
+		userConversations = await Conversation.find({});
+	} else {
+		userConversations = await Conversation.find({ membersId: req.user.id });
+	}
 
 	return res.status(200).json(userConversations);
 });

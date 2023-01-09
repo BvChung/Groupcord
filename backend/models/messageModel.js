@@ -30,12 +30,6 @@ const messageSchema = mongoose.Schema(
 		fullDate: {
 			type: String,
 		},
-		dateCreated: {
-			type: String,
-		},
-		timeCreated: {
-			type: String,
-		},
 	},
 	{
 		timestamps: true,

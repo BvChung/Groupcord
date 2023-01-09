@@ -35,6 +35,7 @@ app.use(
 			"http://localhost:3000",
 			" http://127.0.0.1:5500",
 			"https://groupcord.herokuapp.com/",
+			process.env.HOST_SITE,
 		],
 		credentials: true,
 		optionSuccessStatus: 200,
@@ -119,7 +120,7 @@ io.on("connection", (socket) => {
 			socket.leave(previousRoom);
 		}
 
-		console.log(`User ${socket.id} Joined room: ${room}`.brightGreen.underline);
+		// console.log(`User ${socket.id} Joined room: ${room}`.brightGreen.underline);
 		socket.join(room);
 		currentRoom = room;
 	});
@@ -212,5 +213,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(port, () => {
-	console.log(`Server started on port: ${port}`.brightWhite);
+	console.log(`Server started on port: ${port}`.yellow.underline);
 });

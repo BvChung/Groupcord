@@ -36,6 +36,10 @@ const userSchema = mongoose.Schema(
 			type: String,
 			default: "",
 		},
+		authenticationRole: {
+			type: Number,
+			default: +process.env.MEMBER_ROLE,
+		},
 	},
 	{
 		timestamps: true,

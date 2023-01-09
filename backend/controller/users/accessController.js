@@ -48,6 +48,7 @@ const loginUser = asyncHandler(async (req, res) => {
 				username: foundUser.username,
 				email: foundUser.email,
 				userAvatar: foundUser.userAvatar,
+				authenticationRole: foundUser.authenticationRole,
 				accessToken: generateAccessToken(foundUser._id),
 			});
 	} else {
@@ -77,6 +78,10 @@ const registerUser = asyncHandler(async (req, res) => {
 	if (password.slice(0, 1) === " " || password.slice(-1) === " ") {
 		res.status(400);
 		throw new Error("Your password cannot begin or end with a blank space.");
+	}
+	if (password.length < 6) {
+		res.status(400);
+		throw new Error("Your password must be at least 6 characters.");
 	}
 
 	// Hash(encrypt) password

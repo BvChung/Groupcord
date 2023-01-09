@@ -7,14 +7,10 @@ const Messages = require("../../models/messageModel");
 const getMessages = asyncHandler(async (req, res) => {
 	const { groupId } = req.query;
 
-	// const allMessages = await Messages.find({});
-	// Return messages based on user JWT
-
-	// find() has to match type in mongodb schema
+	// Return messages based on groupId
 	const groupMessages = await Messages.find({ groupId: groupId });
 
 	return res.status(200).json({
-		// allMessages: allMessages,
 		groupMessages: groupMessages,
 	});
 });
@@ -24,7 +20,6 @@ const getMessages = asyncHandler(async (req, res) => {
 // @access Private
 const setMessages = asyncHandler(async (req, res) => {
 	const { groupId } = req.body;
-	// console.log(groupId);
 
 	if (!req.body.message) {
 		res.status(400);
@@ -32,18 +27,10 @@ const setMessages = asyncHandler(async (req, res) => {
 	}
 
 	const timeNow = new Date();
-
-	const convertedTime = timeNow.toLocaleString("en-US", {
-		hour: "numeric",
-		minute: "numeric",
-	});
-
-	const convertedDate = timeNow.toLocaleString("en-US", {
-		day: "numeric",
-		month: "numeric",
-	});
+	const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 	const fullDate = timeNow.toLocaleString("en-US", {
+		timeZone: userTimeZone,
 		month: "long",
 		day: "numeric",
 		year: "numeric",
@@ -56,8 +43,6 @@ const setMessages = asyncHandler(async (req, res) => {
 		groupId: groupId,
 		message: req.body.message,
 		fullDate: fullDate,
-		timeCreated: convertedTime,
-		dateCreated: convertedDate,
 	});
 
 	return res.status(200).json(chatlog);
